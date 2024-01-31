@@ -57,10 +57,8 @@ Loads the environment (to continue previous work)
 
 This is the metadata that we combined to do all the trees, and where the host family has been added manually.
 
-\- \[ \] find a fix for readRDS why this bugs in quarto?
-
 ```{r}
-all_tree_metadata <- readRDS(file = params$all_tree_metadata)
+all_tree_metadata <- readRDS(file = here(params$all_tree_metadata))
 glimpse(all_tree_metadata)
 ```
 
@@ -572,7 +570,6 @@ explor_plot3b <-
                               na.translate = FALSE,
                               name = "Highlight Norway") +
   # adding bootstrap value on branches
-  # shape 126 is ~ 
   ggnewscale::new_scale_color() +
   ggtree::geom_point(aes(x = branch, 
                          color = as.numeric(labels_bootstrap) < 95),
@@ -683,7 +680,6 @@ explor_plot3d <-
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
-  # shape 126 is ~ 
   ggtree::geom_point(aes(x = branch, 
                          color = as.numeric(labels_bootstrap) < 95),
                      data = . %>% filter(!isTip), 
@@ -708,6 +704,10 @@ countries_facet_df <-
 Host_family_facet_df <- 
   get_ctg_data_geom_facet(explor_plot3d$data, "ctg_Host_family", "Host_family", "Host_family_string")
 
+Host_latin_facet_df <- 
+  get_ctg_data_geom_facet(explor_plot3d$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
+
+
 # getting the countries per group
 countries_facet_df2 <- 
   get_data_geom_facet(data = explor_plot3d$data,
@@ -728,8 +728,6 @@ years_facet_df <-
                       nested_col = nested_year, 
                       var = year, 
                       group_expr = NULL)
-
-                      
 ```
 
 1. adding node that will be cut for detailed plotting with a light green point 
@@ -755,6 +753,18 @@ explor_plot4 <-
   ggtree::theme_tree() +
   # Adding the panels 
   # countries barplot and text legend 
+    # Adding the years now
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Year", 
+    data = years_facet_df,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = years_ind_col_pal,
+                    name = "Year") +
   ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Country", 
@@ -793,18 +803,16 @@ explor_plot4 <-
     mapping = aes(x = -.4, label = val),
     hjust = 0,
     size = 1)  +
-  # Adding the years now
-  ggnewscale::new_scale_fill() +
-    ggtree::geom_facet(
-    panel = "Year", 
-    data = years_facet_df,
-    geom = geom_bar,
-    mapping = aes(x = value, fill = variable),
-    orientation = 'y', 
-    width = 1, 
-    stat = "identity") +
-  scale_fill_manual(values = years_ind_col_pal,
-                    name = "Year") 
+  ggtree::geom_facet(
+    panel = "Host Latin", 
+    data = Host_latin_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1) +
+  theme(strip.text = 
+          ggplot2::element_text(size = 9))
+
 
 explor_plot4
 ```
@@ -813,7 +821,23 @@ explor_plot4
 
 ```{r}
 collapsed_plot <- grop_redraw(explor_plot4, 
-                              width_mult = c(1, .1, .3, .1, .3, .1))
+                              width_mult = c(1, .1, .1, .3, .1, .3, .3)
+        )
+```
+
+
+```{r}
+#| layout-ncol: 1
+#| fig-cap: 
+#|   - """H5N1 HA segment.
+#|   ML phylogenetic tree with nodes depth >= 5, that did not contained 
+#|   Norwegian isolates and nodes that represented groups of isolates from the
+#|   same country of origin are collapsed. The tree is rooted, but the outgroup
+#|   is not shown, due to large distance to the body of the tree. The information
+#|   at the tips and collapsed nodes is representative of the data set, including
+#|   identical sequences. 
+#|   """
+
 collapsed_plot
 
 ```
@@ -824,7 +848,7 @@ ggsave(
   collapsed_plot,
   device = "svg",
   dpi = 600, 
-  units = "cm", width = 30, height = 50
+  units = "cm", width = 35, height = 50
   )
 ```
 
@@ -951,10 +975,14 @@ circular_plotb <-
 ```{r}
 #| layout-ncol: 1
 #| fig-cap: 
-#|   - """ML phylogenetic tree. The light green dots represent the branching 
-#|   origin the two groups presented as tree subsets. The trees are rooted
-#|   but the outgroup are not shown as they are too distant from the body
-#|   of the phylogenetic tree."""
+#|   - """H5N1 HA segment.
+#|   ML phylogenetic tree. The light green dots represent the branching 
+#|   origin the two groups presented as tree subsets. The tree is rooted, 
+#|   but the outgroup is not shown, due to large distance to the body of the tree. 
+#|   The information at the tips and collapsed nodes is representative of the 
+#|   data set, including identical sequences."""
+
+
 circular_plotb
 ```
 
@@ -973,7 +1001,398 @@ ggsave(
 
 ## N348 
 
+- getting the list of tips 
+```{r}
+tips_N348 <- 
+  my_plotdata %>% 
+  filter(label == "N348") %>%
+  pull(descendants_tips_from_node) %>%
+  unlist()
+```
+
+- subsetting the tree 
+```{r}
+subtree_N348 <- ape::keep.tip(rooted_tree_nodelab, tips_N348)
+```
+
+- creating the simple plot and adding the metadata
+
+```{r}
+plot_subtree_N348 <- 
+  ggtree(subtree_N348, layout = "rectangular", color = "grey", alpha = .7)  
+
+# adding the metadata 
+plot_subtree_N348$data <- 
+  plot_subtree_N348$data %>% 
+  left_join(my_plotdata %>% 
+              select(c(4, seq(10, ncol(.)))), 
+            by = c("label" = "label")
+            )
+```
+
+- preparing the data for the pannels views
+
+```{r}
+N348_countries_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N348$data, "ctg_country", "country", "country_string")
+
+N348_Host_family_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N348$data, "ctg_Host_family", "Host_family", "Host_family_string")
+
+N348_Host_latin_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N348$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
+
+
+# getting the countries per group
+N348_countries_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N348$data,
+                      nested_col = nested_country, 
+                      var = country,
+                      group_expr = grouping_helper_country)
+
+# getting the host family per group
+N348_Host_family_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N348$data, 
+                      nested_col = nested_Host_family, 
+                      var = Host_family, 
+                      group_expr = NULL)
+
+# getting the years 
+N348_years_facet_df <- 
+  get_data_geom_facet(data = plot_subtree_N348$data, 
+                      nested_col = nested_year, 
+                      var = year, 
+                      group_expr = NULL)
+```
+
+- ploting the tree
+
+```{r}
+N348_plot <- 
+  plot_subtree_N348 + 
+  ggplot2::geom_point(aes(x, y, color = category_highlight),
+                      data = . %>% filter(isTip), 
+                      position = ggforce::position_auto(), size = 1.25) +
+  ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
+                              na.translate = FALSE,
+                              name = "Highlight") +
+  # we need to add the values for those that have different years 
+  # adding bootstrap value on branches
+  ggnewscale::new_scale_color() +
+  ggtree::geom_point(aes(x = branch, 
+                         color = as.numeric(labels_bootstrap) < 95),
+                     data = . %>% filter(!isTip), 
+                     shape = 19, size = .5, na.rm = T) +
+  scale_color_manual(name = "Bootstrap", 
+                     values =  bootstrap_pal_col,
+                     labels = c(expression(phantom(x) >= 95),
+                                expression(phantom(x) < 95)),
+                     na.translate = FALSE) +
+  ggtree::geom_treescale(x = 1e-3, y = 80,
+                         fontsize = 1, 
+                         width = 1e-3,
+                         label = "Substitution/site",
+                         linesize = .1,
+                         offset = 1.5) +
+  ggtree::vexpand(.01) +
+  ggtree::hexpand(.01) +
+  ggtree::theme_tree() +
+  # Adding the panels 
+  # countries barplot and text legend 
+    # Adding the years now
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Year", 
+    data = N348_years_facet_df,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = years_ind_col_pal,
+                    name = "Year") +
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Country", 
+    data = N348_countries_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = col_grouped_countries_pal2,
+                    name = "Country Groups") +
+    ggtree::geom_facet(
+    panel = "Country Legend", 
+    data = N348_countries_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  + 
+  # Adding Host familly panel 
+    ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Family", 
+    data = N348_Host_family_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = host_families_color_pal,
+                    name = "Host Family") +
+  #guides(fill = "none") +
+  ggtree::geom_facet(
+    panel = "Family Legend", 
+    data = N348_Host_family_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  +
+  ggtree::geom_facet(
+    panel = "Host Latin", 
+    data = N348_Host_latin_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1) +
+  theme(strip.text = 
+          ggplot2::element_text(size = 9))
+
+
+N348_plot
+```
+
+- Now we need to adjust the size of the panels 
+
+```{r}
+N348_plotb <- grop_redraw(N348_plot, 
+                              width_mult = c(1, .1, .1, .3, .1, .3, .3)
+        )
+```
+
+
+```{r}
+#| layout-ncol: 1
+#| fig-cap: 
+#|   - """H5N1 HA segment. 
+#|   Detail of the second group of isolates from the ML phylogenetic tree. 
+#|   The subset tree is rooted and branches on the second green dot from the root.
+#|   All the isolates are shown. Variables for sequences that were identical 
+#|   to the tip sequences are showned at the representative tips."""
+#|   
+
+N348_plotb
+
+```
+
+```{r}
+ggsave(
+  paste(params$save_dir, "Node_348_detail.svg", sep = "/"),
+  N348_plotb,
+  device = "svg",
+  dpi = 600, 
+  units = "cm", width = 35, height = 50
+  )
+```
+
+
 ## N9
+
+- getting the list of tips 
+```{r}
+tips_N348 <- 
+  my_plotdata %>% 
+  filter(label == "N348") %>%
+  pull(descendants_tips_from_node) %>%
+  unlist()
+```
+
+- subsetting the tree 
+```{r}
+subtree_N348 <- ape::keep.tip(rooted_tree_nodelab, tips_N348)
+```
+
+- creating the simple plot and adding the metadata
+
+```{r}
+plot_subtree_N348 <- 
+  ggtree(subtree_N348, layout = "rectangular", color = "grey", alpha = .7)  
+
+# adding the metadata 
+plot_subtree_N348$data <- 
+  plot_subtree_N348$data %>% 
+  left_join(my_plotdata %>% 
+              select(c(4, seq(10, ncol(.)))), 
+            by = c("label" = "label")
+            )
+```
+
+- preparing the data for the pannels views
+
+```{r}
+N348_countries_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N348$data, "ctg_country", "country", "country_string")
+
+N348_Host_family_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N348$data, "ctg_Host_family", "Host_family", "Host_family_string")
+
+N348_Host_latin_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N348$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
+
+
+# getting the countries per group
+N348_countries_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N348$data,
+                      nested_col = nested_country, 
+                      var = country,
+                      group_expr = grouping_helper_country)
+
+# getting the host family per group
+N348_Host_family_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N348$data, 
+                      nested_col = nested_Host_family, 
+                      var = Host_family, 
+                      group_expr = NULL)
+
+# getting the years 
+N348_years_facet_df <- 
+  get_data_geom_facet(data = plot_subtree_N348$data, 
+                      nested_col = nested_year, 
+                      var = year, 
+                      group_expr = NULL)
+```
+
+- ploting the tree
+
+```{r}
+N348_plot <- 
+  plot_subtree_N348 + 
+  ggplot2::geom_point(aes(x, y, color = category_highlight),
+                      data = . %>% filter(isTip), 
+                      position = ggforce::position_auto(), size = 1.25) +
+  ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
+                              na.translate = FALSE,
+                              name = "Highlight") +
+  # we need to add the values for those that have different years 
+  # adding bootstrap value on branches
+  ggnewscale::new_scale_color() +
+  ggtree::geom_point(aes(x = branch, 
+                         color = as.numeric(labels_bootstrap) < 95),
+                     data = . %>% filter(!isTip), 
+                     shape = 19, size = .5, na.rm = T) +
+  scale_color_manual(name = "Bootstrap", 
+                     values =  bootstrap_pal_col,
+                     labels = c(expression(phantom(x) >= 95),
+                                expression(phantom(x) < 95)),
+                     na.translate = FALSE) +
+  ggtree::geom_treescale(x = 1e-3, y = 80,
+                         fontsize = 1, 
+                         width = 1e-3,
+                         label = "Substitution/site",
+                         linesize = .1,
+                         offset = 1.5) +
+  ggtree::vexpand(.01) +
+  ggtree::hexpand(.01) +
+  ggtree::theme_tree() +
+  # Adding the panels 
+  # countries barplot and text legend 
+    # Adding the years now
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Year", 
+    data = N348_years_facet_df,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = years_ind_col_pal,
+                    name = "Year") +
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Country", 
+    data = N348_countries_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = col_grouped_countries_pal2,
+                    name = "Country Groups") +
+    ggtree::geom_facet(
+    panel = "Country Legend", 
+    data = N348_countries_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  + 
+  # Adding Host familly panel 
+    ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Family", 
+    data = N348_Host_family_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = host_families_color_pal,
+                    name = "Host Family") +
+  #guides(fill = "none") +
+  ggtree::geom_facet(
+    panel = "Family Legend", 
+    data = N348_Host_family_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  +
+  ggtree::geom_facet(
+    panel = "Host Latin", 
+    data = N348_Host_latin_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1) +
+  theme(strip.text = 
+          ggplot2::element_text(size = 9))
+
+
+N348_plot
+```
+
+- Now we need to adjust the size of the panels 
+
+```{r}
+N348_plotb <- grop_redraw(N348_plot, 
+                              width_mult = c(1, .1, .1, .3, .1, .3, .3)
+        )
+```
+
+
+```{r}
+#| layout-ncol: 1
+#| fig-cap: 
+#|   - """H5N1 HA segment. 
+#|   Detail of the second group of isolates from the ML phylogenetic tree. 
+#|   The subset tree is rooted and branches on the second green dot from the root.
+#|   All the isolates are shown. Variables for sequences that were identical 
+#|   to the tip sequences are showned at the representative tips."""
+#|   
+
+N348_plotb
+
+```
+
+```{r}
+ggsave(
+  paste(params$save_dir, "Node_348_detail.svg", sep = "/"),
+  N348_plotb,
+  device = "svg",
+  dpi = 600, 
+  units = "cm", width = 35, height = 50
+  )
+```
 
 
 # Saving environment
