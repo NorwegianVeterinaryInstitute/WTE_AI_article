@@ -23,7 +23,8 @@ params:
 
 3.  Visualisation phylogenetic tree:
 
--   `SEP_H5N1_phylogenetic_tree.qmd`
+-   `SEP_H5N1_HA_phylogenetic_tree.qmd`
+-   `SEP_H5N5_HA_phylogenetic_tree.qmd`
 
 6.  (last) Preparation metadata and aknowledgments for publication: `POST_preparation_aknowledgments_metadata_for_publication.qmd`
 
