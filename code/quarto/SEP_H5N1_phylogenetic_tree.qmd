@@ -32,10 +32,10 @@ editor_options:
 ```{r setup}
 #| include: false
 library(here)
-source(paste(params$source_code, "AI_main.R", sep = "/"))
+source(here::here(params$source_code, "AI_main.R"))
 
 # Provisional until we get a package
-fun_files_path <- list.files(here(params$source_code, "fun"),
+fun_files_path <- list.files(here::here(params$source_code, "fun"),
   pattern = "*.R",
   full.names = T)
 # sourcing all functions
@@ -50,7 +50,7 @@ Loads the environment (to continue previous work)
 ```{r optional load environment}
 #| include: false
 # Uncomment if you want to load a saved environment file
-# if (file.exists(params$env_file)) {load(params$env_file)}
+#if (file.exists(params$env_file)) {load(params$env_file)}
 ```
 
 # Preparation of metadata specific to the tree
@@ -60,6 +60,9 @@ This is the metadata that we combined to do all the trees, and where the host fa
 ```{r}
 all_tree_metadata <- readRDS(file = here(params$all_tree_metadata))
 glimpse(all_tree_metadata)
+
+# I need a copy without filter to retrieve the names at the end
+all_tree_metadata2 <- all_tree_metadata
 ```
 
 We select only the columns that we will use, to reduce complexity
@@ -67,7 +70,7 @@ We select only the columns that we will use, to reduce complexity
 ```{r}
 all_tree_metadata <- 
   all_tree_metadata %>%
-  dplyr::select("label",  "Isolate_Id", 
+  dplyr::select("label",  "Isolate_Id", "subtype", 
                  "continent", "country", "year",
                 "Host", "Host_latin",  "Host_family")
 ```
@@ -120,7 +123,7 @@ rooted_tree <-
 Verification:
 
 ```{r}
-ggtree::ggtree(tree, layout = "rectangular")
+ggtree::ggtree(rooted_tree, layout = "rectangular")
 ```
 
 ## Integrating information from duplicate sequences
@@ -160,9 +163,23 @@ tree_meta_incl_duplicates <-
                     nb_represented_sequences),
                 ) %>%
   # getting metadata for the tips that are duplicated
-  dplyr::left_join(all_tree_metadata, c("represented_seq_label" = "label")) 
+  dplyr::left_join(all_tree_metadata %>%  select(-subtype), c("represented_seq_label" = "label")) 
+ 
 
 ```
+
+- recheck that we only have the correct subtypes included 
+```{r}
+tree_meta_incl_duplicates %>% 
+  select("represented_seq_label") %>%
+  rename("label" = "represented_seq_label") %>%
+  left_join(all_tree_metadata %>%
+              select(label, subtype)) %>%
+  group_by(subtype) %>%
+  summarise(n = n())
+
+```
+
 
 Now we need to get the contingency tables for each label (which can represent one or several isolates when it is identical to other sequences
 
@@ -233,7 +250,7 @@ explor_plot1
 ```
 
 ```{r}
-ggsave(filename = here(params$save_dir, "explor_plot1.svg"),
+ggsave(filename = here::here(params$save_dir, "explor_plot1.svg"),
        plot = explor_plot1,
        dpi = 300,
        units = "cm",
@@ -425,7 +442,7 @@ explor_plot2
 
 ```{r}
 ggsave(
-  filename = here(params$save_dir, "explor_plot2.svg"),
+  filename = here::here(params$save_dir, "explor_plot2.svg"),
   plot = explor_plot2, 
   dpi = 600, 
   units = "cm", width = 20, height = 30)
@@ -496,6 +513,7 @@ nodes_select_collapsing_1 <-
 
 > apparte to update data and to get objects easier to work with 
 > saving the tree that had node labels 
+
 ```{r}
 rooted_tree_simple_plot_list$simple_plot$data <- my_plotdata
 my_rooted_tree <- rooted_tree_simple_plot_list$tree_nodelab
@@ -598,7 +616,7 @@ explor_plot3b
 
 ```{r}
 ggsave(
-  paste(params$save_dir, "explor_plot3.svg", sep = "/"),
+  here::here(params$save_dir, "explor_plot3.svg"),
   explor_plot3b, 
   device = "svg",
   dpi = 600, 
@@ -827,24 +845,21 @@ collapsed_plot <- grop_redraw(explor_plot4,
 
 
 ```{r}
-#| layout-ncol: 1
-#| fig-cap: 
-#|   - """H5N1 HA segment.
-#|   ML phylogenetic tree with nodes depth >= 5, that did not contained 
-#|   Norwegian isolates and nodes that represented groups of isolates from the
-#|   same country of origin are collapsed. The tree is rooted, but the outgroup
-#|   is not shown, due to large distance to the body of the tree. The information
-#|   at the tips and collapsed nodes is representative of the data set, including
-#|   identical sequences. 
-#|   """
-
 collapsed_plot
-
 ```
+
+_Figure caption:_
+H5N1 HA segment. ML phylogenetic tree with nodes depth >= 5, that did not contained 
+Norwegian isolates and nodes that represented groups of isolates from the
+same country of origin are collapsed. The tree is rooted, but the outgroup
+is not shown, due to large distance to the body of the tree. The information
+at the tips and collapsed nodes is representative of the data set, including
+identical sequences.
+
 
 ```{r}
 ggsave(
-  paste(params$save_dir, "collapsed_plot.svg", sep = "/"),
+  here::here(params$save_dir, "collapsed_plot.svg"),
   collapsed_plot,
   device = "svg",
   dpi = 600, 
@@ -889,6 +904,7 @@ circular_meta <-
 
 
 ```{r}
+# ! here palette is specific for this article: SEP_years_shape_pal
 circular_plot <- 
   ggtree(rooted_tree_nodelab, layout = "circular", color = "grey", alpha = .7)  %<+%
   circular_meta +
@@ -900,7 +916,7 @@ circular_plot <-
   scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"),
                      name = "Highlight") +
   scale_size_continuous(range = c(0, 1)) +
-  scale_shape_manual(values = years_shape_pal, name = "Year") +
+  scale_shape_manual(values = SEP_years_shape_pal, name = "Year") +
   guides(size = "none") +
   # Adding the highlight for the subsets plots - where is the group branching
   ggnewscale::new_scale_color() +
@@ -968,23 +984,20 @@ circular_plotb <-
 
 
 ```{r}
-#| layout-ncol: 1
-#| fig-cap: 
-#|   - """H5N1 HA segment.
-#|   ML phylogenetic tree. The light green dots represent the branching 
-#|   origin the two groups presented as tree subsets. The tree is rooted, 
-#|   but the outgroup is not shown, due to large distance to the body of the tree. 
-#|   The information at the tips and collapsed nodes is representative of the 
-#|   data set, including identical sequences."""
-
-
 circular_plotb
 ```
+
+_Figure caption:_
+H5N1 HA segment. ML phylogenetic tree. The light green dots represent the branching 
+origin the two groups presented as tree subsets. The tree is rooted, 
+but the outgroup is not shown, due to large distance to the body of the tree. 
+The information at the tips and collapsed nodes is representative of the 
+data set, including identical sequences."""
 
 
 ```{r}
 ggsave(
-  paste(params$save_dir, "circular_plot.svg", sep = "/"),
+  here::here(params$save_dir, "circular_plot.svg"),
   circular_plotb, 
   device = "svg",
   dpi = 600, 
@@ -1171,23 +1184,21 @@ N348_plotb <- grop_redraw(N348_plot,
 
 
 ```{r}
-#| layout-ncol: 1
-#| fig-cap: 
-#|   - """H5N1 HA segment. 
-#|   Detail of the second group of isolates from the ML phylogenetic tree. 
-#|   The subset tree is rooted and branches on the second green dot from the root.
-#|   All the isolates are shown. Variables for sequences that were identical 
-#|   to the tip sequences are showned at the representative tips. The position
-#|   of horizontal points is slighly adjusted to avoid overlap."""
-#|   
-
 N348_plotb
-
 ```
+
+_Figure Caption:_
+H5N1 HA segment. Detail of the second group of isolates from the ML phylogenetic tree. 
+The subset tree is rooted and branches on the second green dot from the root.
+All the isolates are shown. Variables for sequences that were identical 
+to the tip sequences are showned at the representative tips. The position
+of horizontal points is slighly adjusted to avoid overlap."
+
+
 
 ```{r}
 ggsave(
-  paste(params$save_dir, "Node_348_detail.svg", sep = "/"),
+  here::here(params$save_dir, "Node_348_detail.svg"),
   N348_plotb,
   device = "svg",
   dpi = 600, 
@@ -1372,24 +1383,21 @@ N9_plotb <- grop_redraw(N9_plot,
 
 
 ```{r}
-#| layout-ncol: 1
-#| fig-cap: 
-#|   - """H5N1 HA segment. 
-#|   Detail of the first group of isolates from the ML phylogenetic tree. 
-#|   The subset tree is rooted and branches on the second green dot from the root.
-#|   All the isolates are shown. Variables for sequences that were identical 
-#|   to the tip sequences are showned at the representative tips. The position
-#|   of horizontal points is slighly adjusted to avoid overlap."""
-
-   
-
 N9_plotb
-
 ```
+
+_Figure Caption:_
+
+H5N1 HA segment. Detail of the first group of isolates from the ML phylogenetic tree. 
+The subset tree is rooted and branches on the second green dot from the root.
+All the isolates are shown. Variables for sequences that were identical 
+to the tip sequences are showned at the representative tips. The position
+of horizontal points is slighly adjusted to avoid overlap."
+
 
 ```{r}
 ggsave(
-  paste(params$save_dir, "Node_9_detail.svg", sep = "/"),
+  here::here(params$save_dir, "Node_9_detail.svg"),
   N9_plotb,
   device = "svg",
   dpi = 600, 
@@ -1401,24 +1409,26 @@ ggsave(
 # Saving environment
 To continue analyses that are not finished
 ```{r}
-save.image(params$env_file)
+save.image(here::here(params$env_file))
 ```
 
 List of isolates used in the tree (otherwise is in the image)
 ```{r}
 write_tsv(duplicates_df,
-          file = paste(params$save_dir, "duplicates.tsv", sep = "/"))
+          file = here::here(params$save_dir, "duplicates.tsv")
+          )
 ```
 
 Metadata for all H5N1 isolates included
 ```{r}
-data_here <- 
-  all_tree_metadata %>%
-  left_join(duplicates_df, by = c("label" = "represented_seq_label")) %>% 
+data_here <- duplicates_df %>%
+  select(represented_seq_label) %>%
+  rename(label = represented_seq_label) %>%
+  left_join(all_tree_metadata2, by = "label") %>%
   select(label, Isolate_Id, subtype, continent, country, year, 
-         Host_family, Host_latin) %>%
+         Host_family, Host_latin, Isolate_Name) %>%
   distinct() 
-E#dim(data_here)
+#dim(data_here)
 ```
 
 This dataset is representative for `r nrow(data_here)` isolates. 
@@ -1431,44 +1441,17 @@ This after a preliminary analysis of the data. This group of isolates appeared t
 
 ![Complete tree, preliminary analysis]("results/H5N1_HA/complete.svg")
 
-# HERE - Need data control again 
-
-The removed isolates are: 
-
-```{r}
-all_tree_metadata %>%
-  filter(subtype == "H5N1" | subtype == "H5N5" ) %>%
-  anti_join(data_here %>% select(label)) %>%
-  dim()
-
-my_plotdata %>%
-  filter(isTip) %>%
-  select()
-
-data_here %>% 
-  select(label) %>%
-  anti_join(all_tree_metadata %>%
-              filter(subtype == "H5N1" | subtype == "H5N5" )
-            ) %>%  dim()
-
-data_here %>% 
-  select(label) %>%
-  left_join(all_tree_metadata %>%
-              select(label, subtype)) %>%
-  group_by(subtype) %>%
-  summarise(n = n()) 
-
-```
-
-- export metadata for isolates from Norway (for all the trees only once)
+# Notes 
+Data control is ok - its only H5N1 
+<!-- I only had done my join in the wrong way --> 
 
 ```{r}
-# all_tree_metadata %>% 
-#  select(label, Isolate_Id, subtype, continent, country, year, 
-#          Host_family, Host_latin, Locality, lat, lon) %>%
-#   mutate(GISAID_ID = if_else(str_detect(label, "EPI_ISL_"), label, NA_character_)) %>%
-#   filter(country == "Norway") %>%
-#   write_tsv(paste(params$save_dir, "Norway_metadata_H5N1_H5N5.tsv", sep = "/"))
+all_tree_metadata2 %>%
+ select(label, Isolate_Id, subtype, continent, country, year,
+         Host_family, Host_latin, Locality, lat, lon,  Isolate_Name) %>%
+  mutate(GISAID_ID = if_else(str_detect(label, "EPI_ISL_"), label, NA_character_)) %>%
+  filter(country == "Norway") %>%
+  write_tsv(here::here(params$save_dir, "Norway_metadata_H5N1_H5N5.tsv"))
 ```
 
 Some isolates have been submited to GISAID since we started this analysis, therefore the 
