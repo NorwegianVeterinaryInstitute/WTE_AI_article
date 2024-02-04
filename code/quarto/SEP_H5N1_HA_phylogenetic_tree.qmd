@@ -1421,14 +1421,32 @@ write_tsv(duplicates_df,
 
 Metadata for all H5N1 isolates included
 ```{r}
-data_here <- duplicates_df %>%
+data_here1 <- duplicates_df %>%
   select(represented_seq_label) %>%
   rename(label = represented_seq_label) %>%
   left_join(all_tree_metadata2, by = "label") %>%
   select(label, Isolate_Id, subtype, continent, country, year, 
          Host_family, Host_latin, Isolate_Name) %>%
   distinct() 
-#dim(data_here)
+
+data_here2 <-  
+  tibble(label = tree$tip.label) %>%
+  left_join(all_tree_metadata2, by = "label") %>%
+  select(label, Isolate_Id, subtype, continent, country, year, 
+         Host_family, Host_latin, Isolate_Name) %>%
+  distinct() 
+
+data_here <- 
+  dplyr::bind_rows(data_here1, data_here2) %>%
+  distinct()
+
+saveRDS(data_here, here::here(params$save_dir, "H5N1_HA_metadata.rds"))
+
+xlsx::write.xlsx(as.data.frame(data_here), 
+                 here::here(params$save_dir, "H5N1_HA_metadata.xlsx"),
+                 sheetName = "H5N1_HA_metadata",
+                 showNA = FALSE,
+                 row.names = FALSE)
 ```
 
 This dataset is representative for `r nrow(data_here)` isolates. 
