@@ -1,0 +1,1596 @@
+---
+title: "SEP H5N1 Phylogenetic tree"
+author: "Eve Zeyl Fiskebeck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+    strain: "H5N1"
+    segment: "NA"
+    all_tree_metadata: "data/prepared_data/all_tree_metadata_CAB.RDS"
+    tree: "results/H5N1_NA/iqtree/"
+    save_dir: "results/H5N1_HA"
+    env_file: "results/env_files/H5N1_NA_SEP.RData"
+    source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
+execute: 
+  echo: false
+  cache: true
+format: html
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Setup
+
+-   sourcing scripts and functions
+
+```{r setup}
+#| include: false
+library(here)
+source(here::here(params$source_code, "AI_main.R"))
+
+# Provisional until we get a package
+fun_files_path <- list.files(here::here(params$source_code, "fun"),
+  pattern = "*.R",
+  full.names = T)
+# sourcing all functions
+sapply(fun_files_path,source,.GlobalEnv)
+
+```
+
+Note: if you are modifying the script and want to continue to work after, you can load a previous environment (don't forget to save it at the end of your work).
+
+Loads the environment (to continue previous work)
+
+```{r optional load environment}
+#| include: false
+# Uncomment if you want to load a saved environment file
+#if (file.exists(params$env_file)) {load(params$env_file)}
+```
+
+# Preparation of metadata specific to the tree
+
+This is the metadata that we combined to do all the trees, and where the host family has been added manually.
+
+```{r}
+all_tree_metadata <- readRDS(file = here(params$all_tree_metadata))
+glimpse(all_tree_metadata)
+
+# I need a copy without filter to retrieve the names at the end
+all_tree_metadata2 <- all_tree_metadata
+```
+
+We select only the columns that we will use, to reduce complexity
+
+```{r}
+all_tree_metadata <- 
+  all_tree_metadata %>%
+  dplyr::select("label",  "Isolate_Id", "subtype", 
+                 "continent", "country", "year",
+                "Host", "Host_latin",  "Host_family")
+```
+
+-   List of duplicate sequences that were removed prior building the phylogenetic tree for `r glue::glue("strain {params$strain}, segment {params$segment}")`
+
+# Information:
+
+For the purpose of homogeneization between plots, for the different phylogenetic trees, palettes and grouping helpers are defined in separate files which are sourced in this script.
+
+-   palettes are defined in the file `AI_palettes.R`
+
+<!-- reasoning detail and putting that in place in 2024-01-02_SEP_HA_final_tree_script.Rmd
+last commit 2024-01-30 in the pilot project. After started to concise in functions.
+-->
+
+# Importing phylogenetic tree, preparing the tree and metdata for plotting
+
+## Rooting the tree
+
+-   importing the tree and cleaning the tip labels (removing extension .fasta)
+
+-   NB we used the consensus tree
+
+```{r}
+tree <- ape::read.tree(here(params$tree))
+tree$tip.label <- tree$tip.label %>% str_remove_all(., ".*\\|") %>%
+  str_remove_all(., "t$") 
+```
+
+-   fast plotting: we see that 2 very long branches, this are the outgroup sequences that we will use for rooting. We root those and remove them from the tree.
+
+```{r}
+ggtree::ggtree(tree, layout = "rectangular") +
+    geom_point(. %>% 
+               filter(label == "EPI_ISL_177506" | label == "EPI_ISL_1254"),
+             mapping = aes(x = x, y = y),
+             color = "green",
+             size = 3)
+```
+
+-   rooting the tree, and dropping the two tips that correspond to the long branch
+
+```{r}
+rooted_tree <- ape::root(tree, 
+                         outgroup = c("EPI_ISL_177506", "EPI_ISL_1254"),
+                         resolve.root = T,
+                         edgelabel = T)
+
+rooted_tree <- 
+  ape::drop.tip(rooted_tree, c("EPI_ISL_177506", "EPI_ISL_1254"))
+
+```
+
+Verification:
+
+```{r}
+ggtree::ggtree(rooted_tree, layout = "rectangular")
+```
+
+
+## No duplicate sequences to integrate in this tree
+
+- creating table with metadata
+
+```{r}
+tree_meta <- 
+  tibble::tibble("label" = tree$tip.label) %>%
+  # getting metadata for the tips that are duplicated
+  dplyr::left_join(all_tree_metadata, c("label" = "label")) 
+```
+
+- recheck that we only have the correct subtypes included 
+```{r}
+tree_meta %>% 
+  dplyr::group_by(subtype) %>%
+  dplyr::summarise(n = n())
+```
+
+Adding filtering columns. We want to show where Norwegian sequences are,
+
+For this purpose, we add columns that would allow to tag labels representing isolates from Norway, and those that contain White-tailed Eagles.
+
+> Note here could have been simpler, but do as the same script as possible as H5N1_HA
+
+```{r}
+tree_meta <- 
+  tree_meta %>% 
+  check_in_var(., "country", 
+               name_new_col = "inNorway", 
+               test_expr = rlang::expr("Norway" %in% .x)) %>% 
+  check_in_var(., "Host_latin", 
+               name_new_col = "isWTE", 
+               test_expr = rlang::expr("Haliceetus albicilla" %in% .x)) %>%
+  dplyr::mutate(category_highlight = !!grouping_helper_category_highligth) %>%
+  string_levels_var(var = "year") %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate_at(dplyr::vars(category_highlight), 
+            ~ factor(.x, levels = category_highligth_levels, ordered = T))
+```
+
+## Exploration of the phylogenetic tree
+
+```{r}
+explor_plot1 <- 
+  rooted_tree %>%
+  ggtree::ggtree(., layout = "rectangular", ladderize = T, 
+                 lwd = .1, color = "grey") %<+%
+  tree_meta +
+  # Highlight Norwegian isolates
+  ggtree::geom_tippoint(aes(
+    color = category_highlight, 
+    shape = levels_year
+    ),
+                data = . %>% droplevels(),
+                position = ggforce::position_auto()) +
+  ggplot2::scale_color_manual(values = category_highlight_pal, name = "Highlight") +
+  ggplot2::scale_shape_manual(values = SEP_years_shape_pal, name = "Collection")
+explor_plot1
+```
+
+```{r}
+ggsave(filename = here::here(params$save_dir, "explor_plot1.svg"),
+       plot = explor_plot1,
+       dpi = 300,
+       units = "cm",
+       width = 20, height = 30) 
+```
+
+<!-- we do not collapse nodes for this tree --> 
+
+```{r}
+# replaces list2
+rooted_tree_simple_plot_list <- 
+  monophyly_nodetag_simple_plot_fun(rooted_tree, lwd = .1, color = "grey")
+```
+
+-   exploring the structure 
+```{r}
+glimpse(rooted_tree_simple_plot_list)
+
+```
+
+-   saving in individual objects (copy). We will reuse the plot data
+
+```{r}
+my_plotdata <- rooted_tree_simple_plot_list$simple_plot$data
+```
+
+```{r}
+my_plotdata %>% 
+  filter(!isTip) %>%
+  print(n = 10, width = Inf)
+```
+
+Checking data - ok it has nested the descendants from nodes 
+```{r}
+my_plotdata %>% filter(label == "N1") %>%
+  select(descendants_tips_from_node) %>%
+  unnest(descendants_tips_from_node)
+```
+
+
+### 2. Adding metadata to nodes and tips 
+
+> for consistency with previous script - we also add tipmetalink 
+
+```{r}
+my_plotdata <- 
+  my_plotdata %>%
+  update_plotdata_desc_repr_metalink_fun(df_duplicate = NULL, 
+                                         df_label = NULL,
+                                         df_represented = NULL) 
+```
+
+- linking metadata to the tree data for the selected column by creating nested
+dataframes for each variable and creating contingency tables for each nested
+variable 
+
+We create contingency tables and nested variables that represent the metadata 
+for each node and tip (label column). 
+
+Note here, we come back to the original metadata table, because we have the 
+list of tips that is represented at each label (tip or node)
+
+Here we do not want to use interaction between factors
+```{r}
+my_plotdata <- 
+  my_plotdata %>%
+  metadata_link_var_cont_fun(
+    col_link = tip_metalink,
+    metadata = all_tree_metadata,
+    interaction = FALSE,
+    country, Host, Host_latin, year, continent, Host_family) 
+```
+
+```{r}
+# my_plotdata %>%
+#   print(n = 10, width = Inf)
+```
+
+
+Here is how it looks like 
+```{r}
+names(my_plotdata)
+```
+
+
+```{r}
+my_plotdata %>% print(n = 10, width = Inf)
+```
+
+Selecting one column where several tips are respresented and
+showing an example of how the nested variable looks like, using eg. 
+nested country variable
+
+> note for this data set its only nodes 
+
+```{r}
+my_plotdata[85, ] %>% 
+  dplyr::select(nested_country) %>%
+  tidyr::unnest(nested_country)
+```
+
+`pos` is the index, in case we need to refer to it. 
+`label` is the label of the sequences that are represented 
+
+Now we can look at the contingency table for the same variable 
+```{r}
+my_plotdata[85, ] %>% 
+  dplyr::select(ctg_country) %>%
+  tidyr::unnest(ctg_country)
+```
+
+`freq_levels@country` : is the number of observations in each country
+`nb_levels@country` : is common in the nested table, its the number of levels of the variable country
+
+
+- NOW: we can reinsert the augmented data to the plot 
+```{r}
+rooted_tree_simple_plot_list$simple_plot$data <- my_plotdata
+```
+
+
+
+
+
+### 3. Filtering based on criteria based on information from nested metadata 
+
+
+# OLD --- review 
+
+
+Adding filtering columns, using the nested data. We want to show where Norwegian sequences are,
+
+but they can be duplicated sequences and thus not the primary labeled sequences on the tree.
+
+For this purpose, we add columns that would allow to tag labels representing isolates from Norway, and those that contain White-tailed Eagles.
+
+```{r}
+# replaces info2
+tree_meta_incl_duplicates_contingency <- 
+  tree_meta_incl_duplicates_contingency %>% 
+  check_in_var(., "country", 
+               name_new_col = "inNorway", 
+               test_expr = rlang::expr("Norway" %in% .x)) %>%
+  check_in_var(., "Host_latin", 
+               name_new_col = "isWTE", 
+               test_expr = rlang::expr("Haliceetus albicilla" %in% .x)) %>% 
+  # We created an helper in AI_grouping_helpers.R (allow homogeneization)  
+  dplyr::mutate(category_highlight = !!grouping_helper_category_highligth) %>%
+  string_levels_var(var = "year") %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate_at(dplyr::vars(category_highlight), 
+            ~ factor(.x, levels = category_highligth_levels, ordered = T))
+  
+
+```
+
+## Exploration of the phylogenetic tree
+
+```{r}
+explor_plot1 <- 
+  rooted_tree %>%
+  ggtree::ggtree(., layout = "rectangular", ladderize = T, 
+                 lwd = .1, color = "grey") %<+%
+  tree_meta_incl_duplicates_contingency +
+  # Highlight Norwegian isolates
+  ggtree::geom_tippoint(aes(
+    color = category_highlight, 
+    shape = levels_year
+    ),
+                data = . %>% droplevels(),
+                position = ggforce::position_auto()) +
+  ggplot2::scale_color_manual(values = category_highlight_pal, name = "Highlight") +
+  ggplot2::scale_shape_manual(values = SEP_years_shape_pal, name = "Collection")
+explor_plot1
+```
+
+```{r}
+ggsave(filename = here::here(params$save_dir, "explor_plot1.svg"),
+       plot = explor_plot1,
+       dpi = 300,
+       units = "cm",
+       width = 20, height = 30) 
+```
+
+# Collapsing nodes
+
+## A. Preparation to collapse nodes
+
+We start from scratch. 
+
+### 1. creating the plot and tree data: adding information to the nodes (monophyly, depth nodes, all descendants)
+
+-   tagging monophyletic nodes with bootstrap support (>=95), adding node labels to be
+able to retrieve information, moving bootstrap values to another column, and computing all nodes descendants and node depth (this can take some time)
+
+-   this create the simple plot at the same time
+
+```{r}
+# replaces list2
+rooted_tree_simple_plot_list <- 
+  monophyly_nodetag_simple_plot_fun(rooted_tree, lwd = .1, color = "grey")
+```
+
+-   exploring the structure 
+```{r}
+glimpse(rooted_tree_simple_plot_list)
+# the plot object
+# rooted_tree_simple_plot_list$simple_plot
+# the tree object with node labels depth osv
+#rooted_tree_simple_plot_list$tree
+```
+
+-   saving in individual objects (copy). We will reuse the plot data
+
+```{r}
+my_plotdata <- rooted_tree_simple_plot_list$simple_plot$data
+```
+
+
+### 2. Adding metadata to nodes and tips - integration of duplicates metadata
+
+- we add a column where all the isolates (duplicated and non duplicated) that are represented at a tip and node are listed. 
+
+We call this column tip_metalink 
+This column will be used to make the join between the tree and the metadata that
+is represented at each tip or node. It uses the metadata table for duplicates.
+
+(This can take some time). 
+> Opps check defaults for the function if you renamed the objects!
+
+Note that isMono_x has no information for the tips (this is normal).
+
+```{r}
+my_plotdata <- 
+  my_plotdata %>%
+  update_plotdata_desc_repr_metalink_fun()
+
+print( my_plotdata, n = 10, width = Inf)
+```
+
+- linking metadata to the tree data for the selected column by creating nested
+dataframes for each variable and creating contingency tables for each nested
+variable 
+
+We create contingency tables and nested variables that represent the metadata 
+for each node and tip (label column). 
+
+Note here, we come back to the original metadata table, because we have the 
+list of tips that is represented at each label (tip or node)
+
+Here we do not want to use interaction between factors
+```{r}
+my_plotdata <- 
+  my_plotdata %>%
+  metadata_link_var_cont_fun(
+    col_link = tip_metalink,
+    metadata = all_tree_metadata,
+    interaction = FALSE,
+    country, Host, Host_latin, year, continent, Host_family)
+```
+
+Here is how it looks like 
+```{r}
+names(my_plotdata)
+```
+
+
+```{r}
+my_plotdata %>% print(n = 10, width = Inf)
+```
+
+Selecting one column where several tips are respresented and
+showing an example of how the nested variable looks like, using eg. 
+nested country variable
+```{r}
+my_plotdata[29, ] %>% 
+  dplyr::select(nested_country) %>%
+  tidyr::unnest(nested_country)
+```
+
+`pos` is the index, in case we need to refer to it. 
+`label` is the label of the sequences that are represented 
+
+Now we can look at the contingency table for the same variable 
+```{r}
+my_plotdata[29, ] %>% 
+  dplyr::select(ctg_country) %>%
+  tidyr::unnest(ctg_country)
+```
+
+`freq_levels@country` : is the number of observations in each country
+`nb_levels@country` : is common in the nested table, its the number of levels of the variable country
+
+
+- NOW: we can reinsert the augmented data to the plot 
+```{r}
+rooted_tree_simple_plot_list$simple_plot$data <- my_plotdata
+```
+
+### 3. Filtering based on criteria based on information from nested metadata 
+
+- Filtering based on criteria that are found in the nested metadata that is attached
+to the tree plot_data 
+
+We add a tag 
+- if there is at least one isolate that is represented by a label 
+in the phylogenetic tree has been collected in Norway 
+
+```{r}
+my_plotdata <- 
+  my_plotdata %>% 
+  dplyr::rowwise() %>%
+  # Tag Norway
+  dplyr::mutate(inNorway = base::list(
+    base::any(
+      rlist::list.mapv(ctg_country[["country"]],  "Norway" %in% .)
+      )
+    )) %>%
+  tidyr::unnest(inNorway) %>%
+  # checking if the data contains WTE
+  check_in_var(., "ctg_Host_latin", 
+               name_new_col = "isWTE", 
+               test_expr = rlang::expr("Haliceetus albicilla" %in% .x))  %>% 
+  dplyr::mutate(category_highlight = !!grouping_helper_category_highligth) %>%
+  dplyr::mutate_at(vars(category_highlight), 
+                   ~ factor(.x, levels = category_highligth_levels, ordered = T)
+                   ) 
+```
+
+```{r}
+names(my_plotdata)
+```
+
+### 4. Test visualisation
+
+We can visualize which nodes can be collapsed and at which depths
+We can try to vary the depth of notes to be collapsed 
+
+```{r}
+# now we now its ok we can put back the data in the plot
+rooted_tree_simple_plot_list$simple_plot$data <- my_plotdata
+names(rooted_tree_simple_plot_list$simple_plot$data)
+```
+
+We add the node labels so we can know which ones we can collapse afterwards
+```{r}
+explor_plot2 <- 
+  rooted_tree_simple_plot_list$simple_plot  +
+  # get the nodes labels on the branches 
+   ggplot2::geom_text(mapping = aes(x = branch, 
+                                   label = label, 
+                                   color = "label_monophy_large"),
+                     data = . %>% 
+                       filter(!isTip, 
+                            as.numeric(node_depth) >= 5,
+                            as.numeric(labels_bootstrap) >= 95,
+                            !inNorway),
+                     size = 2) +
+  ggplot2::scale_color_manual(values = c("label_monophy_large" = "blue")) +
+  ggnewscale::new_scale_color() +
+  ggtree::geom_tippoint(aes(color = category_highlight),
+                position = ggforce::position_auto()) +
+  ggplot2::scale_color_manual(values = category_highlight_pal) 
+
+explor_plot2
+```
+
+```{r}
+ggsave(
+  filename = here::here(params$save_dir, "explor_plot2.svg"),
+  plot = explor_plot2, 
+  dpi = 600, 
+  units = "cm", width = 20, height = 30)
+
+```
+
+### 5. Define criteria priority of nodes to collapse 
+
+ 1. all monophyletic nodes (no need for bootstrap support) where isolates 
+ belong to the same countries (supposed to represent same event) AND 
+ are not from Norway. 
+ 
+We need to extract a list where only one country is represented on node 
+
+```{r}
+my_plotdata <- 
+  my_plotdata %>% 
+  dplyr::rowwise() %>%
+  # different treatment for tips and for nodes
+  # test if nb level of countries is more than 1 -> FALSE
+  dplyr::mutate(isOneCountry = 
+           dplyr::if_else(isTip, 
+                          NA, 
+                          (purrr::map(
+                              .data[["ctg_country"]][["nb_levels@country"]],  ~ .) %>%
+                             unlist() %>%
+                             unique )  <= 1
+                          )
+           )
+```
+
+NB: isMonoNobot is always TRUEE for nodes, as only get descendants from nodes 
+(so I could have removed this but ok)
+
+```{r}
+nodes_OneCountry_NotNorway  <- 
+  my_plotdata %>%
+  filter(!isTip, isOneCountry & !inNorway) %>%
+  pull(label) 
+```
+
+  2. monophyletic nodes (incl. bootstrap support) where our isolates 
+are not included (visual plot to define limit of depth) 
+
+Here I choose a limit of node depth => 5
+We will need to collapse nodes that are deepest first (ensure max collapsing,
+as the following nodes can be subordinate)
+
+```{r}
+nodes_monophyboot_notNorway <-
+  my_plotdata %>%
+  filter(!isTip, 
+         isMono_noboot, 
+         !inNorway, 
+         as.numeric(node_depth) >= 5) %>%
+  # we need priority order to collapse by deepest first
+  arrange(desc(node_depth)) %>%
+  pull(label)
+```
+
+By order of priority, the nodes to collapse are:
+```{r}
+nodes_select_collapsing_1 <- 
+  unique(c(nodes_monophyboot_notNorway, nodes_OneCountry_NotNorway))
+```
+
+## B. Collapsing nodes (step 1)
+
+> apparte to update data and to get objects easier to work with 
+> saving the tree that had node labels 
+
+```{r}
+rooted_tree_simple_plot_list$simple_plot$data <- my_plotdata
+my_rooted_tree <- rooted_tree_simple_plot_list$tree_nodelab
+```
+
+- collapsing the nodes recursively. 
+For this we require a list of descendants of for nodes to collapse 
+
+```{r}
+list_descendants_nodes_collapsing_1 <- 
+  my_plotdata %>% 
+  filter(!isTip) %>%
+  select(label, descendants_tips_from_node) %>%
+  filter(label %in% nodes_select_collapsing_1) %>%
+  pull(descendants_tips_from_node) 
+
+list_descendants_nodes_collapsing_1
+```
+
+Collapsing the nodes of the tree 
+```{r}
+my_collapsed_tree <- 
+  collapsing_nodes_fun(
+    my_rooted_tree, 
+    list_descendants_nodes_collapsing_1
+    )
+```
+
+Visualization of the collapsed tree 
+
+```{r}
+explor_plot3 <- 
+  my_collapsed_tree %>%
+  ggtree::ggtree(., layout = "rectangular", 
+                 ladderize = T, 
+                 lwd = .1,
+                 color = "grey")
+
+explor_plot3
+```
+- we need to merge the metadata with the collapsed data 
+
+Because we have labelled nodes with name, we can reuse the previous labels
+
+```{r}
+my_plotdata %>% names()
+```
+
+label create the join. 
+
+
+```{r}
+explor_plot3$data <- 
+  explor_plot3$data %>% 
+  # 4 is label, 10 is labels bootstrap - to the end it is metadata 
+  # is joining by label - the only common variable
+  dplyr::left_join(my_plotdata %>% 
+                     select(c(4, 10:ncol(my_plotdata)))
+                   )
+```
+
+Now we can visualize the first collapsed plot to make adjustments 
+
+```{r}
+explor_plot3b <- 
+  explor_plot3 +
+  # tip points
+  ggplot2::geom_point(aes(x, y, color = category_highlight),
+                      data = . %>% filter(isTip), 
+                      position = ggforce::position_auto(), size = 1.25) +
+  ggplot2::scale_color_manual(values = category_highlight_pal,
+                              na.translate = FALSE,
+                              name = "Highlight Norway") +
+  # adding bootstrap value on branches
+  ggnewscale::new_scale_color() +
+  ggtree::geom_point(aes(x = branch, 
+                         color = as.numeric(labels_bootstrap) < 95),
+                     data = . %>% filter(!isTip), 
+                     shape = 19, size = .1, na.rm = T) +
+  scale_color_manual(name = "Bootstrap", 
+                     values =  bootstrap_pal_col2,
+                     labels = c(expression(phantom(x) >= 95),
+                                expression(phantom(x) < 95)),
+                     na.translate = FALSE) +
+  # adding the node labels to be able to choose what to collapse
+  # more even if not monophyletic 
+  ggnewscale::new_scale_color() +
+  ggplot2::geom_text(mapping = aes(x = branch, 
+                                   label = label, 
+                                   color = "label_monophy_large"),
+                     data = . %>% 
+                       filter(!isTip, !inNorway,
+                       as.numeric(node_depth) >= 5),
+                     size = .5, 
+                     nudge_x = -5e-5) +
+  ggplot2::scale_color_manual(values = c("label_monophy_large" = "blue")) 
+
+explor_plot3b
+```
+
+```{r}
+ggsave(
+  here::here(params$save_dir, "explor_plot3.svg"),
+  explor_plot3b, 
+  device = "svg",
+  dpi = 600, 
+  units = "cm", width = 15, height = 40
+  )
+```
+
+## C. Manual improvement of collapsing the tree
+
+- branches where no isolates are included in Norway, it is more to be able 
+to have overview of the position of our isolates within the tree. 
+
+Selection from bottom to top. 
+
+```{r}
+manual_nodes_selection <- sort(
+  c("N1385", "N1380", "N1250", 
+  "N251", "N205", "N98",
+  "N560", "N495", "N505", "N444", "N402",
+  "N683", "N1195" , "N1142", "N1072", "N1106", 
+  "N732" , "N786", "N879", "N901", "N1008", "N987")
+  )
+```
+
+getting the descendants tips for the nodes to collapse 
+```{r}
+labels_additional_collapsing <- 
+  explor_plot3b$data %>%
+  filter(label %in% manual_nodes_selection) %>%
+  select(label, descendants_tips_from_node) %>%
+  pull(descendants_tips_from_node) 
+```
+
+
+Collapsing the additional nodes 
+```{r}
+my_collapsed_tree2 <- 
+  collapsing_nodes_fun(my_collapsed_tree, 
+                       labels_additional_collapsing)
+```
+
+Plotting the base of the collapsed tree 
+```{r}
+explor_plot3c <- 
+  my_collapsed_tree2 %>%
+  ggtree::ggtree(., layout = "rectangular", 
+                 ladderize = T, 
+                 lwd = .1,
+                 color = "grey")
+
+explor_plot3c
+```
+
+Adding the metadata to the collapsed tree
+As previouslu
+```{r}
+explor_plot3c$data <-
+  explor_plot3c$data%>% 
+  # 4 is label, 10 is labels boostrap - to the end it is metadata 
+  # is joining by label - the only common variable
+  dplyr::left_join(my_plotdata %>% 
+                     select(c(4, 10:ncol(my_plotdata)))
+                   )
+```
+
+## D. Plotting the collapsed tree
+
+- first we make the base plot  
+
+```{r}
+explor_plot3d <- 
+  explor_plot3c +
+  ggplot2::geom_point(aes(x, y, color = category_highlight),
+                      data = . %>% filter(isTip), 
+                      position = ggforce::position_auto(), size = 1.25) +
+  ggplot2::scale_color_manual(values = category_highlight_pal, 
+                              na.translate = FALSE,
+                              name = "Highlight") +
+  # we need to add the values for those that have different years 
+  # adding bootstrap value on branches
+  ggnewscale::new_scale_color() +
+  ggtree::geom_point(aes(x = branch, 
+                         color = as.numeric(labels_bootstrap) < 95),
+                     data = . %>% filter(!isTip), 
+                     shape = 19, size = .5, na.rm = T) +
+  scale_color_manual(name = "Bootstrap", 
+                     values =  bootstrap_pal_col,
+                     labels = c(expression(phantom(x) >= 95),
+                                expression(phantom(x) < 95)),
+                     na.translate = FALSE) 
+
+```
+
+- Then we get the data for the annotations panels (it is required as separate dataframes)
+```{r}
+names(explor_plot3d$data)
+```
+
+```{r}
+countries_facet_df <- 
+  get_ctg_data_geom_facet(explor_plot3d$data, "ctg_country", "country", "country_string")
+
+Host_family_facet_df <- 
+  get_ctg_data_geom_facet(explor_plot3d$data, "ctg_Host_family", "Host_family", "Host_family_string")
+
+Host_latin_facet_df <- 
+  get_ctg_data_geom_facet(explor_plot3d$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
+
+
+# getting the countries per group
+countries_facet_df2 <- 
+  get_data_geom_facet(data = explor_plot3d$data,
+                      nested_col = nested_country, 
+                      var = country,
+                      group_expr = grouping_helper_country)
+
+# getting the host family per group
+Host_family_facet_df2 <- 
+  get_data_geom_facet(data = explor_plot3d$data, 
+                      nested_col = nested_Host_family, 
+                      var = Host_family, 
+                      group_expr = NULL)
+
+# getting the years 
+years_facet_df <- 
+  get_data_geom_facet(data = explor_plot3d$data, 
+                      nested_col = nested_year, 
+                      var = year, 
+                      group_expr = NULL)
+```
+
+1. adding node that will be cut for detailed plotting with a light green point 
+
+```{r}
+explor_plot4 <- 
+  explor_plot3d + 
+  # adding points where we will do subplots 
+    geom_point(
+    data = . %>% filter(label == "N348" | label == "N9"),
+    mapping = aes(x = x, y = y),
+    size = 1.5,
+    color = "green") +
+    # have to put the scale here so can work
+  ggtree::geom_treescale(x = 1e-3, y = 80,
+                         fontsize = 1, 
+                         width = 1e-3,
+                         label = "Substitution/site",
+                         linesize = .1,
+                         offset = 1.5) +
+  ggtree::vexpand(.01) +
+  ggtree::hexpand(.01) +
+  ggtree::theme_tree() +
+  # Adding the panels 
+  # countries barplot and text legend 
+    # Adding the years now
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Year", 
+    data = years_facet_df,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = years_ind_col_pal,
+                    name = "Year") +
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Country", 
+    data = countries_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = col_grouped_countries_pal2,
+                    name = "Country Groups") +
+    ggtree::geom_facet(
+    panel = "Country Legend", 
+    data = countries_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  + 
+  # Adding Host familly panel 
+    ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Family", 
+    data = Host_family_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = host_families_color_pal,
+                    name = "Host Family") +
+  #guides(fill = "none") +
+  ggtree::geom_facet(
+    panel = "Family Legend", 
+    data = Host_family_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  +
+  ggtree::geom_facet(
+    panel = "Host Latin", 
+    data = Host_latin_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1) +
+  theme(strip.text = 
+          ggplot2::element_text(size = 9))
+
+
+explor_plot4
+```
+
+- Now we need to adjust the size of the panels 
+
+```{r}
+collapsed_plot <- grop_redraw(explor_plot4, 
+                              width_mult = c(1, .1, .1, .3, .1, .3, .3)
+        )
+```
+
+
+```{r}
+collapsed_plot
+```
+
+_Figure caption:_
+H5N1 HA segment. ML phylogenetic tree with nodes depth >= 5, that did not contained 
+Norwegian isolates and nodes that represented groups of isolates from the
+same country of origin are collapsed. The tree is rooted, but the outgroup
+is not shown, due to large distance to the body of the tree. The information
+at the tips and collapsed nodes is representative of the data set, including
+identical sequences.
+
+
+```{r}
+ggsave(
+  here::here(params$save_dir, "collapsed_plot.svg"),
+  collapsed_plot,
+  device = "svg",
+  dpi = 600, 
+  units = "cm", width = 35, height = 50
+  )
+```
+
+# Components for final visualisation
+
+We will create the global circular tree
+And the two groups where White-tailed eagle are found to create trees that
+can be looked at more in detail. 
+
+
+# Circular tree 
+We restart from the rooted tree with node labels 
+
+```{r}
+rooted_tree_nodelab <- rooted_tree_simple_plot_list$tree_nodelab 
+```
+
+Circular metadata will be the at the last plots, except we do not add the coordinates
+```{r}
+circular_meta <- 
+  my_plotdata[c(4, seq(10, ncol(my_plotdata)))] %>%
+  get_nested_var("ctg_year", "year", "year_label") %>%
+  mutate_at(vars(year_label), unlist) 
+```
+
+We had some plotting parameters to be able to view better 
+```{r}
+circular_meta <- 
+  circular_meta %>% 
+  mutate(point_size = case_when(
+    category_highlight == "Other Country" ~ 0.1,
+    TRUE ~ 1
+  )) %>%
+  mutate(point_size = 
+           if_else(label == "N348" | label == "N9", 1, point_size)
+         )
+```
+
+
+```{r}
+# ! here palette is specific for this article: SEP_years_shape_pal
+circular_plot <- 
+  ggtree(rooted_tree_nodelab, layout = "circular", color = "grey", alpha = .7)  %<+%
+  circular_meta +
+  ggnewscale::new_scale_color() +
+  geom_tippoint(
+    aes(color = category_highlight, size = point_size, shape = year_label),
+    position = ggforce::position_auto()) +
+  # curious - weird thing here
+  scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"),
+                     name = "Highlight") +
+  scale_size_continuous(range = c(0, 1)) +
+  scale_shape_manual(values = SEP_years_shape_pal, name = "Year") +
+  guides(size = "none") +
+  # Adding the highlight for the subsets plots - where is the group branching
+  ggnewscale::new_scale_color() +
+  geom_point(
+    data = . %>% filter(label == "N348" | label == "N9"),
+    mapping = aes(x = x, y = y),
+    size = 1.5,
+    color = "green")
+
+```
+
+- Adding annotation around the tree
+```{r}
+country_fruit_df <- 
+  get_data_geom_facet(data = circular_plot$data,
+                      nested_col = nested_country, 
+                      var = country,
+                      group_expr = grouping_helper_country)
+
+
+# getting the years 
+years_fruit_df <- 
+  get_data_geom_facet(data = circular_plot$data, 
+                      nested_col = nested_year, 
+                      var = year, 
+                      group_expr = NULL) 
+  
+```
+
+```{r}
+circular_plotb <- 
+  circular_plot +
+  ggnewscale::new_scale_fill() + 
+  # Year first circle inside
+  ggtreeExtra::geom_fruit(
+     data = years_fruit_df,
+     geom = geom_bar,
+     mapping = aes(x = value,  
+                   y = label, 
+                   fill = variable),
+     size = .2,
+     stat = "identity",
+     width = 1,
+     offset = 0.1,
+     pwidth = 0.1) +
+  scale_fill_manual(values = years_ind_col_pal,
+                    name = "Year") +
+  ggnewscale::new_scale_fill() + 
+  # Country external 
+  ggtreeExtra::geom_fruit(
+     data = country_fruit_df ,
+     geom = geom_bar,
+     mapping = aes(x = value,  
+                   y = label, 
+                   fill = variable),
+     size = .2,
+     stat = "identity",
+     width = 1,
+     offset = 0.1,
+     pwidth = 0.15) +
+  scale_fill_manual(values = col_grouped_countries_pal2,
+                    name = "Country Groups") 
+
+```
+
+
+```{r}
+circular_plotb
+```
+
+_Figure caption:_
+H5N1 HA segment. ML phylogenetic tree. The light green dots represent the branching 
+origin the two groups presented as tree subsets. The tree is rooted, 
+but the outgroup is not shown, due to large distance to the body of the tree. 
+The information at the tips and collapsed nodes is representative of the 
+data set, including identical sequences."""
+
+
+```{r}
+ggsave(
+  here::here(params$save_dir, "circular_plot.svg"),
+  circular_plotb, 
+  device = "svg",
+  dpi = 600, 
+  units = "cm", width = 30, height = 50
+  )
+```
+
+## Detailed subplots 
+
+## N348 
+
+- getting the list of tips 
+```{r}
+tips_N348 <- 
+  my_plotdata %>% 
+  filter(label == "N348") %>%
+  pull(descendants_tips_from_node) %>%
+  unlist()
+```
+
+- subsetting the tree 
+```{r}
+subtree_N348 <- ape::keep.tip(rooted_tree_nodelab, tips_N348)
+```
+
+- creating the simple plot and adding the metadata
+
+```{r}
+plot_subtree_N348 <- 
+  ggtree(subtree_N348, layout = "rectangular", color = "grey", alpha = .7)  
+
+# adding the metadata 
+plot_subtree_N348$data <- 
+  plot_subtree_N348$data %>% 
+  left_join(my_plotdata %>% 
+              select(c(4, seq(10, ncol(.)))), 
+            by = c("label" = "label")
+            )
+```
+
+- preparing the data for the pannels views
+
+```{r}
+N348_countries_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N348$data, "ctg_country", "country", "country_string")
+
+N348_Host_family_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N348$data, "ctg_Host_family", "Host_family", "Host_family_string")
+
+N348_Host_latin_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N348$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
+
+
+# getting the countries per group
+N348_countries_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N348$data,
+                      nested_col = nested_country, 
+                      var = country,
+                      group_expr = grouping_helper_country)
+
+# getting the host family per group
+N348_Host_family_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N348$data, 
+                      nested_col = nested_Host_family, 
+                      var = Host_family, 
+                      group_expr = NULL)
+
+# getting the years 
+N348_years_facet_df <- 
+  get_data_geom_facet(data = plot_subtree_N348$data, 
+                      nested_col = nested_year, 
+                      var = year, 
+                      group_expr = NULL)
+```
+
+- ploting the tree
+
+```{r}
+N348_plot <- 
+  plot_subtree_N348 + 
+  # we adjust the positions to avoid overlap
+  ggplot2::geom_point(data = . %>% filter(isTip)  %>%
+                        unnest(ctg_year) %>%
+                        mutate_at(vars(year), as.character) %>%
+                        transform_positions_at_unnest(spacing = 2e-4), 
+                      aes(color = category_highlight, shape = year)) +
+  ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
+                              na.translate = FALSE,
+                              name = "Highlight") +
+  # we need to add the values for those that have different years 
+  # adding bootstrap value on branches
+  ggnewscale::new_scale_color() +
+  ggtree::geom_point(aes(x = branch, 
+                         color = as.numeric(labels_bootstrap) < 95),
+                     data = . %>% filter(!isTip), 
+                     shape = 19, size = .5, na.rm = T) +
+  scale_color_manual(name = "Bootstrap", 
+                     values =  bootstrap_pal_col,
+                     labels = c(expression(phantom(x) >= 95),
+                                expression(phantom(x) < 95)),
+                     na.translate = FALSE) +
+  ggtree::geom_treescale(x = 1e-3, y = 80,
+                         fontsize = 1, 
+                         width = 1e-3,
+                         label = "Substitution/site",
+                         linesize = .1,
+                         offset = 1.5) +
+  ggtree::vexpand(.01) +
+  ggtree::hexpand(.01) +
+  ggtree::theme_tree() +
+  # Adding the panels 
+  # countries barplot and text legend 
+    # Adding the years now
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Year", 
+    data = N348_years_facet_df,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = years_ind_col_pal,
+                    name = "Year") +
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Country", 
+    data = N348_countries_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = col_grouped_countries_pal2,
+                    name = "Country Groups") +
+    ggtree::geom_facet(
+    panel = "Country Legend", 
+    data = N348_countries_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  + 
+  # Adding Host familly panel 
+    ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Family", 
+    data = N348_Host_family_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = host_families_color_pal,
+                    name = "Host Family") +
+  #guides(fill = "none") +
+  ggtree::geom_facet(
+    panel = "Family Legend", 
+    data = N348_Host_family_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  +
+  ggtree::geom_facet(
+    panel = "Host Latin", 
+    data = N348_Host_latin_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1) +
+  theme(strip.text = 
+          ggplot2::element_text(size = 9))
+
+
+N348_plot
+```
+
+- Now we need to adjust the size of the panels 
+
+```{r}
+N348_plotb <- grop_redraw(N348_plot, 
+                              width_mult = c(1, .1, .1, .3, .1, .3, .3)
+        )
+```
+
+
+```{r}
+N348_plotb
+```
+
+_Figure Caption:_
+H5N1 HA segment. Detail of the second group of isolates from the ML phylogenetic tree. 
+The subset tree is rooted and branches on the second green dot from the root.
+All the isolates are shown. Variables for sequences that were identical 
+to the tip sequences are showned at the representative tips. The position
+of horizontal points is slighly adjusted to avoid overlap."
+
+
+
+```{r}
+ggsave(
+  here::here(params$save_dir, "Node_348_detail.svg"),
+  N348_plotb,
+  device = "svg",
+  dpi = 600, 
+  units = "cm", width = 35, height = 50
+  )
+```
+
+
+## N9
+
+- getting the list of tips 
+```{r}
+tips_N9 <- 
+  my_plotdata %>% 
+  filter(label == "N9") %>%
+  pull(descendants_tips_from_node) %>%
+  unlist()
+```
+
+- subsetting the tree 
+```{r}
+subtree_N9 <- ape::keep.tip(rooted_tree_nodelab, tips_N9)
+```
+
+- creating the simple plot and adding the metadata
+
+```{r}
+plot_subtree_N9 <- 
+  ggtree(subtree_N9, layout = "rectangular", color = "grey", alpha = .7)  
+
+# adding the metadata 
+plot_subtree_N9$data <- 
+  plot_subtree_N9$data %>% 
+  left_join(my_plotdata %>% 
+              select(c(4, seq(10, ncol(.)))), 
+            by = c("label" = "label")
+            )
+```
+
+- preparing the data for the pannels views
+
+```{r}
+N9_countries_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N9$data, "ctg_country", "country", "country_string")
+
+N9_Host_family_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N9$data, "ctg_Host_family", "Host_family", "Host_family_string")
+
+N9_Host_latin_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N9$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
+
+
+# getting the countries per group
+N9_countries_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N9$data,
+                      nested_col = nested_country, 
+                      var = country,
+                      group_expr = grouping_helper_country)
+
+# getting the host family per group
+N9_Host_family_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N9$data, 
+                      nested_col = nested_Host_family, 
+                      var = Host_family, 
+                      group_expr = NULL)
+
+# getting the years 
+N9_years_facet_df <- 
+  get_data_geom_facet(data = plot_subtree_N9$data, 
+                      nested_col = nested_year, 
+                      var = year, 
+                      group_expr = NULL)
+```
+
+- ploting the tree
+
+```{r}
+N9_plot <- 
+  plot_subtree_N9 + 
+  ggplot2::geom_point(data = . %>% filter(isTip)  %>%
+                        unnest(ctg_year) %>%
+                        mutate_at(vars(year), as.character) %>%
+                        transform_positions_at_unnest(spacing = 2e-4), 
+                      aes(color = category_highlight, shape = year)) +
+  ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
+                              na.translate = FALSE,
+                              name = "Highlight") +
+  # we need to add the values for those that have different years 
+  # adding bootstrap value on branches
+  ggnewscale::new_scale_color() +
+  ggtree::geom_point(aes(x = branch, 
+                         color = as.numeric(labels_bootstrap) < 95),
+                     data = . %>% filter(!isTip), 
+                     shape = 19, size = .5, na.rm = T) +
+  scale_color_manual(name = "Bootstrap", 
+                     values =  bootstrap_pal_col,
+                     labels = c(expression(phantom(x) >= 95),
+                                expression(phantom(x) < 95)),
+                     na.translate = FALSE) +
+  ggtree::geom_treescale(x = 1e-3, y = 80,
+                         fontsize = 1, 
+                         width = 1e-3,
+                         label = "Substitution/site",
+                         linesize = .1,
+                         offset = 1.5) +
+  ggtree::vexpand(.01) +
+  ggtree::hexpand(.01) +
+  ggtree::theme_tree() +
+  # Adding the panels 
+  # countries barplot and text legend 
+    # Adding the years now
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Year", 
+    data = N9_years_facet_df,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = years_ind_col_pal,
+                    name = "Year") +
+  ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Country", 
+    data = N9_countries_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = col_grouped_countries_pal2,
+                    name = "Country Groups") +
+    ggtree::geom_facet(
+    panel = "Country Legend", 
+    data = N9_countries_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  + 
+  # Adding Host familly panel 
+    ggnewscale::new_scale_fill() +
+    ggtree::geom_facet(
+    panel = "Family", 
+    data = N9_Host_family_facet_df2,
+    geom = geom_bar,
+    mapping = aes(x = value, fill = variable),
+    orientation = 'y', 
+    width = 1, 
+    stat = "identity") +
+  scale_fill_manual(values = host_families_color_pal,
+                    name = "Host Family") +
+  #guides(fill = "none") +
+  ggtree::geom_facet(
+    panel = "Family Legend", 
+    data = N9_Host_family_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  +
+  ggtree::geom_facet(
+    panel = "Host Latin", 
+    data = N9_Host_latin_facet_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1) +
+  theme(strip.text = 
+          ggplot2::element_text(size = 9))
+
+
+N9_plot
+```
+
+- Now we need to adjust the size of the panels 
+
+```{r}
+N9_plotb <- grop_redraw(N9_plot, 
+                   width_mult = c(1, .1, .1, .3, .1, .3, .3)
+        )
+```
+
+
+```{r}
+N9_plotb
+```
+
+_Figure Caption:_
+
+H5N1 HA segment. Detail of the first group of isolates from the ML phylogenetic tree. 
+The subset tree is rooted and branches on the second green dot from the root.
+All the isolates are shown. Variables for sequences that were identical 
+to the tip sequences are showned at the representative tips. The position
+of horizontal points is slighly adjusted to avoid overlap."
+
+
+```{r}
+ggsave(
+  here::here(params$save_dir, "Node_9_detail.svg"),
+  N9_plotb,
+  device = "svg",
+  dpi = 600, 
+  units = "cm", width = 35, height = 50
+  )
+```
+
+
+# Saving environment
+To continue analyses that are not finished
+```{r}
+save.image(here::here(params$env_file))
+```
+
+List of isolates used in the tree (otherwise is in the image)
+```{r}
+write_tsv(duplicates_df,
+          file = here::here(params$save_dir, "duplicates.tsv")
+          )
+```
+
+Metadata for all H5N1 isolates included
+```{r}
+data_here1 <- duplicates_df %>%
+  select(represented_seq_label) %>%
+  rename(label = represented_seq_label) %>%
+  left_join(all_tree_metadata2, by = "label") %>%
+  select(label, Isolate_Id, subtype, continent, country, year, 
+         Host_family, Host_latin, Isolate_Name) %>%
+  distinct() 
+
+data_here2 <-  
+  tibble(label = tree$tip.label) %>%
+  left_join(all_tree_metadata2, by = "label") %>%
+  select(label, Isolate_Id, subtype, continent, country, year, 
+         Host_family, Host_latin, Isolate_Name) %>%
+  distinct() 
+
+data_here <- 
+  dplyr::bind_rows(data_here1, data_here2) %>%
+  distinct()
+
+saveRDS(data_here, here::here(params$save_dir, "H5N1_HA_metadata.rds"))
+
+xlsx::write.xlsx(as.data.frame(data_here), 
+                 here::here(params$save_dir, "H5N1_HA_metadata.xlsx"),
+                 sheetName = "H5N1_HA_metadata",
+                 showNA = FALSE,
+                 row.names = FALSE)
+```
+
+This dataset is representative for `r nrow(data_here)` isolates. 
+This includes `r length(tree$tip.label)` isolates with unique sequences, 
+including 2 sequences as ougroup. 
+
+Note that one group of isolate isolates beloning to the same year of sampling
+has been removed from our data set in an attempt to reduce the size of the tree.
+This after a preliminary analysis of the data. This group of isolates appeared to originate from our second subset. 
+
+![Complete tree, preliminary analysis]("results/H5N1_HA/complete.svg")
+
+# Notes 
+Data control is ok - its only H5N1 
+<!-- I only had done my join in the wrong way --> 
+
+```{r}
+all_tree_metadata2 %>%
+ select(label, Isolate_Id, subtype, continent, country, year,
+         Host_family, Host_latin, Locality, lat, lon,  Isolate_Name) %>%
+  mutate(GISAID_ID = if_else(str_detect(label, "EPI_ISL_"), label, NA_character_)) %>%
+  filter(country == "Norway") %>%
+  write_tsv(here::here(params$save_dir, "Norway_metadata_H5N1_H5N5.tsv"))
+```
+
+Some isolates have been submited to GISAID since we started this analysis, therefore the 
+complement of GISAID_ID will be completed manually.

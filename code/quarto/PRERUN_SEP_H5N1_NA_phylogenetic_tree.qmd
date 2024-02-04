@@ -1,0 +1,250 @@
+---
+title: "SEP H5N1 NA Phylogenetic tree"
+author: "Eve Zeyl Fiskebeck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+    strain: "H5N1"
+    segment: "HA"
+    all_tree_metadata: "data/prepared_data/all_tree_metadata_CAB.RDS"
+    tree: "results/H5N1_NA/prerun/iqtree/SEP_NA_H5N1_MSA_nonamedub.fasta.contree"
+    save_dir: "results/H5N1_NA/prerun"
+    env_file: "results/env_files/prerun_H5N1_NA_SEP.RData"
+    source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
+execute: 
+  echo: false
+  cache: true
+format: html
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Setup
+
+Note this tree not redone removing duplicates 
+So I will have to collapse as is 
+
+-   sourcing scripts and functions
+
+```{r setup}
+#| include: false
+library(here)
+source(here::here(params$source_code, "AI_main.R"))
+
+# Provisional until we get a package
+fun_files_path <- list.files(here::here(params$source_code, "fun"),
+  pattern = "*.R",
+  full.names = T)
+# sourcing all functions
+sapply(fun_files_path,source,.GlobalEnv)
+
+```
+
+Note: if you are modifying the script and want to continue to work after, you can load a previous environment (don't forget to save it at the end of your work).
+
+Loads the environment (to continue previous work)
+
+```{r optional load environment}
+#| include: false
+# Uncomment if you want to load a saved environment file
+#if (file.exists(params$env_file)) {load(params$env_file)}
+```
+
+# Preparation of metadata specific to the tree
+
+This is the metadata that we combined to do all the trees, and where the host family has been added manually.
+
+```{r}
+all_tree_metadata <- readRDS(file = here(params$all_tree_metadata))
+glimpse(all_tree_metadata)
+
+# I need a copy without filter to retrieve the names at the end
+all_tree_metadata2 <- all_tree_metadata
+```
+
+We select only the columns that we will use, to reduce complexity
+
+```{r}
+all_tree_metadata <- 
+  all_tree_metadata %>%
+  dplyr::select("label",  "Isolate_Id", "subtype", 
+                 "continent", "country", "year",
+                "Host", "Host_latin",  "Host_family")
+```
+
+
+# Information:
+
+For the purpose of homogeneization between plots, for the different phylogenetic trees, palettes and grouping helpers are defined in separate files which are sourced in this script.
+
+-   palettes are defined in the file `AI_palettes.R`
+
+<!-- reasoning detail and putting that in place in 2024-01-02_SEP_HA_final_tree_script.Rmd
+last commit 2024-01-30 in the pilot project. After started to concise in functions.
+-->
+
+# Importing phylogenetic tree, preparing the tree and metdata for plotting
+
+## Rooting the tree
+
+-   importing the tree and cleaning the tip labels (removing extension .fasta)
+
+-   NB we used the consensus tree
+
+```{r}
+tree <- ape::read.tree(here(params$tree))
+tree$tip.label <- tree$tip.label %>% str_remove_all(., ".*\\|") %>%
+  str_remove_all(., "t$") 
+```
+
+-   fast plotting: we see that 2 very long branches, this are the outgroup sequences that we will use for rooting. We root those and remove them from the tree.
+
+```{r}
+ggtree::ggtree(tree, layout = "rectangular") +
+  geom_point(. %>% 
+               filter(label == "EPI_ISL_177506" | label == "EPI_ISL_1254"),
+             mapping = aes(x = x, y = y),
+             color = "green",
+             size = 3)
+```
+
+Ok, the two outgroup are more or less overlapped
+
+-   rooting the tree, and dropping the two tips that correspond to the long branch
+
+```{r}
+rooted_tree <- ape::root(tree, 
+                         outgroup = c("EPI_ISL_177506", "EPI_ISL_1254"),
+                         resolve.root = T,
+                         edgelabel = T)
+
+rooted_tree <- 
+  ape::drop.tip(rooted_tree, c("EPI_ISL_177506", "EPI_ISL_1254"))
+
+```
+
+Verification:
+
+```{r}
+ggtree::ggtree(rooted_tree, layout = "rectangular")
+```
+
+
+## No duplicate sequences to integrate in this tree
+
+- creating table with metadata
+
+```{r}
+tree_meta <- 
+  tibble::tibble("label" = tree$tip.label) %>%
+  # getting metadata for the tips that are duplicated
+  dplyr::left_join(all_tree_metadata, c("label" = "label")) 
+```
+
+- recheck that we only have the correct subtypes included 
+```{r}
+tree_meta %>% 
+  dplyr::group_by(subtype) %>%
+  dplyr::summarise(n = n())
+```
+
+Adding filtering columns. We want to show where Norwegian sequences are,
+
+For this purpose, we add columns that would allow to tag labels representing isolates from Norway, and those that contain White-tailed Eagles.
+
+> Note here could have been simpler, but do as the same script as possible as H5N1_HA
+
+
+```{r}
+tree_meta <- 
+  tree_meta %>% 
+  check_in_var(., "country", 
+               name_new_col = "inNorway", 
+               test_expr = rlang::expr("Norway" %in% .x)) %>% 
+  check_in_var(., "Host_latin", 
+               name_new_col = "isWTE", 
+               test_expr = rlang::expr("Haliceetus albicilla" %in% .x)) %>%
+  dplyr::mutate(category_highlight = !!grouping_helper_category_highligth) %>%
+  string_levels_var(var = "year") %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate_at(dplyr::vars(category_highlight), 
+            ~ factor(.x, levels = category_highligth_levels, ordered = T))
+
+```
+
+# Need to rerun the tree ! 
+
+```{r}
+mammal_data <- 
+  tree_meta %>% 
+  filter(str_detect(Host_latin, "mammal")) 
+
+```
+
+```{r}
+mammal_data
+```
+
+
+## Exploration of the phylogenetic tree
+
+
+
+```{r}
+explor_plot1 <- 
+  rooted_tree %>%
+  ggtree::ggtree(., layout = "rectangular", ladderize = T, 
+                 lwd = .1, color = "grey") %<+%
+  tree_meta +
+  # Highlight Norwegian isolates
+  ggtree::geom_tippoint(aes(
+    color = category_highlight, 
+    shape = levels_year
+    ),
+                data = . %>% droplevels(),
+                position = ggforce::position_auto()) +
+  ggplot2::scale_color_manual(values = category_highlight_pal, name = "Highlight") +
+  ggplot2::scale_shape_manual(values = SEP_years_shape_pal, name = "Collection") 
+explor_plot1
+```
+
+
+So heere I have the solution either I crop the top 
+OR I collapse afterwards. 
+Now that we have developped the script for collapsing, I prefer to collapse 
+less data that is lost 
+
+```{r}
+ggsave(filename = here::here(params$save_dir, "explor_plot1.svg"),
+       plot = explor_plot1,
+       dpi = 300,
+       units = "cm",
+       width = 20, height = 30) 
+```
+
+
+
+# Writing the isolates to remove 
+```{r}
+write_tsv(mammal_data, 
+          here(params$save_dir, 
+               "mammal_data_to_remove.tsv")
+          )
+```
+
+# Removing the mammals sequences from the MSA
+new name for the msa file for iqtree : `SEP_NA_H5N1_MSA_nommals.fasta'
+
+- 4 sequences to remove, I did that manually 
+
+Rerun iqtree 
+```{bash} 
+conda activate iqtree 
+iqtree --version 
+iqtree -s SEP_NA_H5N1_MSA_nommals.fasta -m MFP+F+I  -B 1000 -T AUTO
+
