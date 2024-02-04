@@ -1,0 +1,51 @@
+---
+title: "Preparation Article"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: "Eve Zeyl Fiskebeck"
+
+format: html
+editor: visual
+
+params:
+aknowledgments_rds: "data/prepared_data/SEP_aknowledgements.RDS"
+rds_save_dir: "data/prepared_data" 
+
+format: html
+editor: visual
+---
+
+
+```{r setup }
+library(here)
+library(tidyverse)
+library(readxl)
+library(plyr)
+```
+
+
+# Checklist to ensure everyting is ready for publication
+
+- metadata used for each tree
+```{r}
+
+```
+
+- metadata used for the reference files we used to create in frame MSA 
+
+
+## Aknowledgments 
+
+
+- [ ] ! the two first lines need to be added again to the final file 
+- [ ] Acknowledgments only for the samples and segments we are using
+
+
+```{r}
+
+```
+
+
+- ran script PRE_collate_raw_metata_aknowlegments.qmd
+
+
+

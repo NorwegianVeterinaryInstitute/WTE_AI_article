@@ -1,0 +1,53 @@
+---
+title: "Tree Data check: included in Tree"
+author: "Eve Zeyl Fiskebeck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+    alltree_metadata_rds: "data/prepared_data/all_tree_metadata_CAB.RDS"
+    tree: "results/H5N1_HA/phylog/20240104_HA_H5N1_MSA_filtered_nodub.fasta.contree"
+
+execute: 
+  echo: false
+  cache: true
+format: html
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup}
+library(here)
+library(tidyverse)
+library(ape)
+```
+
+
+# Data check: isolates included in the phylogenetic tree 
+
+- getting the tree
+```{r}
+tree <- ape::read.tree(here(params$tree))
+tree$tip.label <- tree$tip.label %>% str_remove_all(., ".*\\|")
+length(tree$tip.label)
+```
+
+- getting the metadata
+```{r}
+metadata <- readRDS(here(params$alltree_metadata_rds))
+```
+
+- checking what isolates were used in the tree 
+```{r}
+tibble("label" = tree$tip.label) %>%
+  left_join(metadata %>%
+              select(label, subtype), by = c("label" = "label")) %>%
+  group_by(subtype) %>%
+  summarise(n = n()) 
+```
+

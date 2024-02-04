@@ -1,0 +1,135 @@
+---
+title: "Collate Metadata - Aknowledgments"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: "Eve Zeyl Fiskebeck"
+
+format: html
+editor: visual
+
+params:
+  metadata_files_dir: "data/raw_metadata/metadata"
+  metadata_rds: "data/raw_metadata/collated_metadata.RDS"
+  
+  acknowledgments_files_dir: "data/raw_metadata/acknowledge"
+  acknowledgments_rds: "data/raw_metadata/collated_acknowledgements.RDS"
+
+  SEP_metadata_rds_in: "data/"
+  SEP_metadata_rds_out: "data/prepared_data/SEP_metadata.csv"
+  
+  prepared_data_dir: "data/prepared_data"
+  all_tree_metadata_rds: "data/prepared_data/all_tree_metadata_CAB.RDS"
+  
+---
+
+
+<!-- previous script 
+2023-10-18_GISAID_data_prepare.Rmd 
+
+--> 
+
+
+```{r setup }
+library(here)
+library(tidyverse)
+library(readxl)
+library(xlsx)
+library(plyr)
+```
+
+Preparing this script, so we can rerun in case things are missing.
+And allow reruning when all datasets are checked. 
+
+# Collate Metadata
+
+Get list of files with the metadata
+```{r}
+metadata_list <- 
+  list.files(here::here(params$metadata_files_dir), 
+             full.names = TRUE,
+             pattern = ".xls"
+             )
+```
+
+
+```{r}
+metadata_df <- 
+  plyr::ldply(
+  metadata_list,
+  readxl::read_excel,
+  col_types = "text",
+  skip = 0) %>%
+  # ensure no white lines 
+  dplyr::filter_all(., dplyr::any_vars(!is.na(.)))
+```
+
+
+Saving as RDS in our directory 
+```{r}
+saveRDS(metadata_df, here::here(params$metadata_rds))
+```
+
+## update the all tree metadata with the isolate names
+<!-- ONLY do once 
+now we need to update the already prepared metadata for all trees
+```{r}
+all_tree_metadata <- readRDS(here::here(params$all_tree_metadata_rds)) 
+
+all_tree_metadata <- 
+  all_tree_metadata %>%
+  dplyr::left_join(metadata_df %>%
+              select(Isolate_Id, Isolate_Name), 
+            by = c("Isolate_Id" = "Isolate_Id")) 
+```
+
+Now we need to check if missing - This is the Norwegian isolates
+```{r}
+all_tree_metadata %>%
+  filter(is.na(Isolate_Name)) %>%
+  View()
+```
+
+now we can resave as RDS 
+```{r}
+saveRDS(all_tree_metadata, here::here(params$all_tree_metadata_rds))
+```
+
+and we need to re-export for the people 
+```{r}
+xlsx::write.xlsx(all_tree_metadata, 
+                 file = here::here(params$prepared_data_dir, "all_tree_metadata_CAB_IsolateNames.xlsx"), 
+                 sheetName = "all_tree_metadata",
+                 row.names = FALSE,
+                 showNA = FALSE)
+
+```
+
+-->
+
+# Collate Aknowledgments
+
+- [ ] ! the two first lines need to be added again to the final file 
+- [ ] Acknowledgments only for the samples and segments we are using
+
+```{r}
+acknowledge_list <- 
+  list.files(here::here(params$acknowledgments_files_dir), 
+             full.names = TRUE,
+             pattern = ".xls")
+
+acknowledge_df <- 
+  plyr::ldply(
+  acknowledge_list,
+  readxl::read_excel,
+  col_types = "text",
+  skip = 2) %>%
+  # ensure no white lines 
+  dplyr::filter_all(., dplyr::any_vars(!is.na(.))) 
+
+dim(acknowledge_df)
+```
+
+Saving as RDS in our directory 
+```{r}
+saveRDS(acknowledge_df, here::here(params$acknowledgments_rds))
+```
+

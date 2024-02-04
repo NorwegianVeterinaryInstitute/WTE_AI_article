@@ -1,0 +1,34 @@
+---
+title: "README_WORKFLOW"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: "Eve Zeyl Fiskebeck"
+
+format: html
+editor: visual
+
+params:
+---
+
+# Workflow scripts
+
+1.  Metadata and aknowledgments: `PRE_collate_raw_metata_aknowlegments.qmd`
+
+-   collates metadata for isolates
+-   link to previously collated metadata for all trees to get back the isolate name
+-   collates aknowledgments for isolates
+
+2. Data check - included in the phylogenetic tree
+
+
+
+3.  Visualisation phylogenetic tree:
+
+-   `SEP_H5N1_phylogenetic_tree.qmd`
+
+6.  (last) Preparation metadata and aknowledgments for publication: `POST_preparation_aknowledgments_metadata_for_publication.qmd`
+
+-   check list of what needs to be done before publication
+-   metadata to include
+-   aknowledgements and formating checks
+
+## 

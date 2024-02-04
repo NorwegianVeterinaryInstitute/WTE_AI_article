@@ -9,6 +9,15 @@
 *.user
 *.userosscache
 *.sln.docstates
+# quarto build
+**_cache/ 
+**_files/ 
+# R 
+*.Rproj
+.Rhistory 
+# FOR now ignoring the data and results dir 
+data/ 
+results/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
