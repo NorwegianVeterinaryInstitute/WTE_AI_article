@@ -1,5 +1,5 @@
 ---
-title: "SEP H5N5 Phylogenetic tree"
+title: "SEP H5N5 HA Phylogenetic tree"
 author: "Eve Zeyl Fiskebeck"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 params:
@@ -12,7 +12,7 @@ params:
     source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
 execute: 
   echo: false
-  cache: true
+  cache: false
 format: html
 knitr:
   opts_chunk: 
@@ -57,7 +57,7 @@ This is the metadata that we combined to do all the trees, and where the host fa
 
 ```{r}
 all_tree_metadata <- readRDS(file = here(params$all_tree_metadata))
-glimpse(all_tree_metadata)
+#glimpse(all_tree_metadata)
 
 all_tree_metadata2 <- all_tree_metadata
 
@@ -206,16 +206,22 @@ rooted_tree_simple_plot_list <-
 
 -   exploring the structure 
 ```{r}
-glimpse(rooted_tree_simple_plot_list)
+#glimpse(rooted_tree_simple_plot_list)
 
 ```
 
 -   saving in individual objects (copy). We will reuse the plot data
-
+We need to add the tips in descendants from nodes - so its homogeneous for next function
 ```{r}
-my_plotdata <- rooted_tree_simple_plot_list$simple_plot$data
+my_plotdata <- rooted_tree_simple_plot_list$simple_plot$data %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(descendants_tips_from_node = if_else(isTip,
+                                                     list(label), 
+                                                     list(descendants_tips_from_node)))
+         
 ```
 
+<!-- data check
 ```{r}
 my_plotdata %>% 
   filter(!isTip) %>%
@@ -228,7 +234,7 @@ my_plotdata %>% filter(label == "N1") %>%
   select(descendants_tips_from_node) %>%
   unnest(descendants_tips_from_node)
 ```
-
+-->
 
 ### 2. Adding metadata to nodes and tips 
 
@@ -262,12 +268,6 @@ my_plotdata <-
     interaction = FALSE,
     country, Host, Host_latin, year, continent, Host_family) 
 ```
-
-```{r}
-# my_plotdata %>%
-#   print(n = 10, width = Inf)
-```
-
 
 Here is how it looks like 
 ```{r}

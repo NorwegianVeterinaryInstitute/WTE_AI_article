@@ -1,5 +1,5 @@
 ---
-title: "SEP H5N1 Phylogenetic tree"
+title: "SEP H5N1 HA Phylogenetic tree"
 author: "Eve Zeyl Fiskebeck"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 params:
@@ -9,11 +9,11 @@ params:
     duplicates: "results/H5N1_HA/phylog/remove_identical_msa/duplicates_list"
     tree: "results/H5N1_HA/phylog/20240104_HA_H5N1_MSA_filtered_nodub.fasta.contree"
     save_dir: "results/H5N1_HA"
-    env_file: "results/env_files/H5N1_SEP.RData"
+    env_file: "results/env_files/H5N1_HA_SEP.RData"
     source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
 execute: 
   echo: false
-  cache: true
+  cache: false
 format: html
 knitr:
   opts_chunk: 
@@ -210,7 +210,6 @@ but they can be duplicated sequences and thus not the primary labeled sequences 
 For this purpose, we add columns that would allow to tag labels representing isolates from Norway, and those that contain White-tailed Eagles.
 
 ```{r}
-# replaces info2
 tree_meta_incl_duplicates_contingency <- 
   tree_meta_incl_duplicates_contingency %>% 
   check_in_var(., "country", 
@@ -278,7 +277,7 @@ rooted_tree_simple_plot_list <-
 
 -   exploring the structure 
 ```{r}
-glimpse(rooted_tree_simple_plot_list)
+#glimpse(rooted_tree_simple_plot_list)
 # the plot object
 # rooted_tree_simple_plot_list$simple_plot
 # the tree object with node labels depth osv
@@ -521,24 +520,14 @@ my_rooted_tree <- rooted_tree_simple_plot_list$tree_nodelab
 
 - collapsing the nodes recursively. 
 For this we require a list of descendants of for nodes to collapse 
-
-```{r}
-list_descendants_nodes_collapsing_1 <- 
-  my_plotdata %>% 
-  filter(!isTip) %>%
-  select(label, descendants_tips_from_node) %>%
-  filter(label %in% nodes_select_collapsing_1) %>%
-  pull(descendants_tips_from_node) 
-
-list_descendants_nodes_collapsing_1
-```
+# NOW 
 
 Collapsing the nodes of the tree 
 ```{r}
 my_collapsed_tree <- 
-  collapsing_nodes_fun(
+  collapsing_nodes_from_nodes_fun(
     my_rooted_tree, 
-    list_descendants_nodes_collapsing_1
+    nodes_select_collapsing_1
     )
 ```
 
@@ -626,36 +615,50 @@ ggsave(
 
 ## C. Manual improvement of collapsing the tree
 
+# DO review
+
+
+- I need the node labels for review 
+```{r}
+plot_adj <- 
+  explor_plot3b + 
+   ggplot2::geom_text(mapping = aes(x = branch, 
+                                   label = label, 
+                                   color = "label_monophy_large"),
+                     data = . %>% 
+                       filter(!isTip),
+                     size = .5, 
+                     nudge_x = -5e-5) 
+
+plot_adj
+```
+
+```{r}
+ggsave(
+  here::here(params$save_dir, "plot_adj_collapsing.svg"),
+  explor_plot3b, 
+  device = "svg",
+  dpi = 600, 
+  units = "cm", width = 15, height = 40
+  )
+```
+
+
 - branches where no isolates are included in Norway, it is more to be able 
 to have overview of the position of our isolates within the tree. 
 
 Selection from bottom to top. 
 
 ```{r}
-manual_nodes_selection <- sort(
-  c("N1385", "N1380", "N1250", 
-  "N251", "N205", "N98",
-  "N560", "N495", "N505", "N444", "N402",
-  "N683", "N1195" , "N1142", "N1072", "N1106", 
-  "N732" , "N786", "N879", "N901", "N1008", "N987")
-  )
-```
-
-getting the descendants tips for the nodes to collapse 
-```{r}
-labels_additional_collapsing <- 
-  explor_plot3b$data %>%
-  filter(label %in% manual_nodes_selection) %>%
-  select(label, descendants_tips_from_node) %>%
-  pull(descendants_tips_from_node) 
+manual_nodes_selection <- c("N1385", "N1251", "N402", "N1142")
 ```
 
 
 Collapsing the additional nodes 
 ```{r}
 my_collapsed_tree2 <- 
-  collapsing_nodes_fun(my_collapsed_tree, 
-                       labels_additional_collapsing)
+  collapsing_nodes_from_nodes_fun(my_collapsed_tree, 
+                       manual_nodes_selection)
 ```
 
 Plotting the base of the collapsed tree 
@@ -1453,7 +1456,7 @@ This dataset is representative for `r nrow(data_here)` isolates.
 This includes `r length(tree$tip.label)` isolates with unique sequences, 
 including 2 sequences as ougroup. 
 
-Note that one group of isolate isolates beloning to the same year of sampling
+Note that one group of isolate isolates belonging to the same year of sampling
 has been removed from our data set in an attempt to reduce the size of the tree.
 This after a preliminary analysis of the data. This group of isolates appeared to originate from our second subset. 
 
@@ -1472,5 +1475,5 @@ all_tree_metadata2 %>%
   write_tsv(here::here(params$save_dir, "Norway_metadata_H5N1_H5N5.tsv"))
 ```
 
-Some isolates have been submited to GISAID since we started this analysis, therefore the 
+Some isolates have been submitted to GISAID since we started this analysis, therefore the 
 complement of GISAID_ID will be completed manually.

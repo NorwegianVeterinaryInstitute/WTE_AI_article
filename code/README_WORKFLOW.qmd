@@ -31,8 +31,16 @@ params:
 
 6.  (last) Preparation metadata and aknowledgments for publication: `POST_preparation_aknowledgments_metadata_for_publication.qmd`
 
--   check list of what needs to be done before publication
--   metadata to include
--   aknowledgements and formating checks
+# check list of what needs to be done before publication
 
-## 
+Metadata to include
+- [ ] all trees 
+- [ ] preparation files for MSA 
+- [ ] removed sequences for H5N1 HA
+
+Acknowledgements and formating checks
+- [ ] all trees - only for HA and NA segments 
+- [ ] removed sequences for H5N1 HA
+- [ ] preparation files for MSA 
+- [ ] formatting
+

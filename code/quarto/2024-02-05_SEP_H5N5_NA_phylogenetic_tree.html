@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Eve Zeyl Fiskebeck">
-<meta name="dcterms.date" content="2024-02-04">
+<meta name="dcterms.date" content="2024-02-05">
 
 <title>SEP H5N5 NA Phylogenetic tree</title>
 <style>
@@ -64,7 +64,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 4, 2024</p>
+      <p class="date">February 5, 2024</p>
     </div>
   </div>
   
@@ -253,426 +253,81 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>exploring the structure</li>
 </ul>
-<div class="cell">
-<pre><code>#&gt; List of 2
-#&gt;  $ simple_plot :List of 9
-#&gt;   ..$ data       : tbl_tree [163 × 15] (S3: tbl_tree/tbl_tree/tbl_df/tbl/data.frame)
-#&gt;   .. ..- attr(*, "layout")= chr "rectangular"
-#&gt;   ..$ layers     :List of 2
-#&gt;   .. ..$ :Classes 'LayerInstance', 'Layer', 'ggproto', 'gg' &lt;ggproto object: Class LayerInstance, Layer, gg&gt;
-#&gt;     aes_params: list
-#&gt;     compute_aesthetics: function
-#&gt;     compute_geom_1: function
-#&gt;     compute_geom_2: function
-#&gt;     compute_position: function
-#&gt;     compute_statistic: function
-#&gt;     computed_geom_params: NULL
-#&gt;     computed_mapping: NULL
-#&gt;     computed_stat_params: NULL
-#&gt;     constructor: call
-#&gt;     data: waiver
-#&gt;     draw_geom: function
-#&gt;     finish_statistics: function
-#&gt;     geom: &lt;ggproto object: Class GeomSegment, Geom, gg&gt;
-#&gt;         aesthetics: function
-#&gt;         default_aes: uneval
-#&gt;         draw_group: function
-#&gt;         draw_key: function
-#&gt;         draw_layer: function
-#&gt;         draw_panel: function
-#&gt;         extra_params: na.rm
-#&gt;         handle_na: function
-#&gt;         non_missing_aes: linetype linewidth shape
-#&gt;         optional_aes: 
-#&gt;         parameters: function
-#&gt;         rename_size: TRUE
-#&gt;         required_aes: x y xend yend
-#&gt;         setup_data: function
-#&gt;         setup_params: function
-#&gt;         use_defaults: function
-#&gt;         super:  &lt;ggproto object: Class Geom, gg&gt;
-#&gt;     geom_params: list
-#&gt;     inherit.aes: TRUE
-#&gt;     layer_data: function
-#&gt;     map_statistic: function
-#&gt;     mapping: uneval
-#&gt;     position: &lt;ggproto object: Class PositionIdentity, Position, gg&gt;
-#&gt;         compute_layer: function
-#&gt;         compute_panel: function
-#&gt;         required_aes: 
-#&gt;         setup_data: function
-#&gt;         setup_params: function
-#&gt;         super:  &lt;ggproto object: Class Position, gg&gt;
-#&gt;     print: function
-#&gt;     setup_layer: function
-#&gt;     show.legend: NA
-#&gt;     stat: &lt;ggproto object: Class StatTreeHorizontal, Stat, gg&gt;
-#&gt;         aesthetics: function
-#&gt;         compute_group: function
-#&gt;         compute_layer: function
-#&gt;         compute_panel: function
-#&gt;         default_aes: uneval
-#&gt;         dropped_aes: 
-#&gt;         extra_params: na.rm
-#&gt;         finish_layer: function
-#&gt;         non_missing_aes: 
-#&gt;         optional_aes: 
-#&gt;         parameters: function
-#&gt;         required_aes: node parent x y
-#&gt;         retransform: TRUE
-#&gt;         setup_data: function
-#&gt;         setup_params: function
-#&gt;         super:  &lt;ggproto object: Class Stat, gg&gt;
-#&gt;     stat_params: list
-#&gt;     super:  &lt;ggproto object: Class Layer, gg&gt; 
-#&gt;   .. ..$ :Classes 'LayerInstance', 'Layer', 'ggproto', 'gg' &lt;ggproto object: Class LayerInstance, Layer, gg&gt;
-#&gt;     aes_params: list
-#&gt;     compute_aesthetics: function
-#&gt;     compute_geom_1: function
-#&gt;     compute_geom_2: function
-#&gt;     compute_position: function
-#&gt;     compute_statistic: function
-#&gt;     computed_geom_params: NULL
-#&gt;     computed_mapping: NULL
-#&gt;     computed_stat_params: NULL
-#&gt;     constructor: call
-#&gt;     data: waiver
-#&gt;     draw_geom: function
-#&gt;     finish_statistics: function
-#&gt;     geom: &lt;ggproto object: Class GeomSegment, Geom, gg&gt;
-#&gt;         aesthetics: function
-#&gt;         default_aes: uneval
-#&gt;         draw_group: function
-#&gt;         draw_key: function
-#&gt;         draw_layer: function
-#&gt;         draw_panel: function
-#&gt;         extra_params: na.rm
-#&gt;         handle_na: function
-#&gt;         non_missing_aes: linetype linewidth shape
-#&gt;         optional_aes: 
-#&gt;         parameters: function
-#&gt;         rename_size: TRUE
-#&gt;         required_aes: x y xend yend
-#&gt;         setup_data: function
-#&gt;         setup_params: function
-#&gt;         use_defaults: function
-#&gt;         super:  &lt;ggproto object: Class Geom, gg&gt;
-#&gt;     geom_params: list
-#&gt;     inherit.aes: TRUE
-#&gt;     layer_data: function
-#&gt;     map_statistic: function
-#&gt;     mapping: uneval
-#&gt;     position: &lt;ggproto object: Class PositionIdentity, Position, gg&gt;
-#&gt;         compute_layer: function
-#&gt;         compute_panel: function
-#&gt;         required_aes: 
-#&gt;         setup_data: function
-#&gt;         setup_params: function
-#&gt;         super:  &lt;ggproto object: Class Position, gg&gt;
-#&gt;     print: function
-#&gt;     setup_layer: function
-#&gt;     show.legend: NA
-#&gt;     stat: &lt;ggproto object: Class StatTreeVertical, Stat, gg&gt;
-#&gt;         aesthetics: function
-#&gt;         compute_group: function
-#&gt;         compute_layer: function
-#&gt;         compute_panel: function
-#&gt;         default_aes: uneval
-#&gt;         dropped_aes: 
-#&gt;         extra_params: na.rm
-#&gt;         finish_layer: function
-#&gt;         non_missing_aes: 
-#&gt;         optional_aes: 
-#&gt;         parameters: function
-#&gt;         required_aes: node parent x y
-#&gt;         retransform: TRUE
-#&gt;         setup_data: function
-#&gt;         setup_params: function
-#&gt;         super:  &lt;ggproto object: Class Stat, gg&gt;
-#&gt;     stat_params: list
-#&gt;     super:  &lt;ggproto object: Class Layer, gg&gt; 
-#&gt;   ..$ scales     :Classes 'ScalesList', 'ggproto', 'gg' &lt;ggproto object: Class ScalesList, gg&gt;
-#&gt;     add: function
-#&gt;     clone: function
-#&gt;     find: function
-#&gt;     get_scales: function
-#&gt;     has_scale: function
-#&gt;     input: function
-#&gt;     n: function
-#&gt;     non_position_scales: function
-#&gt;     scales: list
-#&gt;     super:  &lt;ggproto object: Class ScalesList, gg&gt; 
-#&gt;   ..$ mapping    :List of 2
-#&gt;   .. ..$ x: language ~x
-#&gt;   .. .. ..- attr(*, ".Environment")=&lt;environment: 0x000001fa29cce8a8&gt; 
-#&gt;   .. ..$ y: language ~y
-#&gt;   .. .. ..- attr(*, ".Environment")=&lt;environment: 0x000001fa29cce8a8&gt; 
-#&gt;   .. ..- attr(*, "class")= chr "uneval"
-#&gt;   ..$ theme      :List of 97
-#&gt;   .. ..$ line                      :List of 6
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_line" "element"
-#&gt;   .. ..$ rect                      :List of 5
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_rect" "element"
-#&gt;   .. ..$ text                      :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ title                     : NULL
-#&gt;   .. ..$ aspect.ratio              : NULL
-#&gt;   .. ..$ axis.title                : NULL
-#&gt;   .. ..$ axis.title.x              :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ axis.title.x.top          :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ axis.title.x.bottom       : NULL
-#&gt;   .. ..$ axis.title.y              :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ axis.title.y.left         : NULL
-#&gt;   .. ..$ axis.title.y.right        :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ axis.text                 :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ axis.text.x               : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ axis.text.x.top           :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ axis.text.x.bottom        : NULL
-#&gt;   .. ..$ axis.text.y               : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ axis.text.y.left          : NULL
-#&gt;   .. ..$ axis.text.y.right         :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ axis.ticks                :List of 6
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_line" "element"
-#&gt;   .. ..$ axis.ticks.x              : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ axis.ticks.x.top          : NULL
-#&gt;   .. ..$ axis.ticks.x.bottom       : NULL
-#&gt;   .. ..$ axis.ticks.y              : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ axis.ticks.y.left         : NULL
-#&gt;   .. ..$ axis.ticks.y.right        : NULL
-#&gt;   .. ..$ axis.ticks.length         : 'simpleUnit' num 2.75points
-#&gt;   .. .. ..- attr(*, "unit")= int 8
-#&gt;   .. ..$ axis.ticks.length.x       : NULL
-#&gt;   .. ..$ axis.ticks.length.x.top   : NULL
-#&gt;   .. ..$ axis.ticks.length.x.bottom: NULL
-#&gt;   .. ..$ axis.ticks.length.y       : NULL
-#&gt;   .. ..$ axis.ticks.length.y.left  : NULL
-#&gt;   .. ..$ axis.ticks.length.y.right : NULL
-#&gt;   .. ..$ axis.line                 :List of 6
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_line" "element"
-#&gt;   .. ..$ axis.line.x               : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ axis.line.x.top           : NULL
-#&gt;   .. ..$ axis.line.x.bottom        : NULL
-#&gt;   .. ..$ axis.line.y               : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ axis.line.y.left          : NULL
-#&gt;   .. ..$ axis.line.y.right         : NULL
-#&gt;   .. ..$ legend.background         :List of 5
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_rect" "element"
-#&gt;   .. ..$ legend.margin             : 'margin' num [1:4] 5.5points 5.5points 5.5points 5.5points
-#&gt;   .. .. ..- attr(*, "unit")= int 8
-#&gt;   .. ..$ legend.spacing            : 'simpleUnit' num 11points
-#&gt;   .. .. ..- attr(*, "unit")= int 8
-#&gt;   .. ..$ legend.spacing.x          : NULL
-#&gt;   .. ..$ legend.spacing.y          : NULL
-#&gt;   .. ..$ legend.key                :List of 5
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_rect" "element"
-#&gt;   .. ..$ legend.key.size           : 'simpleUnit' num 1.2lines
-#&gt;   .. .. ..- attr(*, "unit")= int 3
-#&gt;   .. ..$ legend.key.height         : NULL
-#&gt;   .. ..$ legend.key.width          : NULL
-#&gt;   .. ..$ legend.text               :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ legend.text.align         : NULL
-#&gt;   .. ..$ legend.title              :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ legend.title.align        : NULL
-#&gt;   .. ..$ legend.position           : chr "right"
-#&gt;   .. ..$ legend.direction          : NULL
-#&gt;   .. ..$ legend.justification      : chr "center"
-#&gt;   .. ..$ legend.box                : NULL
-#&gt;   .. ..$ legend.box.just           : NULL
-#&gt;   .. ..$ legend.box.margin         : 'margin' num [1:4] 0cm 0cm 0cm 0cm
-#&gt;   .. .. ..- attr(*, "unit")= int 1
-#&gt;   .. ..$ legend.box.background     : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ legend.box.spacing        : 'simpleUnit' num 11points
-#&gt;   .. .. ..- attr(*, "unit")= int 8
-#&gt;   .. ..$ panel.background          :List of 5
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_rect" "element"
-#&gt;   .. ..$ panel.border              : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ panel.spacing             : 'simpleUnit' num 5.5points
-#&gt;   .. .. ..- attr(*, "unit")= int 8
-#&gt;   .. ..$ panel.spacing.x           : NULL
-#&gt;   .. ..$ panel.spacing.y           : NULL
-#&gt;   .. ..$ panel.grid                :List of 6
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_line" "element"
-#&gt;   .. ..$ panel.grid.major          : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ panel.grid.minor          : list()
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
-#&gt;   .. ..$ panel.grid.major.x        : NULL
-#&gt;   .. ..$ panel.grid.major.y        : NULL
-#&gt;   .. ..$ panel.grid.minor.x        : NULL
-#&gt;   .. ..$ panel.grid.minor.y        : NULL
-#&gt;   .. ..$ panel.ontop               : logi FALSE
-#&gt;   .. ..$ plot.background           :List of 5
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_rect" "element"
-#&gt;   .. ..$ plot.title                :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ plot.title.position       : chr "panel"
-#&gt;   .. ..$ plot.subtitle             :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ plot.caption              :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ plot.caption.position     : chr "panel"
-#&gt;   .. ..$ plot.tag                  :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ plot.tag.position         : chr "topleft"
-#&gt;   .. ..$ plot.margin               : 'margin' num [1:4] 5.5points 5.5points 5.5points 5.5points
-#&gt;   .. .. ..- attr(*, "unit")= int 8
-#&gt;   .. ..$ strip.background          :List of 5
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_rect" "element"
-#&gt;   .. ..$ strip.background.x        : NULL
-#&gt;   .. ..$ strip.background.y        : NULL
-#&gt;   .. ..$ strip.clip                : chr "inherit"
-#&gt;   .. ..$ strip.placement           : chr "inside"
-#&gt;   .. ..$ strip.text                :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ strip.text.x              : NULL
-#&gt;   .. ..$ strip.text.x.bottom       : NULL
-#&gt;   .. ..$ strip.text.x.top          : NULL
-#&gt;   .. ..$ strip.text.y              :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ strip.text.y.left         :List of 11
-#&gt;   .. .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
-#&gt;   .. ..$ strip.text.y.right        : NULL
-#&gt;   .. ..$ strip.switch.pad.grid     : 'simpleUnit' num 2.75points
-#&gt;   .. .. ..- attr(*, "unit")= int 8
-#&gt;   .. ..$ strip.switch.pad.wrap     : 'simpleUnit' num 2.75points
-#&gt;   .. .. ..- attr(*, "unit")= int 8
-#&gt;   .. ..- attr(*, "class")= chr [1:2] "theme" "gg"
-#&gt;   .. ..- attr(*, "complete")= logi TRUE
-#&gt;   .. ..- attr(*, "validate")= logi TRUE
-#&gt;   ..$ coordinates:Classes 'CoordCartesian', 'Coord', 'ggproto', 'gg' &lt;ggproto object: Class CoordCartesian, Coord, gg&gt;
-#&gt;     aspect: function
-#&gt;     backtransform_range: function
-#&gt;     clip: on
-#&gt;     default: TRUE
-#&gt;     distance: function
-#&gt;     expand: TRUE
-#&gt;     is_free: function
-#&gt;     is_linear: function
-#&gt;     labels: function
-#&gt;     limits: list
-#&gt;     modify_scales: function
-#&gt;     range: function
-#&gt;     render_axis_h: function
-#&gt;     render_axis_v: function
-#&gt;     render_bg: function
-#&gt;     render_fg: function
-#&gt;     setup_data: function
-#&gt;     setup_layout: function
-#&gt;     setup_panel_guides: function
-#&gt;     setup_panel_params: function
-#&gt;     setup_params: function
-#&gt;     train_panel_guides: function
-#&gt;     transform: function
-#&gt;     super:  &lt;ggproto object: Class CoordCartesian, Coord, gg&gt; 
-#&gt;   ..$ facet      :Classes 'FacetNull', 'Facet', 'ggproto', 'gg' &lt;ggproto object: Class FacetNull, Facet, gg&gt;
-#&gt;     compute_layout: function
-#&gt;     draw_back: function
-#&gt;     draw_front: function
-#&gt;     draw_labels: function
-#&gt;     draw_panels: function
-#&gt;     finish_data: function
-#&gt;     init_scales: function
-#&gt;     map_data: function
-#&gt;     params: list
-#&gt;     setup_data: function
-#&gt;     setup_params: function
-#&gt;     shrink: TRUE
-#&gt;     train_scales: function
-#&gt;     vars: function
-#&gt;     super:  &lt;ggproto object: Class FacetNull, Facet, gg&gt; 
-#&gt;   ..$ plot_env   :&lt;environment: 0x000001fa29cce8a8&gt; 
-#&gt;   ..$ labels     :List of 4
-#&gt;   .. ..$ y     : NULL
-#&gt;   .. ..$ x     : NULL
-#&gt;   .. ..$ node  : chr "node"
-#&gt;   .. ..$ parent: chr "parent"
-#&gt;   ..- attr(*, "class")= chr [1:3] "ggtree" "gg" "ggplot"
-#&gt;  $ tree_nodelab:List of 5
-#&gt;   ..$ edge       : int [1:162, 1:2] 83 84 85 86 87 88 89 90 91 92 ...
-#&gt;   ..$ edge.length: num [1:162] 5.46e-02 1.41e-03 2.11e-03 2.31e-06 6.50e-03 ...
-#&gt;   ..$ Nnode      : int 81
-#&gt;   ..$ node.label : chr [1:81] "N1" "N2" "N3" "N4" ...
-#&gt;   ..$ tip.label  : chr [1:82] "EPI_ISL_18455201" "EPI_ISL_18455200" "2022_07_1141_1" "2022_07_1140_1" ...
-#&gt;   ..- attr(*, "class")= chr "phylo"
-#&gt;   ..- attr(*, "order")= chr "cladewise"</code></pre>
-</div>
 <ul>
 <li>saving in individual objects (copy). We will reuse the plot data</li>
 </ul>
-<div class="cell">
-<pre><code>#&gt; # A tibble: 81 × 15
-#&gt;    parent  node branch.length label isTip      x     y branch angle
-#&gt;     &lt;int&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-#&gt;  1     83    83    0          N1    FALSE 0       5.19 0       22.8
-#&gt;  2     83    84    0.0546     N2    FALSE 0.0546  9.37 0.0273  41.1
-#&gt;  3     84    85    0.00141    N3    FALSE 0.0560 16.2  0.0553  71.3
-#&gt;  4     85    86    0.00211    N4    FALSE 0.0581 26.7  0.0570 117. 
-#&gt;  5     86    87    0.00000231 N5    FALSE 0.0581 28.9  0.0581 127. 
-#&gt;  6     87    88    0.00650    N6    FALSE 0.0646 31.9  0.0614 140. 
-#&gt;  7     88    89    0.00242    N7    FALSE 0.0670 36.7  0.0658 161. 
-#&gt;  8     89    90    0.0202     N8    FALSE 0.0872 44.7  0.0771 196. 
-#&gt;  9     90    91    0.0189     N9    FALSE 0.106  52.4  0.0967 230. 
-#&gt; 10     91    92    0.00000255 N10   FALSE 0.106  53.7  0.106  236. 
-#&gt;    labels_bootstrap node_depth descendants_tips_from_node isMono_noboot isMono
-#&gt;    &lt;chr&gt;                 &lt;dbl&gt; &lt;list&gt;                     &lt;lgl&gt;         &lt;lgl&gt; 
-#&gt;  1 100                      82 &lt;chr [82]&gt;                 TRUE          TRUE  
-#&gt;  2 98                       81 &lt;chr [81]&gt;                 TRUE          TRUE  
-#&gt;  3 73                       79 &lt;chr [79]&gt;                 TRUE          FALSE 
-#&gt;  4 97                       59 &lt;chr [59]&gt;                 TRUE          TRUE  
-#&gt;  5 53                       57 &lt;chr [57]&gt;                 TRUE          FALSE 
-#&gt;  6 97                       56 &lt;chr [56]&gt;                 TRUE          TRUE  
-#&gt;  7 67                       55 &lt;chr [55]&gt;                 TRUE          FALSE 
-#&gt;  8 100                      52 &lt;chr [52]&gt;                 TRUE          TRUE  
-#&gt;  9 100                      32 &lt;chr [32]&gt;                 TRUE          TRUE  
-#&gt; 10 50                       31 &lt;chr [31]&gt;                 TRUE          FALSE 
-#&gt;    edge_num
-#&gt;       &lt;int&gt;
-#&gt;  1       NA
-#&gt;  2        1
-#&gt;  3        2
-#&gt;  4        3
-#&gt;  5        4
-#&gt;  6        5
-#&gt;  7        6
-#&gt;  8        7
-#&gt;  9        8
-#&gt; 10        9
-#&gt; # ℹ 71 more rows</code></pre>
-</div>
-<p>Checking data - ok it has nested the descendants from nodes</p>
-<div class="cell">
-<pre><code>#&gt; # A tibble: 82 × 1
-#&gt;    descendants_tips_from_node
-#&gt;    &lt;chr&gt;                     
-#&gt;  1 EPI_ISL_1123358           
-#&gt;  2 EPI_ISL_644737            
-#&gt;  3 EPI_ISL_1255051           
-#&gt;  4 EPI_ISL_16209277          
-#&gt;  5 EPI_ISL_16209278          
-#&gt;  6 2022_07_1141_3            
-#&gt;  7 2022_07_100               
-#&gt;  8 2022_07_895_1             
-#&gt;  9 2022_07_897_3             
-#&gt; 10 EPI_ISL_18455201          
-#&gt; # ℹ 72 more rows</code></pre>
-</div>
+<p>We need to add the tips in descendants from nodes - so its homogeneous for next function</p>
+<!-- data check 
+
+::: {.cell}
+
+```
+#> # A tibble: 81 × 15
+#> # Rowwise: 
+#>    parent  node branch.length label isTip      x     y branch angle
+#>     <int> <int>         <dbl> <chr> <lgl>  <dbl> <dbl>  <dbl> <dbl>
+#>  1     83    83    0          N1    FALSE 0       5.19 0       22.8
+#>  2     83    84    0.0546     N2    FALSE 0.0546  9.37 0.0273  41.1
+#>  3     84    85    0.00141    N3    FALSE 0.0560 16.2  0.0553  71.3
+#>  4     85    86    0.00211    N4    FALSE 0.0581 26.7  0.0570 117. 
+#>  5     86    87    0.00000231 N5    FALSE 0.0581 28.9  0.0581 127. 
+#>  6     87    88    0.00650    N6    FALSE 0.0646 31.9  0.0614 140. 
+#>  7     88    89    0.00242    N7    FALSE 0.0670 36.7  0.0658 161. 
+#>  8     89    90    0.0202     N8    FALSE 0.0872 44.7  0.0771 196. 
+#>  9     90    91    0.0189     N9    FALSE 0.106  52.4  0.0967 230. 
+#> 10     91    92    0.00000255 N10   FALSE 0.106  53.7  0.106  236. 
+#>    labels_bootstrap node_depth descendants_tips_from_node isMono_noboot isMono
+#>    <chr>                 <dbl> <list>                     <lgl>         <lgl> 
+#>  1 100                      82 <chr [82]>                 TRUE          TRUE  
+#>  2 98                       81 <chr [81]>                 TRUE          TRUE  
+#>  3 73                       79 <chr [79]>                 TRUE          FALSE 
+#>  4 97                       59 <chr [59]>                 TRUE          TRUE  
+#>  5 53                       57 <chr [57]>                 TRUE          FALSE 
+#>  6 97                       56 <chr [56]>                 TRUE          TRUE  
+#>  7 67                       55 <chr [55]>                 TRUE          FALSE 
+#>  8 100                      52 <chr [52]>                 TRUE          TRUE  
+#>  9 100                      32 <chr [32]>                 TRUE          TRUE  
+#> 10 50                       31 <chr [31]>                 TRUE          FALSE 
+#>    edge_num
+#>       <int>
+#>  1       NA
+#>  2        1
+#>  3        2
+#>  4        3
+#>  5        4
+#>  6        5
+#>  7        6
+#>  8        7
+#>  9        8
+#> 10        9
+#> # ℹ 71 more rows
+```
+:::
+
+
+Checking data - ok it has nested the descendants from nodes 
+
+::: {.cell}
+
+```
+#> # A tibble: 82 × 1
+#>    descendants_tips_from_node
+#>    <chr>                     
+#>  1 EPI_ISL_1123358           
+#>  2 EPI_ISL_644737            
+#>  3 EPI_ISL_1255051           
+#>  4 EPI_ISL_16209277          
+#>  5 EPI_ISL_16209278          
+#>  6 2022_07_1141_3            
+#>  7 2022_07_100               
+#>  8 2022_07_895_1             
+#>  9 2022_07_897_3             
+#> 10 EPI_ISL_18455201          
+#> # ℹ 72 more rows
+```
+:::
+
+-->
 <section id="adding-metadata-to-nodes-and-tips" class="level3">
 <h3 class="anchored" data-anchor-id="adding-metadata-to-nodes-and-tips">2. Adding metadata to nodes and tips</h3>
 <blockquote class="blockquote">
@@ -700,83 +355,6 @@ ul.task-list li input[type="checkbox"] {
 #&gt; [23] "nested_year"                "ctg_year"                  
 #&gt; [25] "nested_continent"           "ctg_continent"             
 #&gt; [27] "nested_Host_family"         "ctg_Host_family"</code></pre>
-</div>
-<div class="cell">
-<pre><code>#&gt; # A tibble: 163 × 28
-#&gt; # Rowwise: 
-#&gt;    parent  node branch.length label            isTip     x     y branch angle
-#&gt;     &lt;int&gt; &lt;int&gt;         &lt;dbl&gt; &lt;chr&gt;            &lt;lgl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-#&gt;  1    103     1    0.00149    EPI_ISL_18455201 TRUE  0.121    65  0.121  285.
-#&gt;  2    115     2    0          EPI_ISL_18455200 TRUE  0.121    81  0.121  356.
-#&gt;  3    115     3    0          2022_07_1141_1   TRUE  0.121    82  0.121  360 
-#&gt;  4    114     4    0.00000231 2022_07_1140_1   TRUE  0.121    80  0.121  351.
-#&gt;  5    113     5    0.000745   2022_07_1233_1   TRUE  0.121    79  0.121  347.
-#&gt;  6    112     6    0.00000231 2022_07_446      TRUE  0.120    78  0.120  342.
-#&gt;  7    111     7    0.00000231 2022_07_693_1    TRUE  0.120    77  0.120  338.
-#&gt;  8    110     8    0.00451    2022_04_13257_1  TRUE  0.124    76  0.122  334.
-#&gt;  9    109     9    0.000734   2022_07_977_1    TRUE  0.120    75  0.120  329.
-#&gt; 10    116    10    0.00000231 EPI_ISL_12754536 TRUE  0.120    73  0.120  320.
-#&gt;    labels_bootstrap node_depth descendants_tips_from_node isMono_noboot isMono
-#&gt;    &lt;chr&gt;                 &lt;dbl&gt; &lt;list&gt;                     &lt;lgl&gt;         &lt;lgl&gt; 
-#&gt;  1 EPI_ISL_18455201          1 &lt;NULL&gt;                     NA            NA    
-#&gt;  2 EPI_ISL_18455200          1 &lt;NULL&gt;                     NA            NA    
-#&gt;  3 2022_07_1141_1            1 &lt;NULL&gt;                     NA            NA    
-#&gt;  4 2022_07_1140_1            1 &lt;NULL&gt;                     NA            NA    
-#&gt;  5 2022_07_1233_1            1 &lt;NULL&gt;                     NA            NA    
-#&gt;  6 2022_07_446               1 &lt;NULL&gt;                     NA            NA    
-#&gt;  7 2022_07_693_1             1 &lt;NULL&gt;                     NA            NA    
-#&gt;  8 2022_04_13257_1           1 &lt;NULL&gt;                     NA            NA    
-#&gt;  9 2022_07_977_1             1 &lt;NULL&gt;                     NA            NA    
-#&gt; 10 EPI_ISL_12754536          1 &lt;NULL&gt;                     NA            NA    
-#&gt;    edge_num tip_metalink nested_country   ctg_country      nested_Host     
-#&gt;       &lt;int&gt; &lt;list&gt;       &lt;list&gt;           &lt;list&gt;           &lt;list&gt;          
-#&gt;  1       21 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  2       40 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  3       41 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  4       42 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  5       43 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  6       44 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  7       45 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  8       46 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  9       47 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt; 10       49 &lt;chr [1]&gt;    &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;    ctg_Host         nested_Host_latin ctg_Host_latin   nested_year     
-#&gt;    &lt;list&gt;           &lt;list&gt;            &lt;list&gt;           &lt;list&gt;          
-#&gt;  1 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  2 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  3 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  4 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  5 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  6 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  7 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  8 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;  9 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt; 10 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;
-#&gt;    ctg_year         nested_continent ctg_continent    nested_Host_family
-#&gt;    &lt;list&gt;           &lt;list&gt;           &lt;list&gt;           &lt;list&gt;            
-#&gt;  1 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt;  2 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt;  3 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt;  4 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt;  5 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt;  6 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt;  7 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt;  8 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt;  9 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt; 10 &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt; &lt;tibble [1 × 4]&gt; &lt;tibble [1 × 3]&gt;  
-#&gt;    ctg_Host_family 
-#&gt;    &lt;list&gt;          
-#&gt;  1 &lt;tibble [1 × 4]&gt;
-#&gt;  2 &lt;tibble [1 × 4]&gt;
-#&gt;  3 &lt;tibble [1 × 4]&gt;
-#&gt;  4 &lt;tibble [1 × 4]&gt;
-#&gt;  5 &lt;tibble [1 × 4]&gt;
-#&gt;  6 &lt;tibble [1 × 4]&gt;
-#&gt;  7 &lt;tibble [1 × 4]&gt;
-#&gt;  8 &lt;tibble [1 × 4]&gt;
-#&gt;  9 &lt;tibble [1 × 4]&gt;
-#&gt; 10 &lt;tibble [1 × 4]&gt;
-#&gt; # ℹ 153 more rows</code></pre>
 </div>
 <p>Selecting one column where several tips are respresented and showing an example of how the nested variable looks like, using eg. nested country variable</p>
 <blockquote class="blockquote">
@@ -977,7 +555,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
-<p><em>Figure Caption:</em> H5N5 HA segment. ML phylogenetic tree. The tree is rooted but the root is not shown as it is too distant from the rest of the tree.</p>
+<p><em>Figure Caption:</em> H5N5 NA segment. ML phylogenetic tree. The tree is rooted but the root is not shown as it is too distant from the rest of the tree.</p>
 </section>
 </section>
 <section id="saving-environment" class="level1">
