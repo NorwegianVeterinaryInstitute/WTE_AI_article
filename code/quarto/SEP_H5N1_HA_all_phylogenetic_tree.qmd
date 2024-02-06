@@ -6,7 +6,7 @@ params:
     strain: "H5N1"
     segment: "HA"
     all_tree_metadata: "data/prepared_data/all_tree_metadata_CAB.RDS"
-    tree: "results/H5N1_HA_all/iqtree/"
+    tree: "results/H5N1_HA_all/iqtree/SEP_HA_H5N1_MSA_nomammals.fasta.contree"
     save_dir: "results/H5N1_HA_all"
     env_file: "results/env_files/H5N1_HA_all_SEP.RData"
     source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
@@ -94,7 +94,7 @@ last commit 2024-01-30 in the pilot project. After started to concise in functio
 
 -   NB we used the consensus tree
 
-# !! CHECK 
+
 ```{r}
 tree <- ape::read.tree(here(params$tree))
 tree$tip.label <- tree$tip.label %>% str_remove_all(., ".*\\|") %>%
@@ -102,7 +102,7 @@ tree$tip.label <- tree$tip.label %>% str_remove_all(., ".*\\|") %>%
 ```
 
 -   fast plotting: we see that 2 very long branches, this are the outgroup sequences that we will use for rooting. We root those and remove them from the tree.
-# !! CHECK 
+
 ```{r}
 ggtree::ggtree(tree, layout = "rectangular") +
     geom_point(. %>% 
@@ -210,7 +210,6 @@ ggsave(filename = here::here(params$save_dir, "explor_plot1.svg"),
 rooted_tree_simple_plot_list <- 
   monophyly_nodetag_simple_plot_fun(rooted_tree, lwd = .1, color = "grey")
 ```
-
 
 -   saving in individual objects (copy). We will reuse the plot data
 We need to add the tips in descendants from nodes - so its homogeneous for next function
@@ -377,7 +376,7 @@ explor_plot2 <-
                             as.numeric(node_depth) >= 5,
                             as.numeric(labels_bootstrap) >= 95,
                             !inNorway),
-                     size = 2) +
+                     size = 1) +
   ggplot2::scale_color_manual(values = c("label_monophy_large" = "blue")) +
   ggnewscale::new_scale_color() +
   ggtree::geom_tippoint(aes(color = category_highlight),
@@ -566,47 +565,13 @@ ggsave(
 
 ## 3. Manual improvement of collapsing the tree
 
-> We need to fetch again the descendants tips from the nodes, because now some nodes
-are collapsed or we need to collapse from the starting tree all together. 
-Wich is simplest 
-
-- branches where no isolates are included in Norway, it is more to be able 
-to have overview of the position of our isolates within the tree. 
-
-Selection from bottom to top. 
-
-# !! CHECK 
-```{r}
-# now the nodes collapsing is quiet ok 
-
-manual_nodes_selection <- c("N4261", "N1773", "N710")
-```
-
-
-Collapsing the additional nodes 
-```{r}
-my_collapsed_tree2 <- 
-  collapsing_nodes_from_nodes_fun(my_collapsed_tree, 
-                                  manual_nodes_selection)
-```
-
-Plotting the base of the collapsed tree 
-```{r}
-explor_plot3c <- 
-  my_collapsed_tree2 %>%
-  ggtree::ggtree(., layout = "rectangular", 
-                 ladderize = T, 
-                 lwd = .1,
-                 color = "grey")
-
-explor_plot3c
-```
+> I do not think this is necessary here ! 
 
 Adding the metadata to the collapsed tree
 As previously
 ```{r}
-explor_plot3c$data <-
-  explor_plot3c$data%>% 
+explor_plot3b$data <-
+  explor_plot3b$data%>% 
   # 4 is label, 10 is labels boostrap - to the end it is metadata 
   # is joining by label - the only common variable
   dplyr::left_join(my_plotdata %>% 
@@ -614,67 +579,7 @@ explor_plot3c$data <-
                    )
 ```
 
-Rechecking collapse tree for iterative adjustment 
-```{r}
-plot_adj <- 
-  explor_plot3c +
-  # tip points
-  ggplot2::geom_point(aes(x, y, color = category_highlight),
-                      data = . %>% filter(isTip), 
-                      position = ggforce::position_auto(), size = 1.25) +
-  ggplot2::scale_color_manual(values = category_highlight_pal,
-                              na.translate = FALSE,
-                              name = "Highlight Norway") +
-  # adding bootstrap value on branches
-  ggnewscale::new_scale_color() +
-  ggtree::geom_point(aes(x = branch, 
-                         color = as.numeric(labels_bootstrap) < 95),
-                     data = . %>% filter(!isTip), 
-                     shape = 19, size = .1, na.rm = T) +
-  scale_color_manual(name = "Bootstrap", 
-                     values =  bootstrap_pal_col2,
-                     labels = c(expression(phantom(x) >= 95),
-                                expression(phantom(x) < 95)),
-                     na.translate = FALSE) +
-  # adding the node labels to be able to choose what to collapse
-  # more even if not monophyletic 
-  ggnewscale::new_scale_color() +
-  ggplot2::geom_text(mapping = aes(x = branch, 
-                                   label = label, 
-                                   color = "label_monophy_large"),
-                     data = . %>% 
-                       filter(!isTip, !inNorway,
-                       as.numeric(node_depth) >= 5),
-                     size = .5, 
-                     nudge_x = -5e-5) +
-  ggplot2::scale_color_manual(values = c("label_monophy_large" = "blue")) 
 
-plot_adj
-```
-
-I need the node labels for the subsets 
-```{r}
-plot_adj <- 
-  plot_adj + 
-  ggplot2::geom_text(mapping = aes(x = branch, 
-                                   label = label, 
-                                   color = "label_monophy_large"),
-                     data = . %>%
-                       filter(!isTip),
-                     size = .5, 
-                     nudge_x = -5e-5) 
-```
-
-
-```{r}
-ggsave(
-  here::here(params$save_dir, "plot_adj_collapsing.svg"),
-  plot_adj, 
-  device = "svg",
-  dpi = 600, 
-  units = "cm", width = 15, height = 40
-  )
-```
 
 ## 4. Plotting the collapsed tree
 
@@ -682,7 +587,8 @@ ggsave(
 
 ```{r}
 explor_plot3d <- 
-  explor_plot3c +
+  # Here shortened one step so its b instead of c
+  explor_plot3b +
   ggplot2::geom_point(aes(x, y, color = category_highlight),
                       data = . %>% filter(isTip), 
                       position = ggforce::position_auto(), size = 1.25) +
@@ -754,7 +660,7 @@ explor_plot4 <-
   explor_plot3d + 
   # adding points where we will do subplots 
     geom_point(
-    data = . %>% filter(label == "N1732" | label == "N15"),
+    data = . %>% filter(label == "N529" | label == "N9"),
     mapping = aes(x = x, y = y),
     size = 1.5,
     color = "green") +
@@ -889,7 +795,7 @@ circular_meta <-
   mutate_at(vars(year_label), unlist) 
 ```
 
-# !! CHECK
+
 We had some plotting parameters to be able to view better 
 ```{r}
 circular_meta <- 
@@ -899,12 +805,11 @@ circular_meta <-
     TRUE ~ 1
   )) %>%
   mutate(point_size = 
-           if_else(label == "N1732" | label == "N15", 1, point_size)
+           if_else(label == "N529" | label == "N9", 1, point_size)
          )
 ```
 
 
-## !! CHECK 
 ```{r}
 # ! here palette is specific for this article: SEP_years_shape_pal
 circular_plot <- 
@@ -923,7 +828,7 @@ circular_plot <-
   # Adding the highlight for the subsets plots - where is the group branching
   ggnewscale::new_scale_color() +
   geom_point(
-    data = . %>% filter(label == "N1732" | label == "N15"),
+    data = . %>% filter(label == "N529" | label == "N9"),
     mapping = aes(x = x, y = y),
     size = 1.5,
     color = "green")
@@ -984,7 +889,7 @@ circular_plotb <-
 
 ```
 
-# HERE
+
 ```{r}
 circular_plotb
 ```
@@ -1009,32 +914,31 @@ ggsave(
 
 ## Detailed subplots 
 
-## !! CHANGE NODE NB 
-## N1732
+## N529 - bottom 
 
 - getting the list of tips 
 ```{r}
-tips_N1732 <- 
+tips_N529 <- 
   my_plotdata %>% 
-  filter(label == "N1732") %>%
+  filter(label == "N529") %>%
   pull(descendants_tips_from_node) %>%
   unlist()
 ```
 
 - subsetting the tree 
 ```{r}
-subtree_N1732 <- ape::keep.tip(rooted_tree_nodelab, tips_N1732)
+subtree_N529 <- ape::keep.tip(rooted_tree_nodelab, tips_N529)
 ```
 
 - creating the simple plot and adding the metadata
 
 ```{r}
-plot_subtree_N1732 <- 
-  ggtree(subtree_N1732, layout = "rectangular", color = "grey", alpha = .7)  
+plot_subtree_N529 <- 
+  ggtree(subtree_N529, layout = "rectangular", color = "grey", alpha = .7)  
 
 # adding the metadata 
-plot_subtree_N1732$data <- 
-  plot_subtree_N1732$data %>% 
+plot_subtree_N529$data <- 
+  plot_subtree_N529$data %>% 
   left_join(my_plotdata %>% 
               select(c(4, seq(10, ncol(.)))), 
             by = c("label" = "label")
@@ -1044,33 +948,33 @@ plot_subtree_N1732$data <-
 - preparing the data for the pannels views
 
 ```{r}
-N1732_countries_facet_df <- 
-  get_ctg_data_geom_facet(plot_subtree_N1732$data, "ctg_country", "country", "country_string")
+N529_countries_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N529$data, "ctg_country", "country", "country_string")
 
-N1732_Host_family_facet_df <- 
-  get_ctg_data_geom_facet(plot_subtree_N1732$data, "ctg_Host_family", "Host_family", "Host_family_string")
+N529_Host_family_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N529$data, "ctg_Host_family", "Host_family", "Host_family_string")
 
-N1732_Host_latin_facet_df <- 
-  get_ctg_data_geom_facet(plot_subtree_N1732$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
+N529_Host_latin_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N529$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
 
 
 # getting the countries per group
-N1732_countries_facet_df2 <- 
-  get_data_geom_facet(data = plot_subtree_N1732$data,
+N529_countries_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N529$data,
                       nested_col = nested_country, 
                       var = country,
                       group_expr = grouping_helper_country)
 
 # getting the host family per group
-N1732_Host_family_facet_df2 <- 
-  get_data_geom_facet(data = plot_subtree_N1732$data, 
+N529_Host_family_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N529$data, 
                       nested_col = nested_Host_family, 
                       var = Host_family, 
                       group_expr = NULL)
 
 # getting the years 
-N1732_years_facet_df <- 
-  get_data_geom_facet(data = plot_subtree_N1732$data, 
+N529_years_facet_df <- 
+  get_data_geom_facet(data = plot_subtree_N529$data, 
                       nested_col = nested_year, 
                       var = year, 
                       group_expr = NULL)
@@ -1079,8 +983,8 @@ N1732_years_facet_df <-
 - plotting the tree
 
 ```{r}
-N1732_plot <- 
-  plot_subtree_N1732 + 
+N529_plot <- 
+  plot_subtree_N529 + 
   ggplot2::geom_point(data = . %>% filter(isTip)  %>%
                         unnest(ctg_year) %>%
                         mutate_at(vars(year), as.character) %>%
@@ -1116,7 +1020,7 @@ N1732_plot <-
   ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Year", 
-    data = N1732_years_facet_df,
+    data = N529_years_facet_df,
     geom = geom_bar,
     mapping = aes(x = value, fill = variable),
     orientation = 'y', 
@@ -1127,7 +1031,7 @@ N1732_plot <-
   ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Country", 
-    data = N1732_countries_facet_df2,
+    data = N529_countries_facet_df2,
     geom = geom_bar,
     mapping = aes(x = value, fill = variable),
     orientation = 'y', 
@@ -1137,7 +1041,7 @@ N1732_plot <-
                     name = "Country Groups") +
     ggtree::geom_facet(
     panel = "Country Legend", 
-    data = N1732_countries_facet_df,
+    data = N529_countries_facet_df,
     geom = geom_text,
     mapping = aes(x = -.4, label = val),
     hjust = 0,
@@ -1146,7 +1050,7 @@ N1732_plot <-
     ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Family", 
-    data = N1732_Host_family_facet_df2,
+    data = N529_Host_family_facet_df2,
     geom = geom_bar,
     mapping = aes(x = value, fill = variable),
     orientation = 'y', 
@@ -1157,14 +1061,14 @@ N1732_plot <-
   #guides(fill = "none") +
   ggtree::geom_facet(
     panel = "Family Legend", 
-    data = N1732_Host_family_facet_df,
+    data = N529_Host_family_facet_df,
     geom = geom_text,
     mapping = aes(x = -.4, label = val),
     hjust = 0,
     size = .5)  +
   ggtree::geom_facet(
     panel = "Host Latin", 
-    data = N1732_Host_latin_facet_df,
+    data = N529_Host_latin_facet_df,
     geom = geom_text,
     mapping = aes(x = -.4, label = val),
     hjust = 0,
@@ -1173,20 +1077,20 @@ N1732_plot <-
           ggplot2::element_text(size = 9))
 
 
-N1732_plot
+N529_plot
 ```
 
 - Now we need to adjust the size of the panels 
 
 ```{r}
-N1732_plotb <- grop_redraw(N1732_plot, 
+N529_plotb <- grop_redraw(N529_plot, 
                    width_mult = c(1, .1, .1, .3, .1, .3, .3)
         )
 ```
 
 
 ```{r}
-N1732_plotb
+N529_plotb
 ```
 
 _Figure Caption:_
@@ -1198,8 +1102,8 @@ All the isolates are shown."
 
 ```{r}
 ggsave(
-  here::here(params$save_dir, "Node_1732_detail.svg"),
-  N1732_plotb,
+  here::here(params$save_dir, "Node_529_detail.svg"),
+  N529_plotb,
   device = "svg",
   dpi = 600, 
   units = "cm", width = 35, height = 100
@@ -1207,32 +1111,31 @@ ggsave(
 ```
 
 
-## !! CHANGE NODE NB
-## N15
+## N9 - Top 
 
 - getting the list of tips 
 ```{r}
-tips_N15 <- 
+tips_N9 <- 
   my_plotdata %>% 
-  filter(label == "N15") %>%
+  filter(label == "N9") %>%
   pull(descendants_tips_from_node) %>%
   unlist()
 ```
 
 - subsetting the tree 
 ```{r}
-subtree_N15 <- ape::keep.tip(rooted_tree_nodelab, tips_N15)
+subtree_N9 <- ape::keep.tip(rooted_tree_nodelab, tips_N9)
 ```
 
 - creating the simple plot and adding the metadata
 
 ```{r}
-plot_subtree_N15 <- 
-  ggtree(subtree_N15, layout = "rectangular", color = "grey", alpha = .7)  
+plot_subtree_N9 <- 
+  ggtree(subtree_N9, layout = "rectangular", color = "grey", alpha = .7)  
 
 # adding the metadata 
-plot_subtree_N15$data <- 
-  plot_subtree_N15$data %>% 
+plot_subtree_N9$data <- 
+  plot_subtree_N9$data %>% 
   left_join(my_plotdata %>% 
               select(c(4, seq(10, ncol(.)))), 
             by = c("label" = "label")
@@ -1242,33 +1145,33 @@ plot_subtree_N15$data <-
 - preparing the data for the pannels views
 
 ```{r}
-N15_countries_facet_df <- 
-  get_ctg_data_geom_facet(plot_subtree_N15$data, "ctg_country", "country", "country_string")
+N9_countries_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N9$data, "ctg_country", "country", "country_string")
 
-N15_Host_family_facet_df <- 
-  get_ctg_data_geom_facet(plot_subtree_N15$data, "ctg_Host_family", "Host_family", "Host_family_string")
+N9_Host_family_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N9$data, "ctg_Host_family", "Host_family", "Host_family_string")
 
-N15_Host_latin_facet_df <- 
-  get_ctg_data_geom_facet(plot_subtree_N15$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
+N9_Host_latin_facet_df <- 
+  get_ctg_data_geom_facet(plot_subtree_N9$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
 
 
 # getting the countries per group
-N15_countries_facet_df2 <- 
-  get_data_geom_facet(data = plot_subtree_N15$data,
+N9_countries_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N9$data,
                       nested_col = nested_country, 
                       var = country,
                       group_expr = grouping_helper_country)
 
 # getting the host family per group
-N15_Host_family_facet_df2 <- 
-  get_data_geom_facet(data = plot_subtree_N15$data, 
+N9_Host_family_facet_df2 <- 
+  get_data_geom_facet(data = plot_subtree_N9$data, 
                       nested_col = nested_Host_family, 
                       var = Host_family, 
                       group_expr = NULL)
 
 # getting the years 
-N15_years_facet_df <- 
-  get_data_geom_facet(data = plot_subtree_N15$data, 
+N9_years_facet_df <- 
+  get_data_geom_facet(data = plot_subtree_N9$data, 
                       nested_col = nested_year, 
                       var = year, 
                       group_expr = NULL)
@@ -1277,8 +1180,8 @@ N15_years_facet_df <-
 - ploting the tree
 
 ```{r}
-N15_plot <- 
-  plot_subtree_N15 + 
+N9_plot <- 
+  plot_subtree_N9 + 
   ggplot2::geom_point(data = . %>% filter(isTip)  %>%
                         unnest(ctg_year) %>%
                         mutate_at(vars(year), as.character) %>%
@@ -1314,7 +1217,7 @@ N15_plot <-
   ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Year", 
-    data = N15_years_facet_df,
+    data = N9_years_facet_df,
     geom = geom_bar,
     mapping = aes(x = value, fill = variable),
     orientation = 'y', 
@@ -1325,7 +1228,7 @@ N15_plot <-
   ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Country", 
-    data = N15_countries_facet_df2,
+    data = N9_countries_facet_df2,
     geom = geom_bar,
     mapping = aes(x = value, fill = variable),
     orientation = 'y', 
@@ -1335,7 +1238,7 @@ N15_plot <-
                     name = "Country Groups") +
     ggtree::geom_facet(
     panel = "Country Legend", 
-    data = N15_countries_facet_df,
+    data = N9_countries_facet_df,
     geom = geom_text,
     mapping = aes(x = -.4, label = val),
     hjust = 0,
@@ -1344,7 +1247,7 @@ N15_plot <-
     ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Family", 
-    data = N15_Host_family_facet_df2,
+    data = N9_Host_family_facet_df2,
     geom = geom_bar,
     mapping = aes(x = value, fill = variable),
     orientation = 'y', 
@@ -1355,14 +1258,14 @@ N15_plot <-
   #guides(fill = "none") +
   ggtree::geom_facet(
     panel = "Family Legend", 
-    data = N15_Host_family_facet_df,
+    data = N9_Host_family_facet_df,
     geom = geom_text,
     mapping = aes(x = -.4, label = val),
     hjust = 0,
     size = 1)  +
   ggtree::geom_facet(
     panel = "Host Latin", 
-    data = N15_Host_latin_facet_df,
+    data = N9_Host_latin_facet_df,
     geom = geom_text,
     mapping = aes(x = -.4, label = val),
     hjust = 0,
@@ -1371,20 +1274,20 @@ N15_plot <-
           ggplot2::element_text(size = 9))
 
 
-N15_plot
+N9_plot
 ```
 
 - Now we need to adjust the size of the panels 
 
 ```{r}
-N15_plotb <- grop_redraw(N15_plot, 
+N9_plotb <- grop_redraw(N9_plot, 
                    width_mult = c(1, .1, .1, .3, .1, .3, .3)
         )
 ```
 
 
 ```{r}
-N15_plotb
+N9_plotb
 ```
 
 _Figure Caption:_
@@ -1397,8 +1300,8 @@ of horizontal points is slighly adjusted to avoid overlap."
 
 ```{r}
 ggsave(
-  here::here(params$save_dir, "Node_15_detail.svg"),
-  N15_plotb,
+  here::here(params$save_dir, "Node_9_detail.svg"),
+  N9_plotb,
   device = "svg",
   dpi = 600, 
   units = "cm", width = 35, height = 50

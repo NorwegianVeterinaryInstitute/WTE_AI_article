@@ -19,12 +19,14 @@ params:
 
 2. Data check - included in the phylogenetic tree
 
+3. Metadata update - updates the metadata - when people add things manually, reformat and re-export 
+- [x] UPDATE_metadata.qmd
 
 
 3.  Visualisation phylogenetic tree:
 
 - [x]   `SEP_H5N1_HA_phylogenetic_tree.qmd`
-- [ ]   `SEP_H5N1_HA_all_phylogenetic_tree.qmd` - rerun according to same model - with all isolates to be able to compare with NA - I think NA was best
+- [x]   `SEP_H5N1_HA_all_phylogenetic_tree.qmd` - rerun according to same model - with all isolates to be able to compare with NA - I think NA was best
 - [x]     `PRERUN_SEP_H5N1_NA_phylogenetic_tree.qmd` - where I select what to filter out (mammals and eventually other isolates on the tree)
 - [x]   `SEP_H5N1_NA_phylogenetic_tree.qmd`
 - [x]   `SEP_H5N5_HA_phylogenetic_tree.qmd`

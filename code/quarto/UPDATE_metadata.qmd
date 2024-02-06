@@ -1,0 +1,43 @@
+---
+title: "Update tree metadata" 
+author: "Eve Zeyl Fiskebeck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+    save_dir: "data/prepared_data/"
+    all_tree_metadata: "all_tree_metadata_CAB.RDS"
+    new_metadata: "all_tree_metadata_CAB_IsolateNames.xlsx"
+execute: 
+  echo: false
+  cache: false
+format: html
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup}
+library(here)
+library(tidyverse)
+library(xlsx)
+```
+
+
+```{r}
+all_tree_metadata <- xlsx::read.xlsx(
+  file = here(params$save_dir, params$new_metadata),
+  sheetName = "all_tree_metadata") %>%
+  dplyr::mutate_at(vars(Locality_code, lon, lat, artkode, efsakode), 
+                   ~as.numeric(.x)) %>%
+  dplyr::mutate_at(c("year", "month", "day"), ~as.integer(.x)) 
+
+# exporting so we can use as RDS 
+saveRDS(all_tree_metadata,
+        file = here(params$save_dir, params$all_tree_metadata)
+        )
+```
+
