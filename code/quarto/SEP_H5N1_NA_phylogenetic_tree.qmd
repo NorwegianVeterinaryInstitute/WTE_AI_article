@@ -12,7 +12,7 @@ params:
     source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
 execute: 
   echo: false
-  cache: false
+  cache: true
 format: html
 knitr:
   opts_chunk: 
@@ -49,7 +49,7 @@ Loads the environment (to continue previous work)
 ```{r optional load environment}
 #| include: false
 # Uncomment if you want to load a saved environment file
-#if (file.exists(params$env_file)) {load(params$env_file)}
+#if (file.exists(here(params$env_file))) {load(here(params$env_file))}
 ```
 
 # Preparation of metadata specific to the tree
@@ -865,6 +865,25 @@ ggsave(
   )
 ```
 
+## Adding the isolates names
+```{r}
+explor_plot4$data %>% 
+  print(n = 10, width = Inf)
+
+test <- 
+  explor_plot4$data %>%
+  filter(label == "N1") %>%
+  select(label, tip_metalink) 
+test[1, "tip_metalink"] %>% 
+  tibble(label = .) %>%
+  unnest(label) 
+  print(width = Inf)
+```
+
+```{r}
+unnest(tip_metalink)
+```
+
 
 # Components for final visualisation
 
@@ -981,7 +1000,7 @@ circular_plotb <-
 
 ```
 
-# HERE
+
 ```{r}
 circular_plotb
 ```
@@ -1006,10 +1025,9 @@ ggsave(
 
 ## Detailed subplots 
 
-
 ## N1732
 
-- getting the list of tips 
+- getting the list of tips
 ```{r}
 tips_N1732 <- 
   my_plotdata %>% 
@@ -1021,6 +1039,15 @@ tips_N1732 <-
 - subsetting the tree 
 ```{r}
 subtree_N1732 <- ape::keep.tip(rooted_tree_nodelab, tips_N1732)
+
+
+subtree_N1732 <- 
+  extract.clade(rooted_tree_nodelab, 
+                "N1732",
+                root.edge = 0, 
+                collapse.singles = TRUE,
+                interactive = FALSE)
+
 ```
 
 - creating the simple plot and adding the metadata
@@ -1033,7 +1060,7 @@ plot_subtree_N1732 <-
 plot_subtree_N1732$data <- 
   plot_subtree_N1732$data %>% 
   left_join(my_plotdata %>% 
-              select(c(4, seq(10, ncol(.)))), 
+              select(c(4, seq(10, ncol(my_plotdata)))), 
             by = c("label" = "label")
             )
 ```
@@ -1073,19 +1100,45 @@ N1732_years_facet_df <-
                       group_expr = NULL)
 ```
 
-- plotting the tree
+- ploting the tree
+
 
 ```{r}
-N1732_plot <- 
+test <- 
+  plot_subtree_N1732$data %>%
+  filter(isTip, inNorway) %>%
+  arrange(desc(y)) %>%
+  head()
+
+
+```
+
+```{r}
+#N1732_plot <- 
   plot_subtree_N1732 + 
   ggplot2::geom_point(data = . %>% filter(isTip)  %>%
                         unnest(ctg_year) %>%
-                        mutate_at(vars(year), as.character) %>%
-                        transform_positions_at_unnest(spacing = 2e-4), 
+                        mutate_at(vars(year), as.character), 
                       aes(color = category_highlight, shape = year)) +
   ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
                               na.translate = FALSE,
-                              name = "Highlight") +
+                              name = "Highlight") 
+  
+  
+  # we need to trick to get the tree in the background layer
+  geom_tippoint(size = .1, alpha = 0) +
+  #adjust the positions to avoid overlap
+  ggnewscale::new_scale_color() +
+  ggnewscale::new_scale_fill() +
+  ggplot2::geom_point(data = . %>% 
+                        filter(isTip)  %>%
+                        unnest(ctg_year) %>%
+                        mutate_at(vars(year), as.character) %>%
+                        transform_positions_at_unnest(spacing = 2e-3), 
+                      aes(color = category_highlight, shape = year)) +
+  ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
+                              na.translate = T,
+                              name = "Highlight") 
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -1177,7 +1230,7 @@ N1732_plot
 
 ```{r}
 N1732_plotb <- grop_redraw(N1732_plot, 
-                   width_mult = c(1, .1, .1, .3, .1, .3, .3)
+                              width_mult = c(1, .1, .1, .3, .1, .3, .3)
         )
 ```
 
@@ -1199,7 +1252,7 @@ ggsave(
   N1732_plotb,
   device = "svg",
   dpi = 600, 
-  units = "cm", width = 35, height = 100
+  units = "cm", width = 35, height = 50
   )
 ```
 

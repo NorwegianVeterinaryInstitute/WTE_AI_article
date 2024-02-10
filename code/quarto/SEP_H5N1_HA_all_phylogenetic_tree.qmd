@@ -582,7 +582,7 @@ explor_plot3b$data <-
 
 
 ## 4. Plotting the collapsed tree
-
+# HERE adding solution tips labels
 - first we make the base plot  
 
 ```{r}
@@ -595,6 +595,10 @@ explor_plot3d <-
   ggplot2::scale_color_manual(values = category_highlight_pal, 
                               na.translate = FALSE,
                               name = "Highlight") +
+  # HERE: adding tip labels 
+  # ggtree::geom_tiplab(aes(label = label),
+  #                     size = 1,
+  #                     vjust = .2) +
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -630,6 +634,15 @@ Host_family_facet_df <-
 Host_latin_facet_df <- 
   get_ctg_data_geom_facet(explor_plot3d$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
 
+# HERE ADDED for simple label panel
+labels_df <- 
+  explor_plot3d$data %>%
+  dplyr::filter(isTip) %>%
+  dplyr::select(label) %>%
+  dplyr::mutate(val = label)
+
+# HERE : getting all the represented tips - had to create a function
+all_represented_tips_df <- get_represented_tips_geom_facet(explor_plot3d$data)
 
 # getting the countries per group
 countries_facet_df2 <- 
@@ -651,10 +664,13 @@ years_facet_df <-
                       nested_col = nested_year, 
                       var = year, 
                       group_expr = NULL)
+
+
+
 ```
 
 1. adding node that will be cut for detailed plotting with a light green point 
-
+# HERE adding solution tips labels as panel
 ```{r}
 explor_plot4 <- 
   explor_plot3d + 
@@ -675,6 +691,30 @@ explor_plot4 <-
   ggtree::hexpand(.01) +
   ggtree::theme_tree() +
   # Adding the panels 
+  # HERE adding tips labels need some adjustment
+  ggtree::geom_facet(
+    panel = "labels",
+    data = labels_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  + 
+  # HERE adding all represented tips  
+  # ggtree::geom_facet(
+  #   panel = "labels", 
+  #   data = labels_df,
+  #   geom = geom_text,
+  #   mapping = aes(x = -.4, label = val),
+  #   hjust = 0,
+    # size = 1)  + 
+  # HERE adding all the tips represented 
+  # ggtree::geom_facet(
+  #   panel = "labels", 
+  #   data = all_represented_tips_df,
+  #   geom = geom_text,
+  #   mapping = aes(x = -.4, label = val),
+  #   hjust = 0,
+  #   size = 1)  + 
   # countries barplot and text legend 
     # Adding the years now
   ggnewscale::new_scale_fill() +
@@ -748,10 +788,38 @@ collapsed_plot <- grop_redraw(explor_plot4,
         )
 ```
 
+HERE for the labels
 
 ```{r}
-collapsed_plot
+collapsed_plot_labels <- grop_redraw(explor_plot4, 
+                              width_mult = c(1, .1, .05, .05, .2, .05, .3, .5)
+        )
 ```
+
+```{r}
+ggsave(
+  here::here(params$save_dir, "collapsed_plot_labels.svg"),
+  collapsed_plot_labels,
+  device = "svg",
+  dpi = 600, 
+  units = "cm", width = 35, height = 50
+  )
+
+```
+
+```{r}
+export_meta_treenodes_fun(
+  plot_data = explor_plot4$data,
+  metadata = all_tree_metadata2,
+  col_rep_tips = "tip_metalink",
+  file = here::here(params$save_dir, "test_H5N1_all_labels_metadata.xlsx"),
+  sheet = "H5N1_all_labels_metadata",
+  Isolate_Id, Isolate_Name, year, continent, country, Host_family, Host_latin
+)
+```
+
+
+
 
 _Figure caption:_
 H5N1 HA segment. ML phylogenetic tree with nodes depth >= 5, that did not contained 

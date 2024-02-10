@@ -50,7 +50,7 @@ Loads the environment (to continue previous work)
 ```{r optional load environment}
 #| include: false
 # Uncomment if you want to load a saved environment file
-#if (file.exists(params$env_file)) {load(params$env_file)}
+#if (file.exists(here(params$env_file))) {load(here(params$env_file))}
 ```
 
 # Preparation of metadata specific to the tree
@@ -520,7 +520,7 @@ my_rooted_tree <- rooted_tree_simple_plot_list$tree_nodelab
 
 - collapsing the nodes recursively. 
 For this we require a list of descendants of for nodes to collapse 
-# NOW 
+
 
 Collapsing the nodes of the tree 
 ```{r}

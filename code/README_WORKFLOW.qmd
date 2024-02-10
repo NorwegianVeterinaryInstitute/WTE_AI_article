@@ -32,6 +32,8 @@ params:
 - [x]   `SEP_H5N5_HA_phylogenetic_tree.qmd`
 - [x]   `SEP_H5N5_NA_phylogenetic_tree.qmd`
 
+4. Packages used citat - session info 
+
 6.  (last) Preparation metadata and aknowledgments for publication: `POST_preparation_aknowledgments_metadata_for_publication.qmd`
 
 # check list of what needs to be done before publication
@@ -46,4 +48,11 @@ Acknowledgements and formating checks
 - [ ] removed sequences for H5N1 HA
 - [ ] preparation files for MSA 
 - [ ] formatting
+
+# Diverse 
+- [ ] Open github repository with scripts before submission 
+- [ ] Add a licence - Ask Karin what type I should use so I can use that to make package afterwards
+- [ ] clean dependencies that are absolutely necessary for the scripts to work (let the scales as it was used 
+to create the scales)
+- [ ] organize and move the prep scripts into the folder so its accessible 
 
