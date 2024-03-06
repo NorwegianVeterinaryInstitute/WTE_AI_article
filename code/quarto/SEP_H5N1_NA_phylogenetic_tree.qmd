@@ -12,7 +12,7 @@ params:
     source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
 execute: 
   echo: false
-  cache: true
+  cache: false
 format: html
 knitr:
   opts_chunk: 
@@ -163,14 +163,13 @@ tree_meta <-
                test_expr = rlang::expr("Norway" %in% .x)) %>% 
   check_in_var(., "Host_latin", 
                name_new_col = "isWTE", 
-               test_expr = rlang::expr("Haliceetus albicilla" %in% .x)) %>%
+               test_expr = rlang::expr("Haliaeetus albicilla" %in% .x)) %>%
   dplyr::mutate(category_highlight = !!grouping_helper_category_highligth) %>%
   string_levels_var(var = "year") %>%
   dplyr::ungroup() %>%
   dplyr::mutate_at(dplyr::vars(category_highlight), 
             ~ factor(.x, levels = category_highligth_levels, ordered = T))
 ```
-
 
 ## Exploration of the phylogenetic tree
 
@@ -224,7 +223,7 @@ my_plotdata <- rooted_tree_simple_plot_list$simple_plot$data   %>%
 
 
 
-<!-- data check
+data check
 ```{r}
 my_plotdata %>%
   filter(!isTip) %>%
@@ -237,7 +236,7 @@ my_plotdata %>% filter(label == "N1") %>%
   select(descendants_tips_from_node) %>%
   unnest(descendants_tips_from_node)
 ```
--->
+
 
 ## 2. Adding metadata to nodes and tips 
 
@@ -273,7 +272,6 @@ my_plotdata <-
 ```
 
 
-<!-- 
 Here is how it looks like 
 ```{r}
 names(my_plotdata)
@@ -285,7 +283,7 @@ my_plotdata %>%
     print(n = 10, width = Inf)
 ```
 
---> 
+ 
 Selecting one column where several tips are represented and
 showing an example of how the nested variable looks like, using eg. 
 nested country variable
@@ -344,7 +342,7 @@ my_plotdata <-
   # checking if the data contains WTE
   check_in_var(., "ctg_Host_latin", 
                name_new_col = "isWTE", 
-               test_expr = rlang::expr("Haliceetus albicilla" %in% .x))  %>% 
+               test_expr = rlang::expr("Haliaeetus albicilla" %in% .x))  %>% 
   dplyr::mutate(category_highlight = !!grouping_helper_category_highligth) %>%
   dplyr::mutate_at(vars(category_highlight), 
                    ~ factor(.x, levels = category_highligth_levels, ordered = T)
@@ -353,7 +351,7 @@ my_plotdata <-
 
 
 
-### 4. Test visualisation
+## 4. Test visualisation
 
 We can visualize which nodes can be collapsed and at which depths
 We can try to vary the depth of notes to be collapsed 
@@ -678,16 +676,37 @@ ggsave(
 ## 4. Plotting the collapsed tree
 
 - first we make the base plot  
+<!-- NB HERE added solution tips labels -->
+Need to add the Isolate_Id to be able to use those as labels in the plot
+```{r}
+explor_plot3c$data <- 
+  explor_plot3c$data %>% 
+  dplyr::left_join(
+    all_tree_metadata %>% 
+      dplyr::select(label, Isolate_Id)) %>%
+  # Adding labels for nodes that became tips during collapsing
+    mutate(Isolate_Id = 
+             case_when(
+               is.na(Isolate_Id) ~ label,
+               TRUE ~ Isolate_Id
+               )) 
+```
 
 ```{r}
 explor_plot3d <- 
   explor_plot3c +
   ggplot2::geom_point(aes(x, y, color = category_highlight),
-                      data = . %>% filter(isTip), 
-                      position = ggforce::position_auto(), size = 1.25) +
-  ggplot2::scale_color_manual(values = category_highlight_pal, 
+                      data = . %>% filter(isTip),
+                      position = ggforce::position_auto(), 
+                      size = 1) +
+  ggplot2::scale_color_manual(values = category_highlight_pal,
                               na.translate = FALSE,
-                              name = "Highlight") +
+                              name = "Highlight Norway") +
+  # HERE: adding tip labels 
+  ggtree::geom_tiplab(aes(label = Isolate_Id),
+                      size = 1,
+                      vjust = .2,
+                      hjust = 1e-4) +
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -720,8 +739,7 @@ countries_facet_df <-
 Host_family_facet_df <- 
   get_ctg_data_geom_facet(explor_plot3d$data, "ctg_Host_family", "Host_family", "Host_family_string")
 
-Host_latin_facet_df <- 
-  get_ctg_data_geom_facet(explor_plot3d$data, "ctg_Host_latin", "Host_latin", "Host_latin_string")
+# We removed the Host_Latin, was to much data cant be displayed nicely
 
 
 # getting the countries per group
@@ -747,7 +765,7 @@ years_facet_df <-
 ```
 
 1. adding node that will be cut for detailed plotting with a light green point 
-
+<!-- HERE adding solution tips labels as panel -->
 ```{r}
 explor_plot4 <- 
   explor_plot3d + 
@@ -799,18 +817,6 @@ explor_plot4 <-
     mapping = aes(x = -.4, label = val),
     hjust = 0,
     size = 1)  + 
-  # Adding Host familly panel 
-    ggnewscale::new_scale_fill() +
-    ggtree::geom_facet(
-    panel = "Family", 
-    data = Host_family_facet_df2,
-    geom = geom_bar,
-    mapping = aes(x = value, fill = variable),
-    orientation = 'y', 
-    width = 1, 
-    stat = "identity") +
-  scale_fill_manual(values = host_families_color_pal,
-                    name = "Host Family") +
   #guides(fill = "none") +
   ggtree::geom_facet(
     panel = "Family Legend", 
@@ -819,13 +825,6 @@ explor_plot4 <-
     mapping = aes(x = -.4, label = val),
     hjust = 0,
     size = 1)  +
-  ggtree::geom_facet(
-    panel = "Host Latin", 
-    data = Host_latin_facet_df,
-    geom = geom_text,
-    mapping = aes(x = -.4, label = val),
-    hjust = 0,
-    size = 1) +
   theme(strip.text = 
           ggplot2::element_text(size = 9))
 
@@ -837,7 +836,7 @@ explor_plot4
 
 ```{r}
 collapsed_plot <- grop_redraw(explor_plot4, 
-                              width_mult = c(1, .1, .1, .3, .1, .3, .3)
+                               width_mult = c(1, .2, .2, 1, 1)
         )
 ```
 
@@ -865,23 +864,18 @@ ggsave(
   )
 ```
 
-## Adding the isolates names
-```{r}
-explor_plot4$data %>% 
-  print(n = 10, width = Inf)
 
-test <- 
-  explor_plot4$data %>%
-  filter(label == "N1") %>%
-  select(label, tip_metalink) 
-test[1, "tip_metalink"] %>% 
-  tibble(label = .) %>%
-  unnest(label) 
-  print(width = Inf)
-```
+## 5. Exporting the metadata for the plot 
 
 ```{r}
-unnest(tip_metalink)
+export_meta_treenodes_funV2(
+  plot_data = explor_plot4$data,
+  metadata = all_tree_metadata2,
+  col_rep_tips = "tip_metalink",
+  file = here::here(params$save_dir, "H5N1_NA_metadata.xlsx"),
+  sheet = "H5N1_NA_collapsed_tree_metadata",
+  Isolate_Name, year, continent, country, Host_family, Host_latin
+)
 ```
 
 
@@ -932,7 +926,7 @@ circular_plot <-
     position = ggforce::position_auto()) +
   # curious - weird thing here
   scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"),
-                     name = "Highlight") +
+                     name = "Highlight Norway") +
   scale_size_continuous(range = c(0, 1)) +
   scale_shape_manual(values = SEP_years_shape_pal, name = "Year") +
   guides(size = "none") +
@@ -1039,19 +1033,10 @@ tips_N1732 <-
 - subsetting the tree 
 ```{r}
 subtree_N1732 <- ape::keep.tip(rooted_tree_nodelab, tips_N1732)
-
-
-subtree_N1732 <- 
-  extract.clade(rooted_tree_nodelab, 
-                "N1732",
-                root.edge = 0, 
-                collapse.singles = TRUE,
-                interactive = FALSE)
-
 ```
 
 - creating the simple plot and adding the metadata
-
+<!-- # HERE need to add the tip isolate ID --> 
 ```{r}
 plot_subtree_N1732 <- 
   ggtree(subtree_N1732, layout = "rectangular", color = "grey", alpha = .7)  
@@ -1062,10 +1047,24 @@ plot_subtree_N1732$data <-
   left_join(my_plotdata %>% 
               select(c(4, seq(10, ncol(my_plotdata)))), 
             by = c("label" = "label")
+            ) %>%
+    dplyr::left_join(all_tree_metadata %>%
+                     select(label, Isolate_Id), 
+                   by = c("label" = "label")
             )
 ```
 
-- preparing the data for the pannels views
+- preparing the data for the panels views
+<!-- # HERE ADDED -->
+```{r}
+N1732_Isolate_Id_df <- 
+  plot_subtree_N1732$data %>% 
+  filter(isTip) %>% 
+  select(label, Isolate_Id) %>% 
+  dplyr::rename(val = Isolate_Id) %>%
+  distinct()
+```
+
 
 ```{r}
 N1732_countries_facet_df <- 
@@ -1101,20 +1100,10 @@ N1732_years_facet_df <-
 ```
 
 - ploting the tree
-
-
-```{r}
-test <- 
-  plot_subtree_N1732$data %>%
-  filter(isTip, inNorway) %>%
-  arrange(desc(y)) %>%
-  head()
-
-
-```
+<!-- # HERE NEED to ADD ID labels --> 
 
 ```{r}
-#N1732_plot <- 
+N1732_plot <- 
   plot_subtree_N1732 + 
   ggplot2::geom_point(data = . %>% filter(isTip)  %>%
                         unnest(ctg_year) %>%
@@ -1122,23 +1111,7 @@ test <-
                       aes(color = category_highlight, shape = year)) +
   ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
                               na.translate = FALSE,
-                              name = "Highlight") 
-  
-  
-  # we need to trick to get the tree in the background layer
-  geom_tippoint(size = .1, alpha = 0) +
-  #adjust the positions to avoid overlap
-  ggnewscale::new_scale_color() +
-  ggnewscale::new_scale_fill() +
-  ggplot2::geom_point(data = . %>% 
-                        filter(isTip)  %>%
-                        unnest(ctg_year) %>%
-                        mutate_at(vars(year), as.character) %>%
-                        transform_positions_at_unnest(spacing = 2e-3), 
-                      aes(color = category_highlight, shape = year)) +
-  ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
-                              na.translate = T,
-                              name = "Highlight") 
+                              name = "Highlight Norway") +
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -1161,6 +1134,14 @@ test <-
   ggtree::hexpand(.01) +
   ggtree::theme_tree() +
   # Adding the panels 
+  # HERE : Adding Isolates ID  
+  ggtree::geom_facet(
+    panel = "Isolate ID", 
+    data = N1732_Isolate_Id_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = .5)  +
   # countries barplot and text legend 
     # Adding the years now
   ggnewscale::new_scale_fill() +
@@ -1230,7 +1211,7 @@ N1732_plot
 
 ```{r}
 N1732_plotb <- grop_redraw(N1732_plot, 
-                              width_mult = c(1, .1, .1, .3, .1, .3, .3)
+                              width_mult = c(1, .3, .1, .1, .3, .1, .3, .3)
         )
 ```
 
@@ -1252,7 +1233,7 @@ ggsave(
   N1732_plotb,
   device = "svg",
   dpi = 600, 
-  units = "cm", width = 35, height = 50
+  units = "cm", width = 35, height = 120
   )
 ```
 
@@ -1277,18 +1258,34 @@ subtree_N15 <- ape::keep.tip(rooted_tree_nodelab, tips_N15)
 
 ```{r}
 plot_subtree_N15 <- 
-  ggtree(subtree_N15, layout = "rectangular", color = "grey", alpha = .7)  
+  ggtree(subtree_N15, layout = "rectangular", color = "grey", alpha = .7)
+```
 
+<!-- HERE ADDED  - to get the ids --> 
+```{r}
 # adding the metadata 
 plot_subtree_N15$data <- 
   plot_subtree_N15$data %>% 
   left_join(my_plotdata %>% 
               select(c(4, seq(10, ncol(.)))), 
             by = c("label" = "label")
+            ) %>% 
+  dplyr::left_join(all_tree_metadata %>%
+                     select(label, Isolate_Id), 
+                   by = c("label" = "label")
             )
 ```
 
-- preparing the data for the pannels views
+- preparing the data for the panels views
+<!-- # HERE ADDED --> 
+```{r}
+N15_Isolate_Id_df <- 
+  plot_subtree_N15$data %>% 
+  filter(isTip) %>% 
+  select(label, Isolate_Id) %>% 
+  dplyr::rename(val = Isolate_Id) %>%
+  distinct()
+```
 
 ```{r}
 N15_countries_facet_df <- 
@@ -1335,7 +1332,7 @@ N15_plot <-
                       aes(color = category_highlight, shape = year)) +
   ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
                               na.translate = FALSE,
-                              name = "Highlight") +
+                              name = "Highlight Norway") +
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -1358,6 +1355,14 @@ N15_plot <-
   ggtree::hexpand(.01) +
   ggtree::theme_tree() +
   # Adding the panels 
+  # HERE : Adding Isolates ID  
+  ggtree::geom_facet(
+    panel = "Isolate ID", 
+    data = N15_Isolate_Id_df,
+    geom = geom_text,
+    mapping = aes(x = -.4, label = val),
+    hjust = 0,
+    size = 1)  +
   # countries barplot and text legend 
     # Adding the years now
   ggnewscale::new_scale_fill() +
@@ -1420,14 +1425,14 @@ N15_plot <-
           ggplot2::element_text(size = 9))
 
 
-N15_plot
+#N15_plot
 ```
 
 - Now we need to adjust the size of the panels 
 
 ```{r}
 N15_plotb <- grop_redraw(N15_plot, 
-                   width_mult = c(1, .1, .1, .3, .1, .3, .3)
+                         width_mult = c(1, .3, .1, .1, .3, .1, .3, .3)
         )
 ```
 
@@ -1469,16 +1474,24 @@ data_here <-
   left_join(all_tree_metadata2, by = "label") %>%
   select(label, Isolate_Id, subtype, continent, country, year, 
          Host_family, Host_latin, Isolate_Name) %>%
-  distinct() 
-
+  distinct()
 
 saveRDS(data_here, here::here(params$save_dir, "H5N1_NA_metadata.rds"))
+```
 
-xlsx::write.xlsx(as.data.frame(data_here), 
+<!-- HERE modified 
+Select label
+Changed names sheets
+need to append in order not to errase previous data 
+--> 
+```{r}
+xlsx::write.xlsx(as.data.frame(data_here) %>%
+                   dplyr::select(-label), 
                  here::here(params$save_dir, "H5N1_NA_metadata.xlsx"),
                  sheetName = "H5N1_NA_metadata",
                  showNA = FALSE,
-                 row.names = FALSE)
+                 row.names = FALSE,
+                 append = TRUE)
 ```
 
 This dataset is representative for `r nrow(data_here)` isolates. 
