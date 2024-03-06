@@ -33,7 +33,10 @@ all_tree_metadata <- xlsx::read.xlsx(
   sheetName = "all_tree_metadata") %>%
   dplyr::mutate_at(vars(Locality_code, lon, lat, artkode, efsakode), 
                    ~as.numeric(.x)) %>%
-  dplyr::mutate_at(c("year", "month", "day"), ~as.integer(.x)) 
+  dplyr::mutate_at(c("year", "month", "day"), ~as.integer(.x)) %>%
+  # changing last column name - to match (easier that to correct everything)
+  dplyr::select(-Host_latin) %>%
+  dplyr::rename(Host_latin = Host_latinsk_navn) 
 
 # exporting so we can use as RDS 
 saveRDS(all_tree_metadata,
