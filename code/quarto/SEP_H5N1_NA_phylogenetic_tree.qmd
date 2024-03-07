@@ -186,7 +186,7 @@ explor_plot1 <-
     ),
                 data = . %>% droplevels(),
                 position = ggforce::position_auto()) +
-  ggplot2::scale_color_manual(values = category_highlight_pal, name = "Highlight") +
+  ggplot2::scale_color_manual(values = category_highlight_pal, name = "Highlight Norway") +
   ggplot2::scale_shape_manual(values = SEP_years_shape_pal, name = "Collection")
 explor_plot1
 ```
@@ -208,6 +208,7 @@ ggsave(filename = here::here(params$save_dir, "explor_plot1.svg"),
 rooted_tree_simple_plot_list <- 
   monophyly_nodetag_simple_plot_fun(rooted_tree, lwd = .1, color = "grey")
 ```
+
 
 
 -   saving in individual objects (copy). We will reuse the plot data
@@ -474,8 +475,10 @@ my_rooted_tree <- rooted_tree_simple_plot_list$tree_nodelab
 my_collapsed_tree <- 
   collapsing_nodes_from_nodes_fun(
     my_rooted_tree, 
-    nodes_select_collapsing_1
+    nodes_select_collapsing_1,
+    trim.internal = F
     )
+# Added avoidance collapse single to test 
 
 ```
 
@@ -584,7 +587,8 @@ Collapsing the additional nodes
 ```{r}
 my_collapsed_tree2 <- 
   collapsing_nodes_from_nodes_fun(my_collapsed_tree, 
-                                  manual_nodes_selection)
+                                  manual_nodes_selection,
+                                  trim.internal = FALSE)
 ```
 
 Plotting the base of the collapsed tree 
@@ -683,13 +687,15 @@ explor_plot3c$data <-
   explor_plot3c$data %>% 
   dplyr::left_join(
     all_tree_metadata %>% 
-      dplyr::select(label, Isolate_Id)) %>%
-  # Adding labels for nodes that became tips during collapsing
-    mutate(Isolate_Id = 
-             case_when(
-               is.na(Isolate_Id) ~ label,
-               TRUE ~ Isolate_Id
-               )) 
+      dplyr::select(label, Isolate_Id),
+    by =  c("label" = "label")
+    ) %>%
+  # Adding labels for nodes in case - so no pb for exporting
+  mutate(Isolate_Id = 
+           case_when(
+             is.na(Isolate_Id) ~ label,
+             TRUE ~ Isolate_Id
+           )) 
 ```
 
 ```{r}
@@ -698,15 +704,26 @@ explor_plot3d <-
   ggplot2::geom_point(aes(x, y, color = category_highlight),
                       data = . %>% filter(isTip),
                       position = ggforce::position_auto(), 
-                      size = 1) +
+                      size = .8) +
   ggplot2::scale_color_manual(values = category_highlight_pal,
                               na.translate = FALSE,
                               name = "Highlight Norway") +
+  # HERE: adding bootstrap value on branches
+  ggnewscale::new_scale_color() +
+  ggtree::geom_point(aes(x = branch, 
+                         color = as.numeric(labels_bootstrap) < 95),
+                     data = . %>% filter(!isTip), 
+                     shape = 19, size = .5, na.rm = T) +
+  ggplot2::scale_color_manual(name = "Bootstrap", 
+                     values =  bootstrap_pal_col,
+                     labels = c(expression(phantom(x) >= 95),
+                                expression(phantom(x) < 95)),
+                     na.translate = FALSE) +
   # HERE: adding tip labels 
   ggtree::geom_tiplab(aes(label = Isolate_Id),
                       size = 1,
-                      vjust = .2,
-                      hjust = 1e-4) +
+                      vjust = .3,
+                      hjust = -1e-1) +
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -860,7 +877,7 @@ ggsave(
   collapsed_plot,
   device = "svg",
   dpi = 600, 
-  units = "cm", width = 35, height = 50
+  units = "cm", width = 40, height = 50
   )
 ```
 
@@ -874,6 +891,7 @@ export_meta_treenodes_funV2(
   col_rep_tips = "tip_metalink",
   file = here::here(params$save_dir, "H5N1_NA_metadata.xlsx"),
   sheet = "H5N1_NA_collapsed_tree_metadata",
+  append = FALSE,
   Isolate_Name, year, continent, country, Host_family, Host_latin
 )
 ```
@@ -911,7 +929,17 @@ circular_meta <-
   )) %>%
   mutate(point_size = 
            if_else(label == "N1732" | label == "N15", 1, point_size)
-         )
+         ) %>%
+  # Add the isolate ID 
+    dplyr::left_join(
+    all_tree_metadata %>% 
+      dplyr::select(label, Isolate_Id)) %>%
+  # Adding labels for nodes in case - so no pb for exporting
+  mutate(Isolate_Id = 
+           case_when(
+             is.na(Isolate_Id) ~ label,
+             TRUE ~ Isolate_Id
+           )) 
 ```
 
 
@@ -927,6 +955,10 @@ circular_plot <-
   # curious - weird thing here
   scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"),
                      name = "Highlight Norway") +
+  # HERE SHAPE
+  scale_shape_manual(values = SEP_years_shape_pal, 
+                     name = "Shape Year", 
+                     na.translate = FALSE) +
   scale_size_continuous(range = c(0, 1)) +
   scale_shape_manual(values = SEP_years_shape_pal, name = "Year") +
   guides(size = "none") +
@@ -1017,6 +1049,21 @@ ggsave(
   )
 ```
 
+export metadata circular tree 
+```{r}
+export_meta_treenodes_funV2(
+  plot_data = circular_plotb,
+  metadata = all_tree_metadata2,
+  col_rep_tips = "tip_metalink",
+  file = here::here(params$save_dir, "H5N1_NA_metadata.xlsx"),
+  sheet = "H5N1_NA_circular_tree_metadata",
+  append = TRUE,
+  Isolate_Name, year, continent, country, Host_family, Host_latin
+)
+
+```
+
+
 ## Detailed subplots 
 
 ## N1732
@@ -1036,6 +1083,7 @@ subtree_N1732 <- ape::keep.tip(rooted_tree_nodelab, tips_N1732)
 ```
 
 - creating the simple plot and adding the metadata
+
 <!-- # HERE need to add the tip isolate ID --> 
 ```{r}
 plot_subtree_N1732 <- 
@@ -1048,10 +1096,18 @@ plot_subtree_N1732$data <-
               select(c(4, seq(10, ncol(my_plotdata)))), 
             by = c("label" = "label")
             ) %>%
-    dplyr::left_join(all_tree_metadata %>%
-                     select(label, Isolate_Id), 
-                   by = c("label" = "label")
-            )
+  # prepare adding isolate ids
+  dplyr::left_join(
+    all_tree_metadata %>% 
+      dplyr::select(label, Isolate_Id),
+    by =  c("label" = "label")
+    ) %>%
+  # Adding labels for nodes in case - so no pb for exporting
+  mutate(Isolate_Id = 
+           case_when(
+             is.na(Isolate_Id) ~ label,
+             TRUE ~ Isolate_Id
+           )) 
 ```
 
 - preparing the data for the panels views
@@ -1112,6 +1168,10 @@ N1732_plot <-
   ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
                               na.translate = FALSE,
                               name = "Highlight Norway") +
+  # HERE SHAPE
+  scale_shape_manual(values = SEP_years_shape_pal, 
+                     name = "Shape Year", 
+                     na.translate = FALSE) +
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -1237,6 +1297,20 @@ ggsave(
   )
 ```
 
+Exporting the metadata 
+```{r}
+export_meta_treenodes_funV2(
+  plot_data = N1732_plot,
+  metadata = all_tree_metadata2,
+  col_rep_tips = "tip_metalink",
+  file = here::here(params$save_dir, "H5N1_NA_metadata.xlsx"),
+  sheet = "H5N1_NA_N1732_tree_metadata",
+  append = TRUE,
+  Isolate_Name, year, continent, country, Host_family, Host_latin
+)
+
+```
+
 
 ## N15
 
@@ -1270,10 +1344,18 @@ plot_subtree_N15$data <-
               select(c(4, seq(10, ncol(.)))), 
             by = c("label" = "label")
             ) %>% 
-  dplyr::left_join(all_tree_metadata %>%
-                     select(label, Isolate_Id), 
-                   by = c("label" = "label")
-            )
+  # adding isolates ID
+  dplyr::left_join(
+    all_tree_metadata %>% 
+      dplyr::select(label, Isolate_Id),
+    by =  c("label" = "label")
+    ) %>%
+  # Adding labels for nodes in case - so no pb for exporting
+  mutate(Isolate_Id = 
+           case_when(
+             is.na(Isolate_Id) ~ label,
+             TRUE ~ Isolate_Id
+           )) 
 ```
 
 - preparing the data for the panels views
@@ -1333,6 +1415,10 @@ N15_plot <-
   ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
                               na.translate = FALSE,
                               name = "Highlight Norway") +
+  # HERE SHAPE
+  scale_shape_manual(values = SEP_years_shape_pal, 
+                     name = "Shape Year", 
+                     na.translate = FALSE) +
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -1459,6 +1545,19 @@ ggsave(
   )
 ```
 
+Exporting the metadata
+```{r}
+export_meta_treenodes_funV2(
+  plot_data = N15_plot,
+  metadata = all_tree_metadata2,
+  col_rep_tips = "tip_metalink",
+  file = here::here(params$save_dir, "H5N1_NA_metadata.xlsx"),
+  sheet = "H5N1_NA_N15_tree_metadata",
+  append = TRUE,
+  Isolate_Name, year, continent, country, Host_family, Host_latin
+)
+```
+
 
 # Saving environment
 To continue analyses that are not finished
@@ -1482,17 +1581,20 @@ saveRDS(data_here, here::here(params$save_dir, "H5N1_NA_metadata.rds"))
 <!-- HERE modified 
 Select label
 Changed names sheets
-need to append in order not to errase previous data 
+need to append in order not to erase previous data 
+Then has information on the root 
 --> 
 ```{r}
 xlsx::write.xlsx(as.data.frame(data_here) %>%
                    dplyr::select(-label), 
                  here::here(params$save_dir, "H5N1_NA_metadata.xlsx"),
-                 sheetName = "H5N1_NA_metadata",
+                 sheetName = "H5N1_NA_all_metadata",
                  showNA = FALSE,
                  row.names = FALSE,
                  append = TRUE)
 ```
+
+
 
 This dataset is representative for `r nrow(data_here)` isolates. 
 This includes `r length(tree$tip.label)` isolates with unique sequences, 

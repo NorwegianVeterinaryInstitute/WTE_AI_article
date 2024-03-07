@@ -5,7 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 params:
     save_dir: "data/prepared_data/"
     all_tree_metadata: "all_tree_metadata_CAB.RDS"
-    new_metadata: "all_tree_metadata_CAB_2023-02-28.xlsx"
+    new_metadata: "all_tree_metadata_CAB_2023-03-07.xlsx"
 execute: 
   echo: false
   cache: false
@@ -36,7 +36,9 @@ all_tree_metadata <- xlsx::read.xlsx(
   dplyr::mutate_at(c("year", "month", "day"), ~as.integer(.x)) %>%
   # changing last column name - to match (easier that to correct everything)
   dplyr::select(-Host_latin) %>%
-  dplyr::rename(Host_latin = Host_latinsk_navn) 
+  dplyr::rename(Host_latin = Host_latinsk_navn) %>%
+  # to remove the duplicates
+  dplyr::distinct()
 
 # exporting so we can use as RDS 
 saveRDS(all_tree_metadata,

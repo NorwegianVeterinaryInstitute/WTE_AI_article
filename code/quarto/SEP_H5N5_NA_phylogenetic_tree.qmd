@@ -186,7 +186,7 @@ tree_meta <-
                test_expr = rlang::expr("Norway" %in% .x)) %>% 
   check_in_var(., "Host_latin", 
                name_new_col = "isWTE", 
-               test_expr = rlang::expr("Haliceetus albicilla" %in% .x)) %>%
+               test_expr = rlang::expr("Haliaeetus albicilla" %in% .x)) %>%
   dplyr::mutate(category_highlight = !!grouping_helper_category_highligth) %>%
   string_levels_var(var = "year") %>%
   dplyr::ungroup() %>%
@@ -209,7 +209,7 @@ explor_plot1 <-
     ),
                 data = . %>% droplevels(),
                 position = ggforce::position_auto()) +
-  ggplot2::scale_color_manual(values = category_highlight_pal, name = "Highlight") +
+  ggplot2::scale_color_manual(values = category_highlight_pal, name = "Highlight Norway") +
   ggplot2::scale_shape_manual(values = SEP_years_shape_pal, name = "Collection")
 explor_plot1
 ```
@@ -232,7 +232,7 @@ rooted_tree_simple_plot_list <-
 
 -   exploring the structure 
 ```{r}
-#glimpse(rooted_tree_simple_plot_list)
+glimpse(rooted_tree_simple_plot_list)
 
 ```
 
@@ -248,7 +248,7 @@ my_plotdata <- rooted_tree_simple_plot_list$simple_plot$data  %>%
                                                      list(descendants_tips_from_node)))
 ```
 
-<!-- data check 
+<!--data check 
 ```{r}
 my_plotdata %>% 
   filter(!isTip) %>%
@@ -297,8 +297,8 @@ my_plotdata <-
 ```
 
 ```{r}
-# my_plotdata %>%
-#   print(n = 10, width = Inf)
+#my_plotdata %>%
+#  print(n = 10, width = Inf)
 ```
 
 
@@ -366,7 +366,7 @@ my_plotdata <-
   # checking if the data contains WTE
   check_in_var(., "ctg_Host_latin", 
                name_new_col = "isWTE", 
-               test_expr = rlang::expr("Haliceetus albicilla" %in% .x))  %>% 
+               test_expr = rlang::expr("Haliaeetus albicilla" %in% .x))  %>% 
   dplyr::mutate(category_highlight = !!grouping_helper_category_highligth) %>%
   dplyr::mutate_at(vars(category_highlight), 
                    ~ factor(.x, levels = category_highligth_levels, ordered = T)
@@ -467,9 +467,12 @@ circular_plot <-
     position = ggforce::position_auto()) +
   # curious - weird thing here
   scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"),
-                     name = "Highlight") +
+                     name = "Highlight Norway") +
   scale_size_continuous(range = c(0, 1)) +
-  scale_shape_manual(values = SEP_years_shape_pal, name = "Year") +
+  # Added homogeneization shapes
+  scale_shape_manual(values = SEP_years_shape_pal, 
+                     name = "Shape Year", 
+                     na.translate = FALSE) +
   guides(size = "none") 
 ```
 
@@ -536,7 +539,7 @@ circular_plotb
 ```
 
 _Figure caption:_
-H5N5 HA segment. ML phylogenetic tree. The tree is rooted, 
+H5N5 NA segment. ML phylogenetic tree. The tree is rooted, 
 but the outgroup is not shown, due to large distance to the body of the tree. 
 
 ```{r}
@@ -549,9 +552,9 @@ ggsave(
   )
 ```
 
-## Rectangular plot 
+# Rectangular plot 
 
-
+<!-- NB HERE added solution tips labels -->
 ```{r}
 rec_plot <- 
   ggtree(rooted_tree_nodelab, layout = "rectangular", color = "grey", alpha = .7)  
@@ -561,7 +564,16 @@ rec_plot$data <-
   left_join(my_plotdata %>% 
               select(c(4, seq(10, ncol(.)))), 
             by = c("label" = "label")
-            )
+            ) %>%
+  dplyr::left_join(
+    all_tree_metadata %>% 
+      dplyr::select(label, Isolate_Id)) %>%
+  # Adding labels for nodes that became tips during collapsing
+    mutate(Isolate_Id = 
+             case_when(
+               is.na(Isolate_Id) ~ label,
+               TRUE ~ Isolate_Id
+               )) 
 ```
 
 - preparing the data for the pannels views
@@ -614,8 +626,16 @@ rec_plot2 <-
                       aes(color = category_highlight, shape = year)) +
   ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
                               na.translate = FALSE,
-                              name = "Highlight") +
-  # we need to add the values for those that have different years 
+                              name = "Highlight Norway") +
+  # Added homogeneization shapes
+  scale_shape_manual(values = SEP_years_shape_pal, 
+                     name = "Shape Year", 
+                     na.translate = FALSE) +
+  # HERE: adding tip labels 
+  ggtree::geom_tiplab(aes(label = Isolate_Id),
+                      size = 1,
+                      vjust = 0,
+                      hjust = -1e-1) +
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
   ggtree::geom_point(aes(x = branch, 
@@ -629,10 +649,10 @@ rec_plot2 <-
                      na.translate = FALSE) +
   ggtree::geom_treescale(x = 1e-3, y = 80,
                          fontsize = 1, 
-                         width = 1e-3,
+                         width = 1e-2,
                          label = "Substitution/site",
                          linesize = .1,
-                         offset = 1.5) +
+                         offset = .5) +
   ggtree::vexpand(.01) +
   ggtree::hexpand(.01) +
   ggtree::theme_tree() +
@@ -750,19 +770,23 @@ data_here <-
   distinct() 
 
 saveRDS(data_here, here::here(params$save_dir, "H5N5_NA_metadata.rds"))
+```
 
-xlsx::write.xlsx(as.data.frame(data_here), 
+<!-- HERE modified 
+append - but I do not save those before so ok
+--> 
+
+```{r}
+xlsx::write.xlsx(as.data.frame(data_here) %>%
+                   dplyr::select(-label), 
                  here::here(params$save_dir, "H5N5_NA_metadata.xlsx"),
                  sheetName = "H5N5_NA_metadata",
                  showNA = FALSE,
-                 row.names = FALSE)
+                 row.names = FALSE,
+                 append = TRUE)
 ```
 
 
 
 This dataset is representative for `r nrow(data_here)` isolates. 
-This includes `r length(tree$tip.label)` isolates with unique sequences, 
-including 1 sequence as outgroup. 
-
-Some isolates have been submited to GISAID since we started this analysis, therefore the 
-complement of GISAID_ID will be completed manually.
+This includes `r length(tree$tip.label)` isolates with unique sequences 
