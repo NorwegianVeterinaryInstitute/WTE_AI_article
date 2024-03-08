@@ -9,7 +9,7 @@ params:
     tree: "results/H5N1_NA/iqtree/SEP_NA_H5N1_MSA_nommals.fasta.contree"
     save_dir: "results/H5N1_NA"
     env_file: "results/env_files/H5N1_NA_SEP.RData"
-    source_code_dir: 'code/R'
+    source_code: 'code/R'
 execute: 
   echo: false
   cache: false
