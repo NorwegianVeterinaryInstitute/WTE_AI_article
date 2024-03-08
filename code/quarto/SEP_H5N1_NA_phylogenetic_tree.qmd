@@ -9,7 +9,7 @@ params:
     tree: "results/H5N1_NA/iqtree/SEP_NA_H5N1_MSA_nommals.fasta.contree"
     save_dir: "results/H5N1_NA"
     env_file: "results/env_files/H5N1_NA_SEP.RData"
-    source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
+    source_code_dir: 'code/R'
 execute: 
   echo: false
   cache: false
@@ -960,7 +960,6 @@ circular_plot <-
                      name = "Shape Year", 
                      na.translate = FALSE) +
   scale_size_continuous(range = c(0, 1)) +
-  scale_shape_manual(values = SEP_years_shape_pal, name = "Year") +
   guides(size = "none") +
   # Adding the highlight for the subsets plots - where is the group branching
   ggnewscale::new_scale_color() +
