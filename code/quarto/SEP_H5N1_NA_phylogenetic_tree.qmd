@@ -12,7 +12,7 @@ params:
     source_code: 'code/R'
 execute: 
   echo: false
-  cache: false
+  cache: true
 format: html
 knitr:
   opts_chunk: 
@@ -688,7 +688,7 @@ ggsave(
 Need to add the Isolate_Id to be able to use those as labels in the plot
 ```{r}
 explor_plot3$data <- 
-  explor_plotc$data %>% 
+  explor_plot3$data %>% 
   dplyr::left_join(
     all_tree_metadata %>% 
       dplyr::select(label, Isolate_Id),
