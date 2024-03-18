@@ -9,7 +9,7 @@ params:
     tree: "results/H5N5_HA/iqtree/H5N5_all_SEP_MSA_jalview.fasta.contree"
     save_dir: "results/H5N5_HA"
     env_file: "results/env_files/H5N5_HA_SEP.RData"
-    source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
+    source_code_dir: 'code/R'
 execute: 
   echo: false
   cache: false
@@ -106,16 +106,25 @@ tree$tip.label <-
 ggtree::ggtree(tree, layout = "rectangular")
 ```
 
--   rooting the tree, and dropping the two tips that correspond to the long branch
+-   rooting the tree, and dropping the two tips that correspond to the long branch of the outgroup
 
 ```{r}
-rooted_tree <- ape::root(tree, 
+rooted_tree1 <- ape::root(tree, 
                          outgroup = "EPI_ISL_1254",
                          resolve.root = T,
                          edgelabel = T)
+```
 
-rooted_tree <- 
-  ape::drop.tip(rooted_tree, "EPI_ISL_1254")
+
+Dropping isolate that was incomplete and same sequencing more complete
+```{r}
+rooted_tree1 <- ape::drop.tip(rooted_tree1, "EPI_ISL_12028892")
+```
+
+dropping outgroup
+
+```{r}
+rooted_tree <-   ape::drop.tip(rooted_tree1, "EPI_ISL_1254")
 ```
 
 Verification:
@@ -127,10 +136,10 @@ ggtree::ggtree(rooted_tree, layout = "rectangular")
 ## No duplicate sequences to integrate in this tree
 
 - creating table with metadata
-
+<!-- using rooted tree 1 for that because contains also the outgroup -->
 ```{r}
 tree_meta <- 
-  tibble::tibble("label" = tree$tip.label) %>%
+  tibble::tibble("label" = rooted_tree1$tip.label) %>%
   # getting metadata for the tips that are duplicated
   dplyr::left_join(all_tree_metadata, c("label" = "label")) 
 ```
@@ -435,14 +444,16 @@ circular_plot <-
   geom_tippoint(
     aes(color = category_highlight, size = point_size, shape = year_label),
     position = ggforce::position_auto()) +
-  # curious - weird thing here
-  scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"),
-                     name = "Highlight Norway") +
+  scale_color_manual(values = category_highlight_pal2, 
+                              na.translate = FALSE,
+                              name = "Highlight Norway",
+                     guide = guide_legend(order = 2)) +
   scale_size_continuous(range = c(0, 1)) +
   # HERE SHAPE
   scale_shape_manual(values = SEP_years_shape_pal, 
                      name = "Shape Year", 
-                     na.translate = FALSE) +
+                     na.translate = FALSE, 
+                     guide = guide_legend(order = 1)) +
   guides(size = "none") 
 ```
 
@@ -484,7 +495,8 @@ circular_plotb <-
      offset = 0.1,
      pwidth = 0.1) +
   scale_fill_manual(values = years_ind_col_pal,
-                    name = "Year") +
+                    name = "Year",
+                    guide = guide_legend(order = 3)) +
   ggnewscale::new_scale_fill() + 
   # Country external 
   ggtreeExtra::geom_fruit(
@@ -499,7 +511,8 @@ circular_plotb <-
      offset = 0.1,
      pwidth = 0.15) +
   scale_fill_manual(values = col_country_ind_pal,
-                    name = "Country") 
+                    name = "Country",
+                    guide = guide_legend(order = 4)) 
 
 ```
 
@@ -598,14 +611,18 @@ rec_plot2 <-
                         mutate_at(vars(year), as.character) %>%
                         transform_positions_at_unnest(spacing = 2e-4), 
                       aes(color = category_highlight, shape = year)) +
-  ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
-                              na.translate = FALSE,
-                              name = "Highlight Norway") +
+  ggplot2::scale_color_manual(values = category_highlight_pal2, 
+                   na.translate = FALSE,
+                   name = "Highlight Norway",
+                   guide = guide_legend(order = 2)) +
+#   ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
+#                               na.translate = FALSE,
+#                               name = "Highlight Norway") +
   # Added homogeneization shapes
   scale_shape_manual(values = SEP_years_shape_pal, 
                      name = "Shape Year", 
-                     na.translate = FALSE) +
-  
+                     na.translate = FALSE,
+                     guide = guide_legend(order = 1)) +
   # HERE: adding tip labels 
   ggtree::geom_tiplab(aes(label = Isolate_Id),
                       size = 1,
@@ -621,7 +638,8 @@ rec_plot2 <-
                      values =  bootstrap_pal_col,
                      labels = c(expression(phantom(x) >= 95),
                                 expression(phantom(x) < 95)),
-                     na.translate = FALSE) +
+                     na.translate = FALSE,
+                     guide = guide_legend(order = 6)) +
   ggtree::geom_treescale(x = 1e-3, y = 80,
                          fontsize = 1, 
                          width = 1e-3,
@@ -644,7 +662,8 @@ rec_plot2 <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = years_ind_col_pal,
-                    name = "Year") +
+                    name = "Year",
+                    guide = guide_legend(order = 3)) +
   ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Country", 
@@ -656,7 +675,8 @@ rec_plot2 <-
     stat = "identity") +
   #col_grouped_countries_pal2
   scale_fill_manual(values =  col_country_ind_pal,
-                    name = "Country") +
+                    name = "Country",
+                    guide = guide_legend(order = 4)) +
     ggtree::geom_facet(
     panel = "Country Legend", 
     data = rec_countries_facet_df,
@@ -675,7 +695,8 @@ rec_plot2 <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = host_families_color_pal,
-                    name = "Host Family") +
+                    name = "Host Family", 
+                    guide = guide_legend(order = 5)) +
   #guides(fill = "none") +
   ggtree::geom_facet(
     panel = "Family Legend", 
@@ -758,7 +779,7 @@ xlsx::write.xlsx(as.data.frame(data_here) %>%
                  sheetName = "H5N5_HA_metadata",
                  showNA = FALSE,
                  row.names = FALSE,
-                 append = TRUE)
+                 append = FALSE)
 ```
 
 

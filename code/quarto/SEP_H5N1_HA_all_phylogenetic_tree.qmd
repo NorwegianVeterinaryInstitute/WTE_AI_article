@@ -9,7 +9,7 @@ params:
     tree: "results/H5N1_HA_all/iqtree/SEP_HA_H5N1_MSA_nomammals.fasta.contree"
     save_dir: "results/H5N1_HA_all"
     env_file: "results/env_files/H5N1_HA_all_SEP.RData"
-    source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
+    source_code: 'code/R'
 execute: 
   echo: false
   cache: false
@@ -525,9 +525,14 @@ explor_plot3b <-
   ggplot2::geom_point(aes(x, y, color = category_highlight),
                       data = . %>% filter(isTip),
                       position = ggforce::position_auto(), size = .8) +
-  ggplot2::scale_color_manual(values = category_highlight_pal,
-                              na.translate = FALSE,
-                              name = "Highlight Norway") +
+  # ggplot2::scale_color_manual(values = category_highlight_pal,
+  #                             na.translate = FALSE,
+  #                             name = "Highlight Norway") +
+  ggplot2::scale_color_manual(values = category_highlight_pal2, 
+                            na.translate = FALSE,
+                            name = "Highlight Norway", 
+                            guide = guide_legend(order = 2)) +
+
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
   ggtree::geom_point(aes(x = branch, 
@@ -538,7 +543,8 @@ explor_plot3b <-
                      values =  bootstrap_pal_col2,
                      labels = c(expression(phantom(x) >= 95),
                                 expression(phantom(x) < 95)),
-                     na.translate = FALSE) +
+                     na.translate = FALSE, 
+                     guide = guide_legend(order = 5)) +
   # adding the node labels to be able to choose what to collapse
   # more even if not monophyletic 
   ggnewscale::new_scale_color() +
@@ -572,8 +578,8 @@ ggsave(
 Adding the metadata to the collapsed tree
 As previously
 ```{r}
-explor_plot3b$data <-
-  explor_plot3b$data%>% 
+explor_plot3$data <-
+  explor_plot3$data%>% 
   # 4 is label, 10 is labels boostrap - to the end it is metadata 
   # is joining by label - the only common variable
   dplyr::left_join(my_plotdata %>% 
@@ -589,8 +595,8 @@ explor_plot3b$data <-
 <!-- NB HERE added solution tips labels -->
 Need to add the Isolate_Id to be able to use those as labels in the plot
 ```{r}
-explor_plot3b$data <- 
-  explor_plot3b$data %>% 
+explor_plot3$data <- 
+  explor_plot3$data %>% 
   dplyr::left_join(
     all_tree_metadata %>% 
       dplyr::select(label, Isolate_Id),
@@ -607,44 +613,37 @@ explor_plot3b$data <-
 
 ```{r}
 explor_plot3d <- 
-  # Here shortened one step so its b instead of c
-  explor_plot3b +
+  explor_plot3 +
+  # tip points
   ggplot2::geom_point(aes(x, y, color = category_highlight),
                       data = . %>% filter(isTip),
-                      position = ggforce::position_auto(),
-                      size = 1) +
-  ggplot2::scale_color_manual(values = category_highlight_pal,
-                              na.translate = FALSE,
-                              name = "Highlight Norway") +
-  # HERE: adding bootstrap value on branches
-  ggnewscale::new_scale_color() +
-  ggplot2::geom_point(aes(x = branch, 
-                         color = as.numeric(labels_bootstrap) < 95),
-                     data = . %>% filter(!isTip), 
-                     shape = 19, size = .5, na.rm = T) +
-  ggplot2::scale_color_manual(name = "Bootstrap", 
-                     values =  bootstrap_pal_col,
-                     labels = c(expression(phantom(x) >= 95),
-                                expression(phantom(x) < 95)),
-                     na.translate = FALSE) +
-  # HERE: adding tip labels 
+                      position = ggforce::position_auto(), 
+                      size = .8) +
+  # adding tip labels 
   ggtree::geom_tiplab(aes(label = Isolate_Id),
                       size = 1,
                       vjust = .3,
                       hjust = -1e-1) +
-
-  # we need to add the values for those that have different years 
-  # adding bootstrap value on branches
+  
+  # Highlights
+  ggplot2::scale_color_manual(values = category_highlight_pal2, 
+                              na.translate = FALSE,
+                              name = "Highlight Norway", 
+                              guide = guide_legend(order = 1)) +
+  
+  # Bootstrap on branches
   ggnewscale::new_scale_color() +
   ggtree::geom_point(aes(x = branch, 
                          color = as.numeric(labels_bootstrap) < 95),
                      data = . %>% filter(!isTip), 
-                     shape = 19, size = .5, na.rm = T) +
+                     shape = 19, size = .1, na.rm = T) +
   scale_color_manual(name = "Bootstrap", 
-                     values =  bootstrap_pal_col,
+                     values =  bootstrap_pal_col2,
                      labels = c(expression(phantom(x) >= 95),
                                 expression(phantom(x) < 95)),
-                     na.translate = FALSE) 
+                     na.translate = FALSE, 
+                     guide = guide_legend(order = 4)) 
+
 
 explor_plot3d
 ```
@@ -725,7 +724,8 @@ explor_plot4 <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = years_ind_col_pal,
-                    name = "Year") +
+                    name = "Year",
+                     guide = guide_legend(order = 2)) +
   ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Country", 
@@ -736,15 +736,15 @@ explor_plot4 <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups") +
+                    name = "Country Groups",
+                    guide = guide_legend(order = 3)) +
     ggtree::geom_facet(
-    panel = "Country Legend", 
+    panel = "Country Detail", 
     data = countries_facet_df,
     geom = geom_text,
     mapping = aes(x = -.4, label = val),
     hjust = 0,
     size = 1)  +
-  #guides(fill = "none") +
   ggtree::geom_facet(
     panel = "Family Legend", 
     data = Host_family_facet_df,
@@ -862,15 +862,18 @@ circular_plot <-
   ggnewscale::new_scale_color() +
   geom_tippoint(
     aes(color = category_highlight, size = point_size, shape = year_label),
-    position = ggforce::position_auto()) +
-  # curious - weird thing here
-  scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"),
-                     name = "Highlight Norway") +
+    position = ggforce::position_auto()) + 
+  # highlight color 
+  ggplot2::scale_color_manual(values = category_highlight_pal2, 
+                            na.translate = FALSE,
+                            name = "Highlight Norway", 
+                            guide = guide_legend(order = 2)) +
   scale_size_continuous(range = c(0, 1)) +
   # HERE SHAPE
   scale_shape_manual(values = SEP_years_shape_pal, 
                      name = "Shape Year", 
-                     na.translate = FALSE) +
+                     na.translate = FALSE,
+                     guide = guide_legend(order = 1)) +
   guides(size = "none") +
   # Adding the highlight for the subsets plots - where is the group branching
   ggnewscale::new_scale_color() +
@@ -917,7 +920,8 @@ circular_plotb <-
      offset = 0.1,
      pwidth = 0.1) +
   scale_fill_manual(values = years_ind_col_pal,
-                    name = "Year") +
+                    name = "Year",
+                    guide = guide_legend(order = 3)) +
   ggnewscale::new_scale_fill() + 
   # Country external 
   ggtreeExtra::geom_fruit(
@@ -932,7 +936,8 @@ circular_plotb <-
      offset = 0.1,
      pwidth = 0.15) +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups") 
+                    name = "Country Groups",
+                    guide = guide_legend(order = 4)) 
 
 ```
 
@@ -1077,13 +1082,15 @@ N529_plot <-
                         mutate_at(vars(year), as.character) %>%
                         transform_positions_at_unnest(spacing = 2e-4), 
                       aes(color = category_highlight, shape = year)) +
-  ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
-                              na.translate = FALSE,
-                              name = "Highlight Norway") +
+  ggplot2::scale_color_manual(values = category_highlight_pal2, 
+                            na.translate = FALSE,
+                            name = "Highlight Norway", 
+                            guide = guide_legend(order = 2)) +
   # HERE SHAPE
   scale_shape_manual(values = SEP_years_shape_pal, 
                      name = "Shape Year", 
-                     na.translate = FALSE) +
+                     na.translate = FALSE, 
+                     guide = guide_legend(order = 1)) +
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -1095,7 +1102,8 @@ N529_plot <-
                      values =  bootstrap_pal_col,
                      labels = c(expression(phantom(x) >= 95),
                                 expression(phantom(x) < 95)),
-                     na.translate = FALSE) +
+                     na.translate = FALSE,
+                     guide = guide_legend(order = 6)) +
   ggtree::geom_treescale(x = 1e-3, y = 80,
                          fontsize = 1, 
                          width = 1e-3,
@@ -1126,7 +1134,8 @@ N529_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = years_ind_col_pal,
-                    name = "Year") +
+                    name = "Year",
+                    guide = guide_legend(order = 3)) +
   ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Country", 
@@ -1137,9 +1146,10 @@ N529_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups") +
+                    name = "Country Groups", 
+                    guide = guide_legend(order = 4)) +
     ggtree::geom_facet(
-    panel = "Country Legend", 
+    panel = "Country Detail", 
     data = N529_countries_facet_df,
     geom = geom_text,
     mapping = aes(x = -.4, label = val),
@@ -1156,7 +1166,8 @@ N529_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = host_families_color_pal,
-                    name = "Host Family") +
+                    name = "Host Family",
+                    guide = guide_legend(order = 5)) +
   #guides(fill = "none") +
   ggtree::geom_facet(
     panel = "Family Legend", 
@@ -1325,13 +1336,15 @@ N9_plot <-
                         mutate_at(vars(year), as.character) %>%
                         transform_positions_at_unnest(spacing = 2e-4), 
                       aes(color = category_highlight, shape = year)) +
-  ggplot2::scale_color_manual(values =  c(rgb(0.7,0.7,0.7,0.1), "#4100FF", "#FF00BE"), 
-                              na.translate = FALSE,
-                              name = "Highlight Norway") +
+  ggplot2::scale_color_manual(values = category_highlight_pal2, 
+                            na.translate = FALSE,
+                            name = "Highlight Norway", 
+                            guide = guide_legend(order = 2)) +
   # HERE SHAPE
   scale_shape_manual(values = SEP_years_shape_pal, 
                      name = "Shape Year", 
-                     na.translate = FALSE) +
+                     na.translate = FALSE, 
+                     guide = guide_legend(order = 1)) +
   # we need to add the values for those that have different years 
   # adding bootstrap value on branches
   ggnewscale::new_scale_color() +
@@ -1343,7 +1356,8 @@ N9_plot <-
                      values =  bootstrap_pal_col,
                      labels = c(expression(phantom(x) >= 95),
                                 expression(phantom(x) < 95)),
-                     na.translate = FALSE) +
+                     na.translate = FALSE,
+                     guide = guide_legend(order = 6)) +
   ggtree::geom_treescale(x = 1e-3, y = 80,
                          fontsize = 1, 
                          width = 1e-3,
@@ -1374,7 +1388,8 @@ N9_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = years_ind_col_pal,
-                    name = "Year") +
+                    name = "Year",
+                    guide = guide_legend(order = 3)) +
   ggnewscale::new_scale_fill() +
     ggtree::geom_facet(
     panel = "Country", 
@@ -1385,9 +1400,10 @@ N9_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups") +
+                    name = "Country Groups",
+                    guide = guide_legend(order = 4)) +
     ggtree::geom_facet(
-    panel = "Country Legend", 
+    panel = "Country Detail", 
     data = N9_countries_facet_df,
     geom = geom_text,
     mapping = aes(x = -.4, label = val),
@@ -1404,7 +1420,8 @@ N9_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = host_families_color_pal,
-                    name = "Host Family") +
+                    name = "Host Family",
+                    guide = guide_legend(order = 5)) +
   #guides(fill = "none") +
   ggtree::geom_facet(
     panel = "Family Legend", 

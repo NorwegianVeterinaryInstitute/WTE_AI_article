@@ -24,9 +24,11 @@ editor_options:
   chunk_output_type: console
 ---
 
+
 # Setup
 
 -   sourcing scripts and functions
+
 
 ```{r setup}
 #| include: false
@@ -42,9 +44,11 @@ sapply(fun_files_path,source,.GlobalEnv)
 
 ```
 
+
 Note: if you are modifying the script and want to continue to work after, you can load a previous environment (don't forget to save it at the end of your work).
 
 Loads the environment (to continue previous work)
+
 
 ```{r optional load environment}
 #| include: false
@@ -52,9 +56,11 @@ Loads the environment (to continue previous work)
 #if (file.exists(here(params$env_file))) {load(here(params$env_file))}
 ```
 
+
 # Preparation of metadata specific to the tree
 
 This is the metadata that we combined to do all the trees, and where the host family has been added manually.
+
 
 ```{r}
 all_tree_metadata <- readRDS(file = here(params$all_tree_metadata))
@@ -64,7 +70,9 @@ all_tree_metadata <- readRDS(file = here(params$all_tree_metadata))
 all_tree_metadata2 <- all_tree_metadata
 ```
 
+
 We select only the columns that we will use, to reduce complexity
+
 
 ```{r}
 all_tree_metadata <- 
@@ -73,6 +81,7 @@ all_tree_metadata <-
                  "continent", "country", "year",
                 "Host", "Host_latin",  "Host_family")
 ```
+
 
 -   List of duplicate sequences that were removed prior building the phylogenetic tree for `r glue::glue("strain {params$strain}, segment {params$segment}")`
 
@@ -94,13 +103,16 @@ last commit 2024-01-30 in the pilot project. After started to concise in functio
 
 -   NB we used the consensus tree
 
+
 ```{r}
 tree <- ape::read.tree(here(params$tree))
 tree$tip.label <- tree$tip.label %>% str_remove_all(., ".*\\|") %>%
   str_remove_all(., "t$") 
 ```
 
+
 -   fast plotting: we see that 2 very long branches, this are the outgroup sequences that we will use for rooting. We root those and remove them from the tree.
+
 
 ```{r}
 ggtree::ggtree(tree, layout = "rectangular") +
@@ -111,7 +123,9 @@ ggtree::ggtree(tree, layout = "rectangular") +
              size = 3)
 ```
 
+
 -   rooting the tree, and dropping the two tips that correspond to the long branch of the outgroup
+
 
 ```{r}
 rooted_tree <- ape::root(tree, 
@@ -125,7 +139,9 @@ rooted_tree <-
 ```
 
 
+
 Verification:
+
 
 ```{r}
 ggtree::ggtree(rooted_tree, layout = "rectangular")
@@ -135,9 +151,11 @@ ggtree::ggtree(rooted_tree, layout = "rectangular")
 
 
 
+
 ## No duplicate sequences to integrate in this tree
 
 - creating table with metadata
+
 
 ```{r}
 tree_meta <- 
@@ -146,18 +164,22 @@ tree_meta <-
   dplyr::left_join(all_tree_metadata, c("label" = "label")) 
 ```
 
+
 - recheck that we only have the correct subtypes included 
+
 ```{r}
 tree_meta %>% 
   dplyr::group_by(subtype) %>%
   dplyr::summarise(n = n())
 ```
 
+
 Adding filtering columns. We want to show where Norwegian sequences are,
 
 For this purpose, we add columns that would allow to tag labels representing isolates from Norway, and those that contain White-tailed Eagles.
 
 > Note here could have been simpler, but do as the same script as possible as H5N1_HA
+
 
 ```{r}
 tree_meta <- 
@@ -175,7 +197,9 @@ tree_meta <-
             ~ factor(.x, levels = category_highligth_levels, ordered = T))
 ```
 
+
 ## Exploration of the phylogenetic tree
+
 
 ```{r}
 explor_plot1 <- 
@@ -203,9 +227,11 @@ ggsave(filename = here::here(params$save_dir, "explor_plot1.svg"),
        width = 20, height = 30) 
 ```
 
+
 # Preparing tree visualisation
 
 ## 1. Determining monophyly, node depth and descendants from nodes
+
 
 ```{r}
 # replaces list2
@@ -215,8 +241,10 @@ rooted_tree_simple_plot_list <-
 
 
 
+
 -   saving in individual objects (copy). We will reuse the plot data
 We need to add the tips in descendants from nodes - so its homogeneous for next function
+
 
 ```{r}
 my_plotdata <- rooted_tree_simple_plot_list$simple_plot$data   %>%
@@ -228,14 +256,18 @@ my_plotdata <- rooted_tree_simple_plot_list$simple_plot$data   %>%
 
 
 
+
 data check
+
 ```{r}
 my_plotdata %>%
   filter(!isTip) %>%
   print(n = 10, width = Inf)
 ```
 
+
 Checking data - ok it has nested the descendants from nodes 
+
 ```{r}
 my_plotdata %>% filter(label == "N1") %>%
   select(descendants_tips_from_node) %>%
@@ -243,9 +275,11 @@ my_plotdata %>% filter(label == "N1") %>%
 ```
 
 
+
 ## 2. Adding metadata to nodes and tips 
 
 > for consistency with previous script - we also add tipmetalink 
+
 
 ```{r}
 my_plotdata <- 
@@ -254,6 +288,7 @@ my_plotdata <-
                                          df_label = NULL,
                                          df_represented = NULL) 
 ```
+
 
 - linking metadata to the tree data for the selected column by creating nested
 dataframes for each variable and creating contingency tables for each nested
@@ -266,6 +301,7 @@ Note here, we come back to the original metadata table, because we have the
 list of tips that is represented at each label (tip or node)
 
 Here we do not want to use interaction between factors
+
 ```{r}
 my_plotdata <- 
   my_plotdata %>%
@@ -277,16 +313,18 @@ my_plotdata <-
 ```
 
 
+
 Here is how it looks like 
+
 ```{r}
 names(my_plotdata)
 ```
-
 
 ```{r}
 my_plotdata %>% 
     print(n = 10, width = Inf)
 ```
+
 
  
 Selecting one column where several tips are represented and
@@ -295,6 +333,7 @@ nested country variable
 
 > note for this data set its only nodes 
 
+
 ```{r}
 my_plotdata %>%
   filter(label == "N1") %>% 
@@ -302,10 +341,12 @@ my_plotdata %>%
   tidyr::unnest(nested_country)
 ```
 
+
 `pos` is the index, in case we need to refer to it. 
 `label` is the label of the sequences that are represented 
 
 Now we can look at the contingency table for the same variable 
+
 ```{r}
 my_plotdata %>%
   filter(label == "N1") %>% 
@@ -313,14 +354,17 @@ my_plotdata %>%
   tidyr::unnest(ctg_country)
 ```
 
+
 `freq_levels@country` : is the number of observations in each country
 `nb_levels@country` : is common in the nested table, its the number of levels of the variable country
 
 
 - NOW: we can reinsert the augmented data to the plot 
+
 ```{r}
 rooted_tree_simple_plot_list$simple_plot$data <- my_plotdata
 ```
+
 
  
 
@@ -332,6 +376,7 @@ to the tree plot_data
 We add a tag 
 - if there is at least one isolate that is represented by a label 
 in the phylogenetic tree has been collected in Norway 
+
 
 ```{r}
 my_plotdata <- 
@@ -356,10 +401,12 @@ my_plotdata <-
 
 
 
+
 ## 4. Test visualisation
 
 We can visualize which nodes can be collapsed and at which depths
 We can try to vary the depth of notes to be collapsed 
+
 
 ```{r}
 # now we now its ok we can put back the data in the plot
@@ -367,7 +414,9 @@ rooted_tree_simple_plot_list$simple_plot$data <- my_plotdata
 names(rooted_tree_simple_plot_list$simple_plot$data)
 ```
 
+
 We add the node labels so we can know which ones we can collapse afterwards
+
 ```{r}
 explor_plot2 <- 
   rooted_tree_simple_plot_list$simple_plot  +
@@ -399,6 +448,7 @@ ggsave(
 
 ```
 
+
 # Collapsing nodes
 
 
@@ -409,6 +459,7 @@ ggsave(
  are not from Norway. 
  
 We need to extract a list where only one country is represented on node 
+
 
 ```{r}
 my_plotdata <- 
@@ -427,8 +478,10 @@ my_plotdata <-
            )
 ```
 
+
 NB: isMonoNobot is always TRUE for nodes, as only get descendants from nodes 
 (so I could have removed this but ok)
+
 
 ```{r}
 nodes_OneCountry_NotNorway  <- 
@@ -437,12 +490,14 @@ nodes_OneCountry_NotNorway  <-
   pull(label) 
 ```
 
+
   2. monophyletic nodes (incl. bootstrap support) where our isolates 
 are not included (visual plot to define limit of depth) 
 
 Here I choose a limit of node depth => 5
 We will need to collapse nodes that are deepest first (ensure max collapsing,
 as the following nodes can be subordinate)
+
 
 ```{r}
 nodes_monophyboot_notNorway <-
@@ -456,16 +511,20 @@ nodes_monophyboot_notNorway <-
   pull(label)
 ```
 
+
 By order of priority, the nodes to collapse are:
+
 ```{r}
 nodes_select_collapsing_1 <- 
   unique(c(nodes_monophyboot_notNorway, nodes_OneCountry_NotNorway))
 ```
 
+
 ## 2. First collapsing of nodes according to defined criteria (step 1)
 
 > apparte to update data and to get objects easier to work with 
 > saving the tree that had node labels 
+
 
 ```{r}
 rooted_tree_simple_plot_list$simple_plot$data <- my_plotdata
@@ -473,7 +532,9 @@ my_rooted_tree <- rooted_tree_simple_plot_list$tree_nodelab
 ```
 
 
+
 - collapsing tree recursively - we need a list of named nodes to collapse 
+
 
 ```{r}
 my_collapsed_tree <- 
@@ -487,7 +548,9 @@ my_collapsed_tree <-
 ```
 
 
+
 Visualization of the collapsed tree 
+
 
 ```{r}
 explor_plot3 <- 
@@ -499,15 +562,19 @@ explor_plot3 <-
 
 explor_plot3
 ```
+
 - we need to merge the metadata with the collapsed data 
 
 Because we have labelled nodes with name, we can reuse the previous labels
+
 
 ```{r}
 my_plotdata %>% names()
 ```
 
+
 label create the join. 
+
 
 
 ```{r}
@@ -520,7 +587,9 @@ explor_plot3$data <-
                    )
 ```
 
+
 Now we can visualize the first collapsed plot to make adjustments 
+
 
 ```{r}
 explor_plot3b <- 
@@ -569,6 +638,7 @@ ggsave(
   )
 ```
 
+
 ## 3. Manual improvement of collapsing the tree
 
 > We need to fetch again the descendants tips from the nodes, because now some nodes
@@ -580,6 +650,7 @@ to have overview of the position of our isolates within the tree.
 
 Selection from bottom to top. 
 
+
 ```{r}
 # now the nodes collapsing is quiet ok 
 
@@ -587,7 +658,9 @@ manual_nodes_selection <- c("N4261", "N1773", "N710")
 ```
 
 
+
 Collapsing the additional nodes 
+
 ```{r}
 my_collapsed_tree2 <- 
   collapsing_nodes_from_nodes_fun(my_collapsed_tree, 
@@ -595,7 +668,9 @@ my_collapsed_tree2 <-
                                   trim.internal = FALSE)
 ```
 
+
 Plotting the base of the collapsed tree 
+
 ```{r}
 explor_plot3c <- 
   my_collapsed_tree2 %>%
@@ -607,8 +682,10 @@ explor_plot3c <-
 explor_plot3c
 ```
 
+
 Adding the metadata to the collapsed tree
 As previously
+
 ```{r}
 explor_plot3c$data <-
   explor_plot3c$data%>% 
@@ -619,7 +696,9 @@ explor_plot3c$data <-
                    )
 ```
 
+
 Rechecking collapse tree for iterative adjustment 
+
 ```{r}
 plot_adj <- 
   explor_plot3c +
@@ -657,7 +736,9 @@ plot_adj <-
 plot_adj
 ```
 
+
 I need the node labels for the subsets 
+
 ```{r}
 plot_adj <- 
   plot_adj + 
@@ -670,7 +751,6 @@ plot_adj <-
                      nudge_x = -5e-5) 
 ```
 
-
 ```{r}
 ggsave(
   here::here(params$save_dir, "plot_adj_collapsing.svg"),
@@ -681,11 +761,13 @@ ggsave(
   )
 ```
 
+
 ## 4. Plotting the collapsed tree
 
 - first we make the base plot  
 <!-- NB HERE added solution tips labels -->
 Need to add the Isolate_Id to be able to use those as labels in the plot
+
 ```{r}
 explor_plot3$data <- 
   explor_plotc$data %>% 
@@ -742,7 +824,9 @@ explor_plot3d
 ```
 
 
+
 - Then we get the data for the annotations panels (it is required as separate dataframes)
+
 ```{r}
 names(explor_plot3d$data)
 ```
@@ -779,8 +863,10 @@ years_facet_df <-
                       group_expr = NULL)
 ```
 
+
 1. adding node that will be cut for detailed plotting with a light green point 
 <!-- HERE adding solution tips labels as panel -->
+
 ```{r}
 explor_plot4 <- 
   explor_plot3d + 
@@ -849,7 +935,9 @@ explor_plot4 <-
 explor_plot4
 ```
 
+
 - Now we need to adjust the size of the panels 
+
 
 ```{r}
 collapsed_plot <- grop_redraw(explor_plot4, 
@@ -857,10 +945,10 @@ collapsed_plot <- grop_redraw(explor_plot4,
         )
 ```
 
-
 ```{r}
 collapsed_plot
 ```
+
 
 _Figure caption:_
 H5N1 NA segment. ML phylogenetic tree with nodes depth >= 5, that did not contained 
@@ -869,6 +957,7 @@ same country of origin are collapsed. The tree is rooted, but the outgroup
 is not shown, due to large distance to the body of the tree. The information
 at the tips and collapsed nodes is representative of the data set, including
 identical sequences.
+
 
 
 ```{r}
@@ -882,7 +971,9 @@ ggsave(
 ```
 
 
+
 ## 5. Exporting the metadata for the plot 
+
 
 ```{r}
 export_meta_treenodes_funV2(
@@ -897,6 +988,7 @@ export_meta_treenodes_funV2(
 ```
 
 
+
 # Components for final visualisation
 
 We will create the global circular tree
@@ -907,11 +999,14 @@ can be looked at more in detail.
 # Circular tree 
 We restart from the rooted tree with node labels 
 
+
 ```{r}
 rooted_tree_nodelab <- rooted_tree_simple_plot_list$tree_nodelab 
 ```
 
+
 Circular metadata will be the at the last plots, except we do not add the coordinates
+
 ```{r}
 circular_meta <- 
   my_plotdata[c(4, seq(10, ncol(my_plotdata)))] %>%
@@ -919,7 +1014,9 @@ circular_meta <-
   mutate_at(vars(year_label), unlist) 
 ```
 
+
 We had some plotting parameters to be able to view better 
+
 ```{r}
 circular_meta <- 
   circular_meta %>% 
@@ -941,7 +1038,6 @@ circular_meta <-
              TRUE ~ Isolate_Id
            )) 
 ```
-
 
 ```{r}
 # ! here palette is specific for this article: SEP_years_shape_pal
@@ -974,7 +1070,9 @@ circular_plot <-
 
 ```
 
+
 - Adding annotation around the tree
+
 ```{r}
 country_fruit_df <- 
   get_data_geom_facet(data = circular_plot$data,
@@ -1030,10 +1128,10 @@ circular_plotb <-
 
 ```
 
-
 ```{r}
 circular_plotb
 ```
+
 
 _Figure caption:_
 H5N1 NA segment. ML phylogenetic tree. The light green dots represent the branching 
@@ -1041,6 +1139,7 @@ origin the two groups presented as tree subsets. The tree is rooted,
 but the outgroup is not shown, due to large distance to the body of the tree. 
 The information at the tips and collapsed nodes is representative of the 
 data set, including identical sequences.
+
 
 
 ```{r}
@@ -1053,7 +1152,9 @@ ggsave(
   )
 ```
 
+
 export metadata circular tree 
+
 ```{r}
 export_meta_treenodes_funV2(
   plot_data = circular_plotb,
@@ -1068,11 +1169,13 @@ export_meta_treenodes_funV2(
 ```
 
 
+
 ## Detailed subplots 
 
 ## N1732
 
 - getting the list of tips
+
 ```{r}
 tips_N1732 <- 
   my_plotdata %>% 
@@ -1081,14 +1184,18 @@ tips_N1732 <-
   unlist()
 ```
 
+
 - subsetting the tree 
+
 ```{r}
 subtree_N1732 <- ape::keep.tip(rooted_tree_nodelab, tips_N1732)
 ```
 
+
 - creating the simple plot and adding the metadata
 
 <!-- # HERE need to add the tip isolate ID --> 
+
 ```{r}
 plot_subtree_N1732 <- 
   ggtree(subtree_N1732, layout = "rectangular", color = "grey", alpha = .7)  
@@ -1114,8 +1221,10 @@ plot_subtree_N1732$data <-
            )) 
 ```
 
+
 - preparing the data for the panels views
 <!-- # HERE ADDED -->
+
 ```{r}
 N1732_Isolate_Id_df <- 
   plot_subtree_N1732$data %>% 
@@ -1124,7 +1233,6 @@ N1732_Isolate_Id_df <-
   dplyr::rename(val = Isolate_Id) %>%
   distinct()
 ```
-
 
 ```{r}
 N1732_countries_facet_df <- 
@@ -1159,8 +1267,10 @@ N1732_years_facet_df <-
                       group_expr = NULL)
 ```
 
+
 - ploting the tree
 <!-- # HERE NEED to ADD ID labels --> 
+
 
 ```{r}
 N1732_plot <- 
@@ -1277,7 +1387,9 @@ N1732_plot <-
 N1732_plot
 ```
 
+
 - Now we need to adjust the size of the panels 
+
 
 ```{r}
 N1732_plotb <- grop_redraw(N1732_plot, 
@@ -1285,15 +1397,16 @@ N1732_plotb <- grop_redraw(N1732_plot,
         )
 ```
 
-
 ```{r}
 N1732_plotb
 ```
+
 
 _Figure Caption:_
 H5N1 NA segment. Detail of the first group of isolates from the ML phylogenetic tree. 
 The subset tree is rooted and branches on the second green dot from the root.
 All the isolates are shown."
+
 
 
 
@@ -1307,7 +1420,9 @@ ggsave(
   )
 ```
 
+
 Exporting the metadata 
+
 ```{r}
 export_meta_treenodes_funV2(
   plot_data = N1732_plot,
@@ -1322,9 +1437,11 @@ export_meta_treenodes_funV2(
 ```
 
 
+
 ## N15
 
 - getting the list of tips 
+
 ```{r}
 tips_N15 <- 
   my_plotdata %>% 
@@ -1333,19 +1450,25 @@ tips_N15 <-
   unlist()
 ```
 
+
 - subsetting the tree 
+
 ```{r}
 subtree_N15 <- ape::keep.tip(rooted_tree_nodelab, tips_N15)
 ```
 
+
 - creating the simple plot and adding the metadata
+
 
 ```{r}
 plot_subtree_N15 <- 
   ggtree(subtree_N15, layout = "rectangular", color = "grey", alpha = .7)
 ```
 
+
 <!-- HERE ADDED  - to get the ids --> 
+
 ```{r}
 # adding the metadata 
 plot_subtree_N15$data <- 
@@ -1368,8 +1491,10 @@ plot_subtree_N15$data <-
            )) 
 ```
 
+
 - preparing the data for the panels views
 <!-- # HERE ADDED --> 
+
 ```{r}
 N15_Isolate_Id_df <- 
   plot_subtree_N15$data %>% 
@@ -1412,7 +1537,9 @@ N15_years_facet_df <-
                       group_expr = NULL)
 ```
 
+
 - ploting the tree
+
 
 ```{r}
 N15_plot <- 
@@ -1530,7 +1657,9 @@ N15_plot <-
 #N15_plot
 ```
 
+
 - Now we need to adjust the size of the panels 
+
 
 ```{r}
 N15_plotb <- grop_redraw(N15_plot, 
@@ -1538,10 +1667,10 @@ N15_plotb <- grop_redraw(N15_plot,
         )
 ```
 
-
 ```{r}
 N15_plotb
 ```
+
 
 _Figure Caption:_
 
@@ -1549,6 +1678,7 @@ H5N1 NA segment. Detail of the first group of isolates from the ML phylogenetic 
 The subset tree is rooted and branches on the second green dot from the root.
 All the isolates are shown. The position
 of horizontal points is slighly adjusted to avoid overlap."
+
 
 
 ```{r}
@@ -1561,7 +1691,9 @@ ggsave(
   )
 ```
 
+
 Exporting the metadata
+
 ```{r}
 export_meta_treenodes_funV2(
   plot_data = N15_plot,
@@ -1575,14 +1707,18 @@ export_meta_treenodes_funV2(
 ```
 
 
+
 # Saving environment
 To continue analyses that are not finished
+
 ```{r}
 save.image(here::here(params$env_file))
 ```
 
 
+
 Metadata for all H5N1 isolates included
+
 ```{r}
 data_here <-  
   tibble(label = tree$tip.label) %>%
@@ -1594,12 +1730,14 @@ data_here <-
 saveRDS(data_here, here::here(params$save_dir, "H5N1_NA_metadata.rds"))
 ```
 
+
 <!-- HERE modified 
 Select label
 Changed names sheets
 need to append in order not to erase previous data 
 Then has information on the root 
 --> 
+
 ```{r}
 xlsx::write.xlsx(as.data.frame(data_here) %>%
                    dplyr::select(-label), 
@@ -1612,9 +1750,11 @@ xlsx::write.xlsx(as.data.frame(data_here) %>%
 
 
 
+
 This dataset is representative for `r nrow(data_here)` isolates. 
 This includes `r length(tree$tip.label)` isolates with unique sequences, 
 including 2 sequences as outgroup. 
 
 Some isolates have been submitted to GISAID since we started this analysis, therefore the 
 complement of GISAID_ID will be completed manually.
+

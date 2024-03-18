@@ -215,7 +215,13 @@ names(host_families_color_pal) <- host_families_levels
 
 # PALETTE for the categories highlights in the plots 
 
-category_highlight_pal <- c(rgb(0.7, 0.7, 0.7, 0.2), "#FF00BE", "#4100FF")
+category_highlight_pal <- c(rgb(0.7, 0.7, 0.7, 0.1), "#FF00BE", "#4100FF")
 names(category_highlight_pal) <- c("Other Country", "NO: WTE", "NO: Other Avian")
+
+
+category_highlight_pal2 <- c("#FF00BE", "#4100FF")
+names(category_highlight_pal2) <- c("NO: WTE", "NO: Other Avian")
+
+
 
 # This could avoid to have to give levels - but we want plotting in specified order
