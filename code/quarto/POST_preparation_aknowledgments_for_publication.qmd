@@ -1,0 +1,363 @@
+---
+title: "Preparation Article Aknkowledgments"
+author: "Eve Zeyl Fiskebeck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+  aknowledgments_dir: "data/raw_metadata/acknowledge"
+  metadata_dir: "data/raw_metadata/metadata"
+  save_dir: "data/prepared_data" 
+execute: 
+  echo: false
+  cache: false
+format: html
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup }
+library(here)
+library(tidyverse)
+library(readxl)
+library(xlsx)
+library(plyr)
+```
+
+
+# Aknowledgments
+
+-   [ ] ! the two first lines need to be added again to the final file
+-   [ ] Acknowledgments only for the samples and segments we are using
+
+I merged all the different files of the different projects - to be sure nothing missing for the data prep (has been done in so many steps)
+
+## merging all the aknowledgment files  
+
+```{r}
+aknowledgments_list <- 
+  list.files(here::here(params$aknowledgments_dir), 
+             full.names = TRUE,
+             recursive = TRUE,
+             pattern = ".xls"
+             )
+```
+
+
+
+```{r}
+aknowledgments_df <- 
+  plyr::ldply(
+  aknowledgments_list,
+  readxl::read_xls,
+  col_types = "text",
+  sheet = "Acknowledge Table",
+  skip = 2) %>%
+  # ensure no white lines 
+  dplyr::filter_all(., dplyr::any_vars(!is.na(.))) %>%
+  # ensure no duplicates
+  dplyr::distinct() 
+
+# we need to keep names for reinsertion
+old_names <- names(aknowledgments_df)
+names(aknowledgments_df) <- stringr::str_replace_all(old_names, " ", "_")
+```
+
+## merging all the metadata files 
+```{r}
+metadata_list <- 
+  list.files(here::here(params$metadata_dir), 
+             full.names = TRUE,
+             pattern = ".xls",
+             recursive = TRUE
+             )
+```
+
+
+```{r}
+metadata_df <- 
+  plyr::ldply(
+  metadata_list,
+  readxl::read_xls,
+  col_types = "text",
+  skip = 0) %>%
+  # ensure no white lines 
+  dplyr::filter_all(., dplyr::any_vars(!is.na(.))) %>%
+  # ensure no duplicates
+  dplyr::distinct()
+
+#renaming for facility  
+names(metadata_df) <- 
+  stringr::str_replace_all(names(metadata_df), " Segment_Id", "_Id")
+```
+
+--> 
+## overview file formats
+```{r}
+aknowledgments_df %>% 
+  #dplyr::filter(Segment == "HA") %>%
+  #dplyr::filter(is.na(Segment)) %>%
+  head() 
+
+metadata_df %>%
+  head() 
+```
+
+
+# extracting aknowledgments per tree
+
+Functions: 
+```{r}
+extract_metadata_aknowledgments <- function(aknowledgments_df, tree_metadata_file, sheet, segment){
+  
+  tree_metadata_df <- readxl::read_xlsx(tree_metadata_file, sheet = sheet)
+  
+  print(sprintf("tree metadata has %s", nrow(tree_metadata_df)))
+  
+  tree_aknowledgments <- 
+    tree_metadata_df %>%
+    # to test only Norwegian not in the merged table
+    dplyr::rename(country_tree = country) %>%
+    dplyr::select(Isolate_Id, country_tree) %>%
+    dplyr::distinct() %>%
+    dplyr::left_join(aknowledgments_df %>% 
+                       dplyr::filter(!is.na(Segment_ID), Segment == segment) %>%
+                       dplyr::distinct(), by = c("Isolate_Id" = "Isolate-ID"))
+  print(sprintf("aknowledgment has %s", nrow(tree_aknowledgments)))
+  
+  return(tree_aknowledgments)
+
+}
+```
+
+## H5N1 HA tree data - without the norwegian isolates 
+
+```{r}
+H5N1_HA_noNo <- 
+  extract_metadata_aknowledgments(aknowledgments_df, 
+                                  tree_metadata_file = here::here("results", "H5N1_HA_all", "H5N1_HA_metadata.xlsx"), 
+                                  sheet = "H5N1_HA_all_metadata",
+                                  segment = "HA") %>%
+  dplyr::filter(country_tree != "Norway")%>% 
+  dplyr::select(-country_tree) 
+  
+# data check its ok 
+dim(H5N1_HA_noNo)
+
+H5N1_HA_noNo %>%
+  #filter(Isolate_Id == "EPI_ISL_16183656")
+  filter(is.na(Country)) 
+```
+
+
+```{r}
+# stupid does not like tibbles
+xlsx::write.xlsx(as.data.frame(H5N1_HA_noNo), 
+                 file = here::here(params$save_dir, "aknowledgments_per_treedata.xlsx"),
+                 sheetName = "H5N1_HA_without_Norway",
+                 showNA = FALSE,
+                 row.names = FALSE,
+                 append = FALSE)
+  
+```
+
+## H5N1 NA tree data - without the norwegian isolates 
+```{r}
+H5N1_NA_noNo <- 
+  extract_metadata_aknowledgments(aknowledgments_df, 
+                                  tree_metadata_file = here::here("results", "H5N1_NA", "H5N1_NA_metadata.xlsx"), 
+                                  sheet = "H5N1_NA_all_metadata",
+                                  segment = "NA") %>%
+  dplyr::filter(country_tree != "Norway")%>% 
+  dplyr::select(-country_tree) 
+  
+# data check its ok 
+dim(H5N1_NA_noNo)
+
+H5N1_NA_noNo %>%
+  #filter(Isolate_Id == "EPI_ISL_16183656")
+  filter(is.na(Country)) 
+```
+
+
+```{r}
+# stupid does not like tibbles
+xlsx::write.xlsx(as.data.frame(H5N1_NA_noNo), 
+                 file = here::here(params$save_dir, "aknowledgments_per_treedata.xlsx"),
+                 sheetName = "H5N1_NA_without_Norway",
+                 showNA = FALSE,
+                 row.names = FALSE,
+                 append = TRUE)
+  
+```
+
+## H5N5 NA tree data - without the norwegian isolates 
+```{r}
+H5N5_NA_noNo <- 
+  extract_metadata_aknowledgments(aknowledgments_df, 
+                                  tree_metadata_file = here::here("results", "H5N5_NA", "H5N5_NA_metadata.xlsx"), 
+                                  sheet = "H5N5_NA_metadata",
+                                  segment = "NA") %>%
+  dplyr::filter(country_tree != "Norway")%>% 
+  dplyr::select(-country_tree) 
+  
+# data check its ok 
+dim(H5N5_NA_noNo)
+
+H5N5_NA_noNo %>%
+  filter(is.na(Country)) 
+```
+
+
+```{r}
+# stupid does not like tibbles
+xlsx::write.xlsx(as.data.frame(H5N5_NA_noNo), 
+                 file = here::here(params$save_dir, "aknowledgments_per_treedata.xlsx"),
+                 sheetName = "H5N5_NA_without_Norway",
+                 showNA = FALSE,
+                 row.names = FALSE,
+                 append = TRUE)
+  
+```
+
+## H5N5 HA tree data - without the norwegian isolates 
+```{r}
+H5N5_HA_noNo <- 
+  extract_metadata_aknowledgments(aknowledgments_df, 
+                                  tree_metadata_file = here::here("results", "H5N5_HA", "H5N5_HA_metadata.xlsx"), 
+                                  sheet = "H5N5_HA_metadata",
+                                  segment = "HA") %>%
+  dplyr::filter(country_tree != "Norway")%>% 
+  dplyr::select(-country_tree) 
+  
+# data check its ok 
+dim(H5N5_HA_noNo)
+
+H5N5_HA_noNo %>%
+  filter(is.na(Country)) 
+```
+
+
+```{r}
+# stupid does not like tibbles
+xlsx::write.xlsx(as.data.frame(H5N5_HA_noNo), 
+                 file = here::here(params$save_dir, "aknowledgments_per_treedata.xlsx"),
+                 sheetName = "H5N5_HA_without_Norway",
+                 showNA = FALSE,
+                 row.names = FALSE,
+                 append = TRUE)
+  
+```
+
+# Aknowledgments for the preparation files for cropping and aligment 
+
+
+```{r}
+library("seqinr")
+```
+We used the genotype and representative sequence for the initial alignment -> this is the longest file where all need to be aknowledged
+
+
+# HA 
+
+
+```{r}
+HA_repr_file <- here::here("results", "intermediary_files_copy", "HA_repr_ref_inframe_extended.fasta")
+HA_repr <- read.fasta(HA_repr_file)
+
+names_HA_repr <- unlist(getAnnot(HA_repr)) %>%
+  str_replace_all(., ">.*EPI ISL ", "EPI_ISL_")
+                                     
+names_HA_repr
+```
+
+Now we need to retrieve the IDS
+- create df 
+
+
+```{r}
+HA_repr_df <- 
+  tibble::tibble("Isolate-ID" = names_HA_repr) 
+
+dim(HA_repr_df %>% distinct())
+```
+
+getting acknowledgments
+```{r}
+head(aknowledgments_df)
+
+
+HA_aknowledgments <- 
+  HA_repr_df %>% 
+  dplyr::distinct() %>%
+  dplyr:::left_join(aknowledgments_df %>%
+                      dplyr::filter(Segment == "HA") %>%
+                      distinct()) 
+```
+
+
+```{r}
+xlsx::write.xlsx(as.data.frame(HA_aknowledgments), 
+                 file = here::here(params$save_dir, "aknowledgments_preparation_files.xlsx"),
+                 sheetName = "HA_prep_files",
+                 showNA = FALSE,
+                 row.names = FALSE,
+                 append = FALSE)
+  
+```
+
+
+## NA 
+
+
+```{r}
+NA_repr_file <- here::here("results", "intermediary_files_copy", "HA_repr_ref_inframe_extended.fasta")
+NA_repr <- read.fasta(NA_repr_file)
+
+names_NA_repr <- unlist(getAnnot(NA_repr)) %>%
+  str_replace_all(., ">.*EPI ISL ", "EPI_ISL_")
+                                     
+names_NA_repr
+```
+
+Now we need to retrieve the IDS
+- create df 
+
+
+```{r}
+NA_repr_df <- 
+  tibble::tibble("Isolate-ID" = names_NA_repr) 
+
+dim(NA_repr_df %>% distinct())
+```
+
+getting acknowledgments
+```{r}
+NA_aknowledgments <- 
+  NA_repr_df %>% 
+  dplyr::distinct() %>%
+  dplyr:::left_join(aknowledgments_df %>%
+                      dplyr::filter(Segment == "NA") %>%
+                      distinct()) 
+
+dim(NA_aknowledgments)
+```
+
+
+```{r}
+xlsx::write.xlsx(as.data.frame(NA_aknowledgments), 
+                 file = here::here(params$save_dir, "aknowledgments_preparation_files.xlsx"),
+                 sheetName = "NA_prep_files",
+                 showNA = FALSE,
+                 row.names = FALSE,
+                 append = TRUE)
+  
+```
+
+# Editing manually 
+Adding the first 2 lines acknowledgments manually 
+and the colnames

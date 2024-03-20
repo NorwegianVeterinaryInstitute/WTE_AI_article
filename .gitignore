@@ -15,6 +15,10 @@
 # R 
 *.Rproj
 .Rhistory 
+*.html
+*Tmp
+temp*
+*docx
 # FOR now ignoring the data and results dir 
 data/ 
 results/
