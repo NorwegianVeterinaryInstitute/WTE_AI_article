@@ -1,0 +1,56 @@
+---
+title: "SEP Phylog tree packages"
+author: "Eve Zeyl Fiskebeck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+    source_code: 'code/R'
+execute: 
+  echo: false
+  cache: false
+format: html
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup}
+#| include: false
+
+packages_phylog <- 
+  c("base", "here", "tidyverse", "rlist", "xlsx", "glue", "ggplot2", "ggnewscale", 
+    "scales", "qualpalr", "RColorBrewer", "ggplotify", "ggforce", "phytools", 
+    "rlang", "ape", "ggtree", "ggtreeExtra")
+
+```
+
+Other packages prep files - for scripts 
+... and I am probably forgetting some 
+
+```{r}
+#| include: false
+packages_other <- c("readxl", "plyr", 
+                    "seqinr", "optparse")
+```
+
+Blog: interesting : 
+https://ropensci.org/blog/2021/11/16/how-to-cite-r-and-r-packages/
+
+Citatations for packages used ... 
+
+All other
+```{r}
+sink("citations_incl_phylog.txt")
+for (pkg in c(packages_phylog, packages_other)) {
+  print(citation(pkg))
+}
+sink()
+```
+
+
+

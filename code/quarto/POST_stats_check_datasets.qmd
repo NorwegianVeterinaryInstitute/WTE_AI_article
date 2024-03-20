@@ -1,0 +1,66 @@
+---
+title: "Check stats datasets"
+author: "Eve Zeyl Fiskebeck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+  prepdata_dir: "data/prepared_data" 
+  results_dir: "results"
+execute: 
+  echo: false
+  cache: false
+format: html
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup }
+library(here)
+library(tidyverse)
+library(readxl)
+library(xlsx)
+library(plyr)
+library(seqinr)
+```
+
+
+```{r}
+HA_init_file <- here::here("results", "H5N1_HA_all", "msa", "H5N1_initial_ref_MSA_jalview.fasta")
+HA_init <- read.fasta(HA_init_file)
+
+names_HA_init <- unlist(getAnnot(HA_init)) 
+length(names_HA_init)
+
+seq_HA_init <- unlist(getSequence(HA_init, as.string = T)) %>%
+  str_remove_all(., "-")
+
+HA_init_df <- tibble("header" = names_HA_init, 
+                     "sequence" = seq_HA_init) %>%
+  mutate(length = str_length(sequence))
+
+max(HA_init_df$length)
+```
+
+
+```{r}
+NA_init_file <- here::here("results", "H5N1_NA", "MSA", "NA_N1_initial_alignment.fasta")
+NA_init <- read.fasta(NA_init_file)
+
+names_NA_init <- unlist(getAnnot(NA_init)) 
+length(names_NA_init)
+
+seq_NA_init <- unlist(getSequence(NA_init, as.string = T)) %>%
+  str_remove_all(., "-")
+
+NA_init_df <- tibble("header" = names_NA_init, 
+                     "sequence" = seq_NA_init) %>%
+  mutate(length = str_length(sequence))
+
+max(NA_init_df$length)
+```
+
