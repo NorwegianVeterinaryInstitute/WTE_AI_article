@@ -1,0 +1,312 @@
+To cite R in publications use:
+
+  R Core Team (2023). _R: A Language and Environment for Statistical Computing_. R Foundation for Statistical Computing, Vienna, Austria. <https://www.R-project.org/>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {R: A Language and Environment for Statistical Computing},
+    author = {{R Core Team}},
+    organization = {R Foundation for Statistical Computing},
+    address = {Vienna, Austria},
+    year = {2023},
+    url = {https://www.R-project.org/},
+  }
+
+We have invested a lot of time and effort in creating R, please cite it when using it for data analysis. See also ‘citation("pkgname")’ for citing R packages.
+To cite package ‘here’ in publications use:
+
+  Müller K (2020). _here: A Simpler Way to Find Your Files_. R package version 1.0.1, <https://CRAN.R-project.org/package=here>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {here: A Simpler Way to Find Your Files},
+    author = {Kirill Müller},
+    year = {2020},
+    note = {R package version 1.0.1},
+    url = {https://CRAN.R-project.org/package=here},
+  }
+To cite package ‘tidyverse’ in publications use:
+
+  Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP,
+  Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” _Journal of Open Source Software_, *4*(43), 1686. doi:10.21105/joss.01686
+  <https://doi.org/10.21105/joss.01686>.
+
+A BibTeX entry for LaTeX users is
+
+  @Article{,
+    title = {Welcome to the {tidyverse}},
+    author = {Hadley Wickham and Mara Averick and Jennifer Bryan and Winston Chang and Lucy D'Agostino McGowan and Romain François and Garrett Grolemund and Alex Hayes and Lionel Henry and Jim Hester and Max Kuhn and Thomas Lin Pedersen and Evan Miller and Stephan Milton Bache and Kirill Müller and Jeroen Ooms and David Robinson and Dana Paige Seidel and Vitalie Spinu and Kohske Takahashi and Davis Vaughan and Claus Wilke and Kara Woo and Hiroaki Yutani},
+    year = {2019},
+    journal = {Journal of Open Source Software},
+    volume = {4},
+    number = {43},
+    pages = {1686},
+    doi = {10.21105/joss.01686},
+  }
+To cite package ‘rlist’ in publications use:
+
+  Ren K (2021). _rlist: A Toolbox for Non-Tabular Data Manipulation_. R package version 0.4.6.2, <https://CRAN.R-project.org/package=rlist>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {rlist: A Toolbox for Non-Tabular Data Manipulation},
+    author = {Kun Ren},
+    year = {2021},
+    note = {R package version 0.4.6.2},
+    url = {https://CRAN.R-project.org/package=rlist},
+  }
+
+ATTENTION: This citation information has been auto-generated from the package DESCRIPTION file and may need manual editing, see ‘help("citation")’.
+To cite package ‘xlsx’ in publications use:
+
+  Dragulescu A, Arendt C (2020). _xlsx: Read, Write, Format Excel 2007 and Excel 97/2000/XP/2003 Files_. R package version 0.6.5, <https://CRAN.R-project.org/package=xlsx>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {xlsx: Read, Write, Format Excel 2007 and Excel 97/2000/XP/2003 Files},
+    author = {Adrian Dragulescu and Cole Arendt},
+    year = {2020},
+    note = {R package version 0.6.5},
+    url = {https://CRAN.R-project.org/package=xlsx},
+  }
+To cite package ‘glue’ in publications use:
+
+  Hester J, Bryan J (2022). _glue: Interpreted String Literals_. R package version 1.6.2, <https://CRAN.R-project.org/package=glue>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {glue: Interpreted String Literals},
+    author = {Jim Hester and Jennifer Bryan},
+    year = {2022},
+    note = {R package version 1.6.2},
+    url = {https://CRAN.R-project.org/package=glue},
+  }
+To cite ggplot2 in publications, please use
+
+  H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
+
+A BibTeX entry for LaTeX users is
+
+  @Book{,
+    author = {Hadley Wickham},
+    title = {ggplot2: Elegant Graphics for Data Analysis},
+    publisher = {Springer-Verlag New York},
+    year = {2016},
+    isbn = {978-3-319-24277-4},
+    url = {https://ggplot2.tidyverse.org},
+  }
+To cite package ‘ggnewscale’ in publications use:
+
+  Campitelli E (2024). _ggnewscale: Multiple Fill and Colour Scales in 'ggplot2'_. R package version 0.4.10, <https://CRAN.R-project.org/package=ggnewscale>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {ggnewscale: Multiple Fill and Colour Scales in 'ggplot2'},
+    author = {Elio Campitelli},
+    year = {2024},
+    note = {R package version 0.4.10},
+    url = {https://CRAN.R-project.org/package=ggnewscale},
+  }
+To cite package ‘scales’ in publications use:
+
+  Wickham H, Pedersen T, Seidel D (2023). _scales: Scale Functions for Visualization_. R package version 1.3.0, <https://CRAN.R-project.org/package=scales>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {scales: Scale Functions for Visualization},
+    author = {Hadley Wickham and Thomas Lin Pedersen and Dana Seidel},
+    year = {2023},
+    note = {R package version 1.3.0},
+    url = {https://CRAN.R-project.org/package=scales},
+  }
+To cite qualpalr in publications, please use:
+
+  Johan Larsson (2023). _qualpalr: Automatic Generation of Qualitative Color Palettes_. R package version 0.4.4, <https://cran.r-project.org/package=qualpalr>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {{qualpalr}: Automatic Generation of Qualitative Color Palettes},
+    author = {{Johan Larsson}},
+    year = {2023},
+    note = {R package version 0.4.4},
+    url = {https://cran.r-project.org/package=qualpalr},
+  }
+To cite package ‘RColorBrewer’ in publications use:
+
+  Neuwirth E (2022). _RColorBrewer: ColorBrewer Palettes_. R package version 1.1-3, <https://CRAN.R-project.org/package=RColorBrewer>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {RColorBrewer: ColorBrewer Palettes},
+    author = {Erich Neuwirth},
+    year = {2022},
+    note = {R package version 1.1-3},
+    url = {https://CRAN.R-project.org/package=RColorBrewer},
+  }
+To cite package ‘ggplotify’ in publications use:
+
+  Yu G (2023). _ggplotify: Convert Plot to 'grob' or 'ggplot' Object_. R package version 0.1.2, <https://CRAN.R-project.org/package=ggplotify>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {ggplotify: Convert Plot to 'grob' or 'ggplot' Object},
+    author = {Guangchuang Yu},
+    year = {2023},
+    note = {R package version 0.1.2},
+    url = {https://CRAN.R-project.org/package=ggplotify},
+  }
+To cite package ‘ggforce’ in publications use:
+
+  Pedersen T (2022). _ggforce: Accelerating 'ggplot2'_. R package version 0.4.1, <https://CRAN.R-project.org/package=ggforce>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {ggforce: Accelerating 'ggplot2'},
+    author = {Thomas Lin Pedersen},
+    year = {2022},
+    note = {R package version 0.4.1},
+    url = {https://CRAN.R-project.org/package=ggforce},
+  }
+To cite phytools in a publication please use:
+
+  Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). PeerJ, 12, e16505.
+
+A BibTeX entry for LaTeX users is
+
+  @Article{,
+    title = {{p}hytools 2.0: an updated {R} ecosystem for phylogenetic comparative methods (and other things).},
+    author = {Liam J. Revell},
+    journal = {PeerJ},
+    year = {2024},
+    volume = {12},
+    pages = {e16505},
+    doi = {10.7717/peerj.16505},
+  }
+
+As phytools is continually evolving you may also want to cite its version number (found with 'library(help = phytools)' or 'packageVersion("phytools")').
+To cite package ‘rlang’ in publications use:
+
+  Henry L, Wickham H (2023). _rlang: Functions for Base Types and Core R and 'Tidyverse' Features_. R package version 1.1.2, <https://CRAN.R-project.org/package=rlang>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {rlang: Functions for Base Types and Core R and 'Tidyverse' Features},
+    author = {Lionel Henry and Hadley Wickham},
+    year = {2023},
+    note = {R package version 1.1.2},
+    url = {https://CRAN.R-project.org/package=rlang},
+  }
+To cite ape in a publication please use:
+
+  Paradis E, Schliep K (2019). “ape 5.0: an environment for modern phylogenetics and evolutionary analyses in R.” _Bioinformatics_, *35*, 526-528. doi:10.1093/bioinformatics/bty633
+  <https://doi.org/10.1093/bioinformatics/bty633>.
+
+A BibTeX entry for LaTeX users is
+
+  @Article{,
+    title = {ape 5.0: an environment for modern phylogenetics and evolutionary analyses in {R}},
+    author = {Emmanuel Paradis and Klaus Schliep},
+    journal = {Bioinformatics},
+    year = {2019},
+    volume = {35},
+    pages = {526-528},
+    doi = {10.1093/bioinformatics/bty633},
+  }
+
+ape is evolving quickly, so you may want to cite its version number (found with 'library(help = ape)' or 'packageVersion("ape")').
+To cite ggtree in publications use:
+
+  Guangchuang Yu. (2022). Data Integration, Manipulation and Visualization of Phylogenetic Trees (1st edition). Chapman and Hall/CRC. doi:10.1201/9781003279242
+
+  Shuangbin Xu, Lin Li, Xiao Luo, Meijun Chen, Wenli Tang, Li Zhan, Zehan Dai, Tommy T. Lam, Yi Guan, Guangchuang Yu. Ggtree: A serialized data object for visualization of a phylogenetic
+  tree and annotation data. iMeta 2022, 4(1):e56. doi:10.1002/imt2.56
+
+  Guangchuang Yu. Using ggtree to visualize data on tree-like structures. Current Protocols in Bioinformatics, 2020, 69:e96. doi: 10.1002/cpbi.96
+
+  Guangchuang Yu, Tommy Tsan-Yuk Lam, Huachen Zhu, Yi Guan. Two methods for mapping and visualizing associated data on phylogeny using ggtree. Molecular Biology and Evolution 2018,
+  35(2):3041-3043. doi: 10.1093/molbev/msy194
+
+  Guangchuang Yu, David Smith, Huachen Zhu, Yi Guan, Tommy Tsan-Yuk Lam. ggtree: an R package for visualization and annotation of phylogenetic trees with their covariates and other
+  associated data. Methods in Ecology and Evolution 2017, 8(1):28-36. doi:10.1111/2041-210X.12628
+
+To see these entries in BibTeX format, use 'print(<citation>, bibtex=TRUE)', 'toBibtex(.)', or set 'options(citation.bibtex.max=999)'.
+To cite ggtreeExtra in publications use:
+
+  Guangchuang Yu. (2022). Data Integration, Manipulation and Visualization of Phylogenetic Trees (1st edition). Chapman and Hall/CRC.
+
+  S Xu, Z Dai, P Guo, X Fu, S Liu, L Zhou, W Tang, T Feng, M Chen, L Zhan, T Wu, E Hu, Y Jiang, X Bo, G Yu. ggtreeExtra: Compact visualization of richly annotated phylogenetic data.
+  Molecular Biology and Evolution 2021, 38(9):4039-4042. doi: 10.1093/molbev/msab166
+
+To see these entries in BibTeX format, use 'print(<citation>, bibtex=TRUE)', 'toBibtex(.)', or set 'options(citation.bibtex.max=999)'.
+To cite package ‘readxl’ in publications use:
+
+  Wickham H, Bryan J (2023). _readxl: Read Excel Files_. R package version 1.4.3, <https://CRAN.R-project.org/package=readxl>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {readxl: Read Excel Files},
+    author = {Hadley Wickham and Jennifer Bryan},
+    year = {2023},
+    note = {R package version 1.4.3},
+    url = {https://CRAN.R-project.org/package=readxl},
+  }
+To cite package ‘plyr’ in publications use:
+
+  Hadley Wickham (2011). The Split-Apply-Combine Strategy for Data Analysis. Journal of Statistical Software, 40(1), 1-29. URL https://www.jstatsoft.org/v40/i01/.
+
+A BibTeX entry for LaTeX users is
+
+  @Article{,
+    title = {The Split-Apply-Combine Strategy for Data Analysis},
+    author = {Hadley Wickham},
+    journal = {Journal of Statistical Software},
+    year = {2011},
+    volume = {40},
+    number = {1},
+    pages = {1--29},
+    url = {https://www.jstatsoft.org/v40/i01/},
+  }
+To cite seqinr in publications use:
+
+  Charif, D. and Lobry, J.R. (2007)
+
+A BibTeX entry for LaTeX users is
+
+  @InCollection{,
+    author = {D. Charif and J.R. Lobry},
+    title = {Seqin{R} 1.0-2: a contributed package to the {R} project for statistical computing devoted to biological sequences retrieval and analysis.},
+    booktitle = {Structural approaches to sequence evolution: Molecules, networks, populations},
+    year = {2007},
+    editor = {U. Bastolla and M. Porto and H.E. Roman and M. Vendruscolo},
+    series = {Biological and Medical Physics, Biomedical Engineering},
+    pages = {207-232},
+    address = {New York},
+    publisher = {Springer Verlag},
+    note = {{ISBN :} 978-3-540-35305-8},
+  }
+To cite package ‘optparse’ in publications use:
+
+  Davis T (2024). _optparse: Command Line Option Parser_. R package version 1.7.4, <https://CRAN.R-project.org/package=optparse>.
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {optparse: Command Line Option Parser},
+    author = {Trevor L Davis},
+    year = {2024},
+    note = {R package version 1.7.4},
+    url = {https://CRAN.R-project.org/package=optparse},
+  }
