@@ -1,0 +1,249 @@
+TY  - RPRT
+TI  - R: A language and environment for statistical computing
+AU  - R Core Team
+CY  - Vienna, Austria
+DA  - 2023///
+PY  - 2023
+M3  - manual
+PB  - R Foundation for Statistical Computing
+UR  - https://www.R-project.org/
+ER  - 
+
+TY  - RPRT
+TI  - here: A simpler way to find your files
+AU  - Müller, Kirill
+DA  - 2020///
+PY  - 2020
+M3  - manual
+UR  - https://CRAN.R-project.org/package=here
+N1  - R package version 1.0.1
+ER  - 
+
+TY  - JOUR
+TI  - Welcome to the <span class="nocase">tidyverse</span>
+AU  - Wickham, Hadley
+AU  - Averick, Mara
+AU  - Bryan, Jennifer
+AU  - Chang, Winston
+AU  - McGowan, Lucy D'Agostino
+AU  - François, Romain
+AU  - Grolemund, Garrett
+AU  - Hayes, Alex
+AU  - Henry, Lionel
+AU  - Hester, Jim
+AU  - Kuhn, Max
+AU  - Pedersen, Thomas Lin
+AU  - Miller, Evan
+AU  - Bache, Stephan Milton
+AU  - Müller, Kirill
+AU  - Ooms, Jeroen
+AU  - Robinson, David
+AU  - Seidel, Dana Paige
+AU  - Spinu, Vitalie
+AU  - Takahashi, Kohske
+AU  - Vaughan, Davis
+AU  - Wilke, Claus
+AU  - Woo, Kara
+AU  - Yutani, Hiroaki
+T2  - Journal of Open Source Software
+DA  - 2019///
+PY  - 2019
+DO  - 10.21105/joss.01686
+VL  - 4
+IS  - 43
+SP  - 1686
+ER  - 
+
+TY  - RPRT
+TI  - rlist: A toolbox for non-tabular data manipulation
+AU  - Ren, Kun
+DA  - 2021///
+PY  - 2021
+M3  - manual
+UR  - https://CRAN.R-project.org/package=rlist
+N1  - R package version 0.4.6.2
+ER  - 
+
+TY  - RPRT
+TI  - xlsx: Read, write, format excel 2007 and excel 97/2000/XP/2003 files
+AU  - Dragulescu, Adrian
+AU  - Arendt, Cole
+DA  - 2020///
+PY  - 2020
+M3  - manual
+UR  - https://CRAN.R-project.org/package=xlsx
+N1  - R package version 0.6.5
+ER  - 
+
+TY  - RPRT
+TI  - glue: Interpreted string literals
+AU  - Hester, Jim
+AU  - Bryan, Jennifer
+DA  - 2022///
+PY  - 2022
+M3  - manual
+UR  - https://CRAN.R-project.org/package=glue
+N1  - R package version 1.6.2
+ER  - 
+
+TY  - BOOK
+TI  - ggplot2: Elegant graphics for data analysis
+AU  - Wickham, Hadley
+DA  - 2016///
+PY  - 2016
+PB  - Springer-Verlag New York
+SN  - 978-3-319-24277-4
+UR  - https://ggplot2.tidyverse.org
+ER  - 
+
+TY  - RPRT
+TI  - ggnewscale: Multiple fill and colour scales in 'ggplot2'
+AU  - Campitelli, Elio
+DA  - 2024///
+PY  - 2024
+M3  - manual
+UR  - https://CRAN.R-project.org/package=ggnewscale
+N1  - R package version 0.4.10
+ER  - 
+
+TY  - RPRT
+TI  - scales: Scale functions for visualization
+AU  - Wickham, Hadley
+AU  - Pedersen, Thomas Lin
+AU  - Seidel, Dana
+DA  - 2023///
+PY  - 2023
+M3  - manual
+UR  - https://CRAN.R-project.org/package=scales
+N1  - R package version 1.3.0
+ER  - 
+
+TY  - RPRT
+TI  - <span class="nocase">qualpalr</span>: Automatic generation of qualitative color palettes
+AU  - Johan Larsson
+DA  - 2023///
+PY  - 2023
+M3  - manual
+UR  - https://cran.r-project.org/package=qualpalr
+N1  - R package version 0.4.4
+ER  - 
+
+TY  - RPRT
+TI  - RColorBrewer: ColorBrewer palettes
+AU  - Neuwirth, Erich
+DA  - 2022///
+PY  - 2022
+M3  - manual
+UR  - https://CRAN.R-project.org/package=RColorBrewer
+N1  - R package version 1.1-3
+ER  - 
+
+TY  - RPRT
+TI  - ggplotify: Convert Plot to 'grob' or 'ggplot' Object
+AU  - Yu, Guangchuang
+DA  - 2023///
+PY  - 2023
+M3  - manual
+UR  - https://CRAN.R-project.org/package=ggplotify
+N1  - R package version 0.1.2
+ER  - 
+
+TY  - RPRT
+TI  - ggforce: Accelerating 'ggplot2'
+AU  - Pedersen, Thomas Lin
+DA  - 2022///
+PY  - 2022
+M3  - manual
+UR  - https://CRAN.R-project.org/package=ggforce
+N1  - R package version 0.4.1
+ER  - 
+
+TY  - JOUR
+TI  - <span class="nocase">p</span>hytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things).
+AU  - Revell, Liam J.
+T2  - PeerJ
+DA  - 2024///
+PY  - 2024
+DO  - 10.7717/peerj.16505
+VL  - 12
+SP  - e16505
+ER  - 
+
+TY  - RPRT
+TI  - rlang: Functions for base types and core R and 'tidyverse' features
+AU  - Henry, Lionel
+AU  - Wickham, Hadley
+DA  - 2023///
+PY  - 2023
+M3  - manual
+UR  - https://CRAN.R-project.org/package=rlang
+N1  - R package version 1.1.2
+ER  - 
+
+TY  - JOUR
+TI  - ape 5.0: an environment for modern phylogenetics and evolutionary analyses in R
+AU  - Paradis, Emmanuel
+AU  - Schliep, Klaus
+T2  - Bioinformatics (Oxford, England)
+DA  - 2019///
+PY  - 2019
+DO  - 10.1093/bioinformatics/bty633
+VL  - 35
+SP  - 526
+EP  - 528
+J2  - Bioinformatics
+ER  - 
+
+TY  - RPRT
+TI  - readxl: Read excel files
+AU  - Wickham, Hadley
+AU  - Bryan, Jennifer
+DA  - 2023///
+PY  - 2023
+M3  - manual
+UR  - https://CRAN.R-project.org/package=readxl
+N1  - R package version 1.4.3
+ER  - 
+
+TY  - JOUR
+TI  - The split-apply-combine strategy for data analysis
+AU  - Wickham, Hadley
+T2  - Journal of Statistical Software
+DA  - 2011///
+PY  - 2011
+VL  - 40
+IS  - 1
+SP  - 1
+EP  - 29
+UR  - https://www.jstatsoft.org/v40/i01/
+ER  - 
+
+TY  - CHAP
+TI  - SeqinR 1.0-2: a contributed package to the R project for statistical computing devoted to biological sequences retrieval and analysis.
+AU  - Charif, D.
+AU  - Lobry, J.R.
+T2  - Structural approaches to sequence evolution: Molecules, networks, populations
+A2  - Bastolla, U.
+A2  - Porto, M.
+A2  - Roman, H.E.
+A2  - Vendruscolo, M.
+T3  - Biological and medical physics, biomedical engineering
+CY  - New York
+DA  - 2007///
+PY  - 2007
+SP  - 207
+EP  - 232
+PB  - Springer Verlag
+N1  - ISBN : 978-3-540-35305-8
+ER  - 
+
+TY  - RPRT
+TI  - optparse: Command line option parser
+AU  - Davis, Trevor L
+DA  - 2024///
+PY  - 2024
+M3  - manual
+UR  - https://CRAN.R-project.org/package=optparse
+N1  - R package version 1.7.4
+ER  - 
+

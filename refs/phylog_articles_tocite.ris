@@ -1,0 +1,303 @@
+TY  - JOUR
+TI  - MUSCLE: multiple sequence alignment with high accuracy and high throughput
+AU  - Edgar, Robert C
+T2  - Nucleic acids research
+DA  - 2004///
+PY  - 2004
+VL  - 32
+IS  - 5
+SP  - 1792
+EP  - 1797
+ER  - 
+
+TY  - JOUR
+TI  - ModelFinder: fast model selection for accurate phylogenetic estimates
+AU  - Kalyaanamoorthy, Subha
+AU  - Minh, Bui Quang
+AU  - Wong, Thomas K. F.
+AU  - von Haeseler, Arndt
+AU  - Jermiin, Lars S.
+T2  - Nature Methods
+AB  - ModelFinder is a fast model-selection method that greatly improves the accuracy of phylogenetic estimates.
+DA  - 2017/06//
+PY  - 2017
+DO  - 10.1038/nmeth.4285
+DP  - www.nature.com
+VL  - 14
+IS  - 6
+SP  - 587
+EP  - 589
+LA  - en
+SN  - 1548-7105
+ST  - ModelFinder
+UR  - https://www.nature.com/articles/nmeth.4285
+Y2  - 2021/05/31/12:29:25
+N1  - <p>model finder of IQTREE</p>
+KW  - iqtree
+KW  - modelFinder
+KW  - phylogenetics
+ER  - 
+
+TY  - JOUR
+TI  - IQ-TREE 2: New Models and Efficient Methods for Phylogenetic Inference in the Genomic Era
+AU  - Minh, Bui Quang
+AU  - Schmidt, Heiko A
+AU  - Chernomor, Olga
+AU  - Schrempf, Dominik
+AU  - Woodhams, Michael D
+AU  - von Haeseler, Arndt
+AU  - Lanfear, Robert
+T2  - Molecular Biology and Evolution
+A2  - Teeling, Emma
+AB  - Abstract
+            IQ-TREE (http://www.iqtree.org, last accessed February 6, 2020) is a user-friendly and widely used software package for phylogenetic inference using maximum likelihood. Since the release of version 1 in 2014, we have continuously expanded IQ-TREE to integrate a plethora of new models of sequence evolution and efficient computational approaches of phylogenetic inference to deal with genomic data. Here, we describe notable features of IQ-TREE version 2 and highlight the key advantages over other software.
+DA  - 2020/02/03/
+PY  - 2020
+DO  - 10.1093/molbev/msaa015
+DP  - DOI.org (Crossref)
+SP  - msaa015
+LA  - en
+SN  - 0737-4038, 1537-1719
+ST  - IQ-TREE 2
+UR  - https://academic.oup.com/mbe/advance-article/doi/10.1093/molbev/msaa015/5721363
+Y2  - 2020/04/06/12:48:43
+ER  - 
+
+TY  - JOUR
+TI  - IQ-TREE: A Fast and Effective Stochastic Algorithm for Estimating Maximum-Likelihood Phylogenies
+AU  - Nguyen, Lam-Tung
+AU  - Schmidt, Heiko A.
+AU  - von Haeseler, Arndt
+AU  - Minh, Bui Quang
+T2  - Molecular Biology and Evolution
+AB  - Abstract.  Large phylogenomics data sets require fast tree inference methods, especially for maximum-likelihood (ML) phylogenies. Fast programs exist, but due t
+DA  - 2015/01/01/
+PY  - 2015
+DO  - 10.1093/molbev/msu300
+DP  - academic.oup.com
+VL  - 32
+IS  - 1
+SP  - 268
+EP  - 274
+J2  - Mol Biol Evol
+LA  - en
+SN  - 0737-4038
+ST  - IQ-TREE
+UR  - https://academic.oup.com/mbe/article/32/1/268/2925592
+Y2  - 2019/03/14/15:26:21
+ER  - 
+
+TY  - JOUR
+TI  - MEGA11: Molecular Evolutionary Genetics Analysis Version 11
+AU  - Tamura, Koichiro
+AU  - Stecher, Glen
+AU  - Kumar, Sudhir
+T2  - Molecular Biology and Evolution
+AB  - The Molecular Evolutionary Genetics Analysis (MEGA) software has matured to contain a large collection of methods and tools of computational molecular evolution. Here, we describe new additions that make MEGA a more comprehensive tool for building timetrees of species, pathogens, and gene families using rapid relaxed-clock methods. Methods for estimating divergence times and confidence intervals are implemented to use probability densities for calibration constraints for node-dating and sequence sampling dates for tip-dating analyses. They are supported by new options for tagging sequences with spatiotemporal sampling information, an expanded interactive Node Calibrations Editor, and an extended Tree Explorer to display timetrees. Also added is a Bayesian method for estimating neutral evolutionary probabilities of alleles in a species using multispecies sequence alignments and a machine learning method to test for the autocorrelation of evolutionary rates in phylogenies. The computer memory requirements for the maximum likelihood analysis are reduced significantly through reprogramming, and the graphical user interface has been made more responsive and interactive for very big data sets. These enhancements will improve the user experience, quality of results, and the pace of biological discovery. Natively compiled graphical user interface and command-line versions of MEGA11 are available for Microsoft Windows, Linux, and macOS from www.megasoftware.net.
+DA  - 2021/04/23/
+PY  - 2021
+DO  - 10.1093/molbev/msab120
+DP  - Silverchair
+IS  - msab120
+J2  - Molecular Biology and Evolution
+SN  - 0737-4038
+ST  - MEGA11
+UR  - https://doi.org/10.1093/molbev/msab120
+Y2  - 2021/06/17/08:50:00
+ER  - 
+
+TY  - JOUR
+TI  - UFBoot2: Improving the Ultrafast Bootstrap Approximation
+AU  - Hoang, Diep Thi
+AU  - Chernomor, Olga
+AU  - von Haeseler, Arndt
+AU  - Minh, Bui Quang
+AU  - Vinh, Le Sy
+T2  - Molecular Biology and Evolution
+DA  - 2018/02/01/
+PY  - 2018
+DO  - 10.1093/molbev/msx281
+DP  - DOI.org (Crossref)
+VL  - 35
+IS  - 2
+SP  - 518
+EP  - 522
+LA  - en
+SN  - 0737-4038, 1537-1719
+ST  - UFBoot2
+UR  - https://academic.oup.com/mbe/article/35/2/518/4565479
+Y2  - 2020/04/06/12:48:43
+ER  - 
+
+TY  - JOUR
+TI  - VSEARCH: a versatile open source tool for metagenomics
+AU  - Rognes, Torbjørn
+AU  - Flouri, Tomáš
+AU  - Nichols, Ben
+AU  - Quince, Christopher
+AU  - Mahé, Frédéric
+T2  - PeerJ
+AB  - BACKGROUND: VSEARCH is an open source and free of charge multithreaded 64-bit tool for processing and preparing metagenomics, genomics and population genomics nucleotide sequence data. It is designed as an alternative to the widely used USEARCH tool (Edgar, 2010) for which the source code is not publicly available, algorithm details are only rudimentarily described, and only a memory-confined 32-bit version is freely available for academic use.
+METHODS: When searching nucleotide sequences, VSEARCH uses a fast heuristic based on words shared by the query and target sequences in order to quickly identify similar sequences, a similar strategy is probably used in USEARCH. VSEARCH then performs optimal global sequence alignment of the query against potential target sequences, using full dynamic programming instead of the seed-and-extend heuristic used by USEARCH. Pairwise alignments are computed in parallel using vectorisation and multiple threads.
+RESULTS: VSEARCH includes most commands for analysing nucleotide sequences available in USEARCH version 7 and several of those available in USEARCH version 8, including searching (exact or based on global alignment), clustering by similarity (using length pre-sorting, abundance pre-sorting or a user-defined order), chimera detection (reference-based or de novo), dereplication (full length or prefix), pairwise alignment, reverse complementation, sorting, and subsampling. VSEARCH also includes commands for FASTQ file processing, i.e., format detection, filtering, read quality statistics, and merging of paired reads. Furthermore, VSEARCH extends functionality with several new commands and improvements, including shuffling, rereplication, masking of low-complexity sequences with the well-known DUST algorithm, a choice among different similarity definitions, and FASTQ file format conversion. VSEARCH is here shown to be more accurate than USEARCH when performing searching, clustering, chimera detection and subsampling, while on a par with USEARCH for paired-ends read merging. VSEARCH is slower than USEARCH when performing clustering and chimera detection, but significantly faster when performing paired-end reads merging and dereplication. VSEARCH is available at https://github.com/torognes/vsearch under either the BSD 2-clause license or the GNU General Public License version 3.0.
+DISCUSSION: VSEARCH has been shown to be a fast, accurate and full-fledged alternative to USEARCH. A free and open-source versatile tool for sequence analysis is now available to the metagenomics community.
+DA  - 2016///
+PY  - 2016
+DO  - 10.7717/peerj.2584
+DP  - PubMed
+VL  - 4
+SP  - e2584
+J2  - PeerJ
+LA  - eng
+SN  - 2167-8359
+ST  - VSEARCH
+KW  - Alignment
+KW  - Chimera detection
+KW  - Clustering
+KW  - Dereplication
+KW  - Masking
+KW  - Metagenomics
+KW  - Parallellization
+KW  - Searching
+KW  - Sequences
+KW  - Shuffling
+ER  - 
+
+TY  - JOUR
+TI  - INSaFLU: an automated open web-based bioinformatics suite “from-reads” for influenza whole-genome-sequencing-based surveillance
+AU  - Borges, Vítor
+AU  - Pinheiro, Miguel
+AU  - Pechirra, Pedro
+AU  - Guiomar, Raquel
+AU  - Gomes, João Paulo
+T2  - Genome Medicine
+AB  - A new era of flu surveillance has already started based on the genetic characterization and exploration of influenza virus evolution at whole-genome scale. Although this has been prioritized by national and international health authorities, the demanded technological transition to whole-genome sequencing (WGS)-based flu surveillance has been particularly delayed by the lack of bioinformatics infrastructures and/or expertise to deal with primary next-generation sequencing (NGS) data.
+DA  - 2018/06/29/
+PY  - 2018
+DO  - 10.1186/s13073-018-0555-0
+DP  - BioMed Central
+VL  - 10
+IS  - 1
+SP  - 46
+J2  - Genome Medicine
+SN  - 1756-994X
+ST  - INSaFLU
+UR  - https://doi.org/10.1186/s13073-018-0555-0
+Y2  - 2020/11/12/07:55:22
+N1  - <p>Notes in Obsidian</p>
+KW  - Bioinformatics
+KW  - Influenza
+KW  - INSaFLU
+KW  - Next-generation sequencing
+KW  - Public health
+KW  - Surveillance
+KW  - Variants
+ER  - 
+
+TY  - JOUR
+TI  - MAFFT Multiple Sequence Alignment Software Version 7: Improvements in Performance and Usability
+AU  - Katoh, Kazutaka
+AU  - Standley, Daron M.
+T2  - Molecular Biology and Evolution
+AB  - We report a major update of the MAFFT multiple sequence alignment program. This version has several new features, including options for adding unaligned sequences into an existing alignment, adjustment of direction in nucleotide alignment, constrained alignment and parallel processing, which were implemented after the previous major update. This report shows actual examples to explain how these features work, alone and in combination. Some examples incorrectly aligned by MAFFT are also shown to clarify its limitations. We discuss how to avoid misalignments, and our ongoing efforts to overcome such limitations.
+DA  - 2013/04/01/
+PY  - 2013
+DO  - 10.1093/molbev/mst010
+DP  - Silverchair
+VL  - 30
+IS  - 4
+SP  - 772
+EP  - 780
+J2  - Molecular Biology and Evolution
+SN  - 0737-4038
+ST  - MAFFT Multiple Sequence Alignment Software Version 7
+UR  - https://doi.org/10.1093/molbev/mst010
+Y2  - 2023/06/12/08:20:23
+L2  - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3603318/
+ER  - 
+
+TY  - JOUR
+TI  - SeqKit: A Cross-Platform and Ultrafast Toolkit for FASTA/Q File Manipulation
+AU  - Shen, Wei
+AU  - Le, Shuai
+AU  - Li, Yan
+AU  - Hu, Fuquan
+T2  - PLOS ONE
+A2  - Zou, Quan
+DA  - 2016/10/05/
+PY  - 2016
+DO  - 10.1371/journal.pone.0163962
+DP  - DOI.org (Crossref)
+VL  - 11
+IS  - 10
+SP  - e0163962
+J2  - PLoS ONE
+LA  - en
+SN  - 1932-6203
+ST  - SeqKit
+UR  - https://dx.plos.org/10.1371/journal.pone.0163962
+Y2  - 2024/03/18/10:15:47
+ER  - 
+
+TY  - JOUR
+TI  - Jalview Version 2—a multiple sequence alignment editor and analysis workbench
+AU  - Waterhouse, Andrew M.
+AU  - Procter, James B.
+AU  - Martin, David M. A.
+AU  - Clamp, Michèle
+AU  - Barton, Geoffrey J.
+T2  - Bioinformatics
+AB  - Summary: Jalview Version 2 is a system for interactive WYSIWYG editing, analysis and annotation of multiple sequence alignments. Core features include keyboard and mouse-based editing, multiple views and alignment overviews, and linked structure display with Jmol. Jalview 2 is available in two forms: a lightweight Java applet for use in web applications, and a powerful desktop application that employs web services for sequence alignment, secondary structure prediction and the retrieval of alignments, sequences, annotation and structures from public databases and any DAS 1.53 compliant sequence or annotation server.Availability: The Jalview 2 Desktop application and JalviewLite applet are made freely available under the GPL, and can be downloaded from www.jalview.orgContact:  g.j.barton@dundee.ac.uk
+DA  - 2009/05/01/
+PY  - 2009
+DO  - 10.1093/bioinformatics/btp033
+DP  - Silverchair
+VL  - 25
+IS  - 9
+SP  - 1189
+EP  - 1191
+J2  - Bioinformatics
+SN  - 1367-4803
+UR  - https://doi.org/10.1093/bioinformatics/btp033
+Y2  - 2024/03/18/16:01:02
+ER  - 
+
+TY  - JOUR
+TI  - Muscle5: High-accuracy alignment ensembles enable unbiased assessments of sequence homology and phylogeny
+AU  - Edgar, Robert C.
+T2  - Nature Communications
+AB  - Multiple sequence alignments are widely used to infer evolutionary relationships, enabling inferences of structure, function, and phylogeny. Standard practice is to construct one alignment by some preferred method and use it in further analysis; however, undetected alignment bias can be problematic. I describe Muscle5, a novel algorithm which constructs an ensemble of high-accuracy alignment with diverse biases by perturbing a hidden Markov model and permuting its guide tree. Confidence in an inference is assessed as the fraction of the ensemble which supports it. Applied to phylogenetic tree estimation, I show that ensembles can confidently resolve topologies with low bootstrap according to standard methods, and conversely that some topologies with high bootstraps are incorrect. Applied to the phylogeny of RNA viruses, ensemble analysis shows that recently adopted taxonomic phyla are probably polyphyletic. Ensemble analysis can improve confidence assessment in any inference from an alignment., Multiple sequence alignments are widely used to predict protein structure, function, and phylogeny, but are uncertain with more diverged sequences. Muscle5 generates ensembles of alternative high-accurate alignments, enabling novel confidence estimates in alignments, trees, and other inferences.
+DA  - 2022/11/15/
+PY  - 2022
+DO  - 10.1038/s41467-022-34630-w
+DP  - PubMed Central
+VL  - 13
+SP  - 6968
+J2  - Nat Commun
+SN  - 2041-1723
+ST  - Muscle5
+UR  - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9664440/
+Y2  - 2024/03/18/16:04:23
+L2  - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9664440/
+ER  - 
+
+TY  - JOUR
+TI  - Adding unaligned sequences into an existing alignment using MAFFT and LAST
+AU  - Katoh, Kazutaka
+AU  - Frith, Martin C.
+T2  - Bioinformatics
+AB  - Two methods to add unaligned sequences into an existing multiple sequence alignment have been implemented as the ‘–add’ and ‘–addfragments’ options in the MAFFT package. The former option is a basic one and applicable only to full-length sequences, whereas the latter option is applicable even when the unaligned sequences are short and fragmentary. These methods internally infer the phylogenetic relationship among the sequences in the existing alignment and the phylogenetic positions of unaligned sequences. Benchmarks based on two independent simulations consistently suggest that the “–addfragments” option outperforms recent methods, PaPaRa and PAGAN, in accuracy for difficult problems and that these three methods appropriately handle easy problems.Availability:  http://mafft.cbrc.jp/alignment/software/Contact:  katoh@ifrec.osaka-u.ac.jpSupplementary information:  Supplementary data are available at Bioinformatics online
+DA  - 2012/12/01/
+PY  - 2012
+DO  - 10.1093/bioinformatics/bts578
+DP  - Silverchair
+VL  - 28
+IS  - 23
+SP  - 3144
+EP  - 3146
+J2  - Bioinformatics
+SN  - 1367-4803
+UR  - https://doi.org/10.1093/bioinformatics/bts578
+Y2  - 2024/03/18/16:09:39
+ER  - 
+
