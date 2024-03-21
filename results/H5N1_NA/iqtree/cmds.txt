@@ -1,0 +1,8 @@
+iqtree --version
+IQ-TREE multicore version 2.1.4-beta COVID-edition for Linux 64-bit built Jun 24 2021
+Developed by Bui Quang Minh, James Barbetti, Nguyen Lam Tung,
+Olga Chernomor, Heiko Schmidt, Dominik Schrempf, Michael Woodhams.
+
+iqtree -s SEP_NA_H5N1_MSA_nommals.fasta -m MFP+F+I -B 1000 -T AUTO 2>&1 | tee iqtree.log
+
+
