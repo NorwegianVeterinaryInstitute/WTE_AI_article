@@ -1,0 +1,568 @@
+IQ-TREE multicore version 2.2.2.9 COVID-edition for Linux 64-bit built Aug  6 2023
+Developed by Bui Quang Minh, James Barbetti, Nguyen Lam Tung,
+Olga Chernomor, Heiko Schmidt, Dominik Schrempf, Michael Woodhams, Ly Trong Nhan.
+
+Host:    cliff (AVX2, FMA3, 31 GB RAM)
+Command: iqtree -s SEP_NA_H5N5_clean_total_jalview_alignment.fasta -m MFP+F+I -B 1000 -T AUTO
+Seed:    47904 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Sat Nov 18 10:38:06 2023
+Kernel:  AVX+FMA - auto-detect threads (4 CPU cores detected)
+
+Reading alignment file SEP_NA_H5N5_clean_total_jalview_alignment.fasta ... Fasta format detected
+Reading fasta file: done in 0.0102057 secs using 19.43% CPU
+Alignment most likely contains DNA/RNA sequences
+Constructing alignment: done in 0.00353141 secs using 58.53% CPU
+Alignment has 84 sequences with 1486 columns, 418 distinct patterns
+550 parsimony-informative, 193 singleton sites, 743 constant sites
+WARNING: Some sequence names are changed as follows:
+A/peregrine_falcon/Denmark/13776-1/2020-10-30(H5N5)|NA|EPI_ISL_644737/1-1418 -> A/peregrine_falcon/Denmark/13776-1/2020-10-30_H5N5_|NA|EPI_ISL_644737/1-1418
+A/eagle/Hungary/8569/2021_(H5N5)|NA|EPI_ISL_3135926/1-1418 -> A/eagle/Hungary/8569/2021__H5N5_|NA|EPI_ISL_3135926/1-1418
+A/tufted_duck/Poland/MB061/2021(H5N5)|NA|EPI_ISL_1255051/1-1418 -> A/tufted_duck/Poland/MB061/2021_H5N5_|NA|EPI_ISL_1255051/1-1418
+
+                                                                                      Gap/Ambiguity  Composition  p-value
+Analyzing sequences: done in 0.00260518 secs using 199.5% CPU
+   1  A/Great_black-backed_gull/Norway/2022-07-1141-4T/2022|NA|EPI_ISL_18455201/1-1352        9.02%    passed     98.64%
+   2  A/European_herring_gull/Norway/2022-07-1141-1T/2022|NA|EPI_ISL_18455200/1-1352          9.02%    passed     99.68%
+   3  A/sea_eagle/Norway/2022-07-198_22VIR3866-2/2022|NA|EPI_ISL_12754536/1-1352              9.02%    passed     98.67%
+   4  A/Glaucous_gull/Norway/2022-07-1148/2022|NA|EPI_ISL_18454937/1-1352                     9.02%    passed     99.43%
+   5  A/goose/Russian_Federation/Omsk/1680-6/2020|NA|EPI_ISL_626648/1-1418                    4.58%    passed     99.80%
+   6  A/peregrine_falcon/Denmark/13776-1/2020-10-30_H5N5_|NA|EPI_ISL_644737/1-1418            4.58%    passed     99.18%
+   7  A/mute_swan/Wales/048068/2020|NA|EPI_ISL_683999/1-1414                                  4.85%    passed     97.45%
+   8  A/mute_swan/Wales/048069/2020|NA|EPI_ISL_683997/1-1392                                  6.33%    passed     91.69%
+   9  A/swan/Rostov/2299-2/2020|NA|EPI_ISL_16209276/1-1418                                    4.58%    passed     97.79%
+  10  A/mute_swan/Slovenia/1914-20_21VIR959-5/2020|NA|EPI_ISL_1665267/1-1418                  4.64%    passed     99.40%
+  11  A/chicken/Russian_Federation/Omsk/1680-10/2020|NA|EPI_ISL_626647/1-1418                 4.58%    passed     99.80%
+  12  A/chicken/Germany-MV/AI02431/2020|NA|EPI_ISL_5061617/1-1418                             4.58%    passed     98.77%
+  13  A/buzzard/Germany-MV/AI02166/2020|NA|EPI_ISL_614399/1-1418                              4.58%    passed     99.55%
+  14  A/barnacle_goose/Sweden/SVA201201SZ0353/KN003624/2020|NA|EPI_ISL_722176/1-1418          4.58%    passed     99.22%
+  15  A/brent_goose/England/095684/2020|NA|EPI_ISL_1123358/1-1418                             4.58%    passed     90.26%
+  16  A/greater_white-fronted_goose/Netherlands/20017403-004/2020|NA|EPI_ISL_641378/1-1418    4.58%    passed     99.22%
+  17  A/common_teal/Italy/20VIR7439-190/2020|NA|EPI_ISL_956409/1-1418                         4.58%    passed     99.22%
+  18  A/Gallus_gallus/Belgium/12168_002/2020|NA|EPI_ISL_660264/1-1418                         4.58%    passed     99.22%
+  19  A/Chicken/Sweden/SVA210226SZ0168/KN048380-IP9/2021|NA|EPI_ISL_1219038/1-1418            4.58%    passed     99.10%
+  20  A/northern_goshawk/Sweden/SVA210318SZ0322/KN001092/M/2021|NA|EPI_ISL_1391276/1-1418     4.58%    passed     99.55%
+  21  A/chicken/Slovakia/Pah10_21VIR1086-5/2021|NA|EPI_ISL_1665250/1-1418                     4.58%    passed     99.73%
+  22  A/common_golden_eye/Sweden/SVA210316SZ0489/KN001046/M/2021|NA|EPI_ISL_1391019/1-1418    4.58%    passed     99.12%
+  23  A/chicken/Romania/10101_21VIR2044-1/2021|NA|EPI_ISL_1665249/1-1418                      4.64%    passed     99.74%
+  24  A/mute_swan/Slovakia/Pah15_21VIR1086-3/2021|NA|EPI_ISL_1665261/1-1418                   4.58%    passed     99.73%
+  25  A/mute_swan/Austria/21013162_21VIR1085-5/2021|NA|EPI_ISL_1665258/1-1418                 4.58%    passed     98.97%
+  26  A/mute_swan/Slovakia/Pah6_21VIR1086-2/2021|NA|EPI_ISL_1665262/1-1418                    4.58%    passed     99.73%
+  27  A/whooper_swan/Romania/10311_21VIR849-2/2021|NA|EPI_ISL_1665269/1-1418                  4.58%    passed     99.73%
+  28  A/whooper_swan/Romania/10122_21VIR2593-23/2021|NA|EPI_ISL_2234821/1-1418                4.58%    passed     99.73%
+  29  A/whooper_swan/Romania/10123_21VIR849-1/2021|NA|EPI_ISL_1665268/1-1418                  4.64%    passed     99.84%
+  30  A/whooper_swan/Romania/10171_21VIR2593-15/2021|NA|EPI_ISL_2234822/1-1418                4.58%    passed     99.73%
+  31  A/whooper_swan/Romania/10362_21VIR2593-20/2021|NA|EPI_ISL_2234824/1-1418                4.58%    passed     99.73%
+  32  A/whooper_swan/Romania/10213_21VIR2593-27/2021|NA|EPI_ISL_2234823/1-1418                4.58%    passed     99.73%
+  33  A/eagle/Hungary/8569/2021__H5N5_|NA|EPI_ISL_3135926/1-1418                              4.58%    passed     99.64%
+  34  A/whooper_swan/Sweden/SVA2100329SZ0210/FB0001277/H-2021|NA|EPI_ISL_3143954/1-1418       4.58%    passed     99.72%
+  35  A/Chicken/Sweden/SVA210121SZ0033/KN000273-IP3/2021|NA|EPI_ISL_943551/1-1418             4.58%    passed     99.78%
+  36  A/Chicken/Sweden/SVA210117SZ0004/KN011326-IP3/2021|NA|EPI_ISL_943553/1-1418             4.58%    passed     99.78%
+  37  A/tufted_duck/Poland/MB061/2021_H5N5_|NA|EPI_ISL_1255051/1-1418                         4.58%    passed     69.47%
+  38  A/Common_goldeneye/SVA210202SZ0464/KN000277/2021|NA|EPI_ISL_1093424/1-1418              4.58%    passed     98.11%
+  39  A/Goose/Sweden/SVA210311SZ0003/KN0001570-IP14/2021|NA|EPI_ISL_1305778/1-1418            4.58%    passed     99.16%
+  40  A/Chicken/Sweden/SVA210302SZ0564/KN052345-IP12/2021|NA|EPI_ISL_1238195/1-1418           4.58%    passed     99.71%
+  41  A/Common_peacock/Sweden/SVA210311SZ0002/KN001568-IP14/2021|NA|EPI_ISL_1305777/1-1418    4.58%    passed     99.16%
+  42  A/Duck/Sweden/SVA210311SZ0004/KN0001570-IP14/2021|NA|EPI_ISL_1305779/1-1418             4.58%    passed     99.16%
+  43  A/European_herring_gull/Bulgaria/222_21VIR4270-1/2021|NA|EPI_ISL_3102054/1-1418         4.58%    passed     98.98%
+  44  A/Chicken/Sweden/SVA210323SZ001/KN001982-IP21/2021|NA|EPI_ISL_1385792/1-1418            4.58%    passed     99.16%
+  45  A/Mute_Swan/Sweden/SVA210302Z0465/KN000716/SOTR/2021|NA|EPI_ISL_1305781/1-1418          4.58%    passed     98.62%
+  46  A/Mute_Swan/Sweden/SVA210303SZ0392/KN000806/Kal/2021|NA|EPI_ISL_1308010/1-1418          4.58%    passed     98.14%
+  47  A/grey_heron/Bulgaria/223_21VIR4270-2/2021|NA|EPI_ISL_3102055/1-1418                    4.58%    passed     98.98%
+  48  A/Mute_Swan/Sweden/SVA210330SZ0417/FB001305/D-2021|NA|EPI_ISL_3294584/1-1418            4.58%    passed     87.80%
+  49  A/mute_swan/Romania/11981-1_21VIR3163-5/2021|NA|EPI_ISL_3102081/1-1418                  4.58%    passed     99.04%
+  50  A/pelican/Dagestan/397-1/2021|NA|EPI_ISL_16209274/1-1418                                4.58%    passed     99.82%
+  51  A/gull/Dagestan/397-2/2021|NA|EPI_ISL_16209275/1-1418                                   4.58%    passed     99.19%
+  52  A/mute_swan/Czech_Republic/4099/2021|NA|EPI_ISL_10364607/1-1418                         4.58%    passed     98.98%
+  53  A/shelduck/Kalmykia/1814-1/2021|NA|EPI_ISL_16209277/1-1352                              9.02%    passed     98.64%
+  54  A/sea_eagle/Norway/2022-07-100_22VIR2882-2/2022|NA|EPI_ISL_12028892/1-512              65.55%    passed     81.82%
+  55  A/sea_eagle/Norway/2022-07-196_22VIR3866-1/2022|NA|EPI_ISL_12754535/1-1352              9.02%    passed     99.70%
+  56  A/Chicken/Sweden/SVA210201SZ0080/FB000693-IP4/2021|NA|EPI_ISL_12980521/1-1418           4.58%    passed     99.90%
+  57  A/waterfowl/Russia/1526-4/2021|NA|EPI_ISL_16209278/1-1352                               9.02%    passed     99.43%
+  58  A/chicken/Egypt/A10351A/2014|NA|EPI_ISL_177506/1-1349                                   9.22%    passed     93.44%
+  59  A/Goose/Guangdong/1/96|NA|EPI_ISL_1254/1-1409                                           5.18%    passed     76.70%
+  60  2022_07_1004_1_H5N5|NA|2022_07_1004_1/1-1352                                            9.02%    passed     99.91%
+  61  2022_07_1140_1_H5N5|NA|2022_07_1140_1/1-1352                                            9.02%    passed     99.68%
+  62  2022_07_1141_3_H5N5|NA|2022_07_1141_3/1-1352                                            9.02%    passed     99.83%
+  63  2022_07_1141_4_H5N5|NA|2022_07_1141_4/1-1352                                            9.02%    passed     99.30%
+  64  2022_07_1137_1_H5N5|NA|2022_07_1137_1/1-1352                                            9.02%    passed     99.42%
+  65  2022_07_1141_1_H5N5|NA|2022_07_1141_1/1-1352                                            9.02%    passed     99.68%
+  66  2022_07_1233_1_H5N5|NA|2022_07_1233_1/1-1352                                            9.02%    passed     99.68%
+  67  2022_07_1231_1_H5N5|NA|2022_07_1231_1/1-1352                                            9.02%    passed     99.91%
+  68  2022_07_895_1_H5N5|NA|2022_07_895_1/1-1352                                              9.02%    passed     99.78%
+  69  2022_07_897_2_H5N5|NA|2022_07_897_2/1-1352                                              9.02%    passed     99.43%
+  70  2022_07_2739_1_H5N5|NA|2022_07_2739_1/1-1352                                            9.02%    passed     99.78%
+  71  2022_07_3018_2_H5N5|NA|2022_07_3018_2/1-1356                                            8.75%    passed     99.81%
+  72  2022_07_897_3_H5N5|NA|2022_07_897_3/1-1352                                              9.02%    passed     99.42%
+  73  2022_07_897_4_H5N5|NA|2022_07_897_4/1-1352                                              9.02%    passed     99.43%
+  74  2022_04_13257_1_H5N5|NA|2022_04_13257_1/1-1419                                          4.51%    passed      8.07%
+  75  2022_07_100c_H5N5|NA|2022_07_100c/1-1353                                                8.95%    passed     99.82%
+  76  2022_07_1141_5_tr_H5N5|NA|2022_07_1141_5_tr/1-1353                                      8.95%    passed     99.96%
+  77  2022_07_196_H5N5|NA|2022_07_196/1-1353                                                  8.95%    passed     99.79%
+  78  2022_07_198_H5N5|NA|2022_07_198/1-1353                                                  8.95%    passed     98.96%
+  79  2022_07_446_H5N5|NA|2022_07_446/1-1353                                                  8.95%    passed     99.76%
+  80  2022_07_448_H5N5|NA|2022_07_448/1-1353                                                  8.95%    passed     99.79%
+  81  2022_07_693_1_H5N5|NA|2022_07_693_1/1-1375                                              7.47%    passed     92.17%
+  82  2022_07_694_1_H5N5|NA|2022_07_694_1/1-1354                                              8.88%    passed     99.97%
+  83  2022_07_977_1_H5N5|NA|2022_07_977_1/1-1372                                              7.67%    passed     91.95%
+  84  2022_07_981_1_H5N5|NA|2022_07_981_1/1-1357                                              8.68%    passed     99.82%
+WARNING: 1 sequences contain more than 50% gaps/ambiguity
+****  TOTAL                                                                                   6.98%  0 sequences failed composition chi2 test (p-value<5%; df=3)
+NOTE: 2022_07_1140_1_H5N5|NA|2022_07_1140_1/1-1352 is identical to A/European_herring_gull/Norway/2022-07-1141-1T/2022|NA|EPI_ISL_18455200/1-1352 but kept for subsequent analysis
+NOTE: 2022_07_897_2_H5N5|NA|2022_07_897_2/1-1352 is identical to A/Glaucous_gull/Norway/2022-07-1148/2022|NA|EPI_ISL_18454937/1-1352 but kept for subsequent analysis
+NOTE: A/chicken/Russian_Federation/Omsk/1680-10/2020|NA|EPI_ISL_626647/1-1418 is identical to A/goose/Russian_Federation/Omsk/1680-6/2020|NA|EPI_ISL_626648/1-1418 but kept for subsequent analysis
+NOTE: A/greater_white-fronted_goose/Netherlands/20017403-004/2020|NA|EPI_ISL_641378/1-1418 is identical to A/barnacle_goose/Sweden/SVA201201SZ0353/KN003624/2020|NA|EPI_ISL_722176/1-1418 but kept for subsequent analysis
+NOTE: A/mute_swan/Slovakia/Pah15_21VIR1086-3/2021|NA|EPI_ISL_1665261/1-1418 is identical to A/chicken/Slovakia/Pah10_21VIR1086-5/2021|NA|EPI_ISL_1665250/1-1418 but kept for subsequent analysis
+NOTE: A/whooper_swan/Romania/10122_21VIR2593-23/2021|NA|EPI_ISL_2234821/1-1418 is identical to A/whooper_swan/Romania/10311_21VIR849-2/2021|NA|EPI_ISL_1665269/1-1418 but kept for subsequent analysis
+NOTE: A/Chicken/Sweden/SVA210117SZ0004/KN011326-IP3/2021|NA|EPI_ISL_943553/1-1418 is identical to A/Chicken/Sweden/SVA210121SZ0033/KN000273-IP3/2021|NA|EPI_ISL_943551/1-1418 but kept for subsequent analysis
+NOTE: A/Common_peacock/Sweden/SVA210311SZ0002/KN001568-IP14/2021|NA|EPI_ISL_1305777/1-1418 is identical to A/Goose/Sweden/SVA210311SZ0003/KN0001570-IP14/2021|NA|EPI_ISL_1305778/1-1418 but kept for subsequent analysis
+NOTE: A/grey_heron/Bulgaria/223_21VIR4270-2/2021|NA|EPI_ISL_3102055/1-1418 is identical to A/European_herring_gull/Bulgaria/222_21VIR4270-1/2021|NA|EPI_ISL_3102054/1-1418 but kept for subsequent analysis
+NOTE: 2022_07_1231_1_H5N5|NA|2022_07_1231_1/1-1352 is identical to 2022_07_1004_1_H5N5|NA|2022_07_1004_1/1-1352 but kept for subsequent analysis
+Checking for duplicate sequences: done in 0.00330141 secs using 176.5% CPU
+Identifying sites to remove: done in 0.00111513 secs using 204.9% CPU
+NOTE: 8 identical sequences (see below) will be ignored for subsequent analysis
+NOTE: 2022_07_1141_1_H5N5|NA|2022_07_1141_1/1-1352 (identical to A/European_herring_gull/Norway/2022-07-1141-1T/2022|NA|EPI_ISL_18455200/1-1352) is ignored but added at the end
+NOTE: 2022_07_897_4_H5N5|NA|2022_07_897_4/1-1352 (identical to A/Glaucous_gull/Norway/2022-07-1148/2022|NA|EPI_ISL_18454937/1-1352) is ignored but added at the end
+NOTE: A/Gallus_gallus/Belgium/12168_002/2020|NA|EPI_ISL_660264/1-1418 (identical to A/barnacle_goose/Sweden/SVA201201SZ0353/KN003624/2020|NA|EPI_ISL_722176/1-1418) is ignored but added at the end
+NOTE: A/mute_swan/Slovakia/Pah6_21VIR1086-2/2021|NA|EPI_ISL_1665262/1-1418 (identical to A/chicken/Slovakia/Pah10_21VIR1086-5/2021|NA|EPI_ISL_1665250/1-1418) is ignored but added at the end
+NOTE: A/whooper_swan/Romania/10171_21VIR2593-15/2021|NA|EPI_ISL_2234822/1-1418 (identical to A/whooper_swan/Romania/10311_21VIR849-2/2021|NA|EPI_ISL_1665269/1-1418) is ignored but added at the end
+NOTE: A/whooper_swan/Romania/10362_21VIR2593-20/2021|NA|EPI_ISL_2234824/1-1418 (identical to A/whooper_swan/Romania/10311_21VIR849-2/2021|NA|EPI_ISL_1665269/1-1418) is ignored but added at the end
+NOTE: A/whooper_swan/Romania/10213_21VIR2593-27/2021|NA|EPI_ISL_2234823/1-1418 (identical to A/whooper_swan/Romania/10311_21VIR849-2/2021|NA|EPI_ISL_1665269/1-1418) is ignored but added at the end
+NOTE: A/Duck/Sweden/SVA210311SZ0004/KN0001570-IP14/2021|NA|EPI_ISL_1305779/1-1418 (identical to A/Goose/Sweden/SVA210311SZ0003/KN0001570-IP14/2021|NA|EPI_ISL_1305778/1-1418) is ignored but added at the end
+Alignment was printed to SEP_NA_H5N5_clean_total_jalview_alignment.fasta.uniqueseq.phy
+
+For your convenience alignment with unique sequences printed to SEP_NA_H5N5_clean_total_jalview_alignment.fasta.uniqueseq.phy
+
+Creating fast initial parsimony tree by random order stepwise addition...
+12.699 seconds, parsimony score: 1048 (based on 743 sites)
+Measuring multi-threading efficiency up to 4 CPU cores
+Increase to 10 rounds for branch lengths
+65 trees examined
+Threads: 1 / Time: 4.044 sec / Speedup: 1.000 / Efficiency: 100% / LogL: -11949
+Threads: 2 / Time: 3.037 sec / Speedup: 1.332 / Efficiency: 67% / LogL: -11949
+Threads: 3 / Time: 2.682 sec / Speedup: 1.508 / Efficiency: 50% / LogL: -11949
+Threads: 4 / Time: 592.532 sec / Speedup: 0.007 / Efficiency: 0% / LogL: -11949
+Determining AUTO threadcount: done in 602.298 secs using 242.1% CPU
+BEST NUMBER OF THREADS: 3
+
+Perform fast likelihood tree search using GTR+I+G model...
+Estimate model parameters (epsilon = 5.000)
+Perform nearest neighbor interchange...
+Optimizing NNI: done in 2.2312 secs using 111.2% CPU
+Estimate model parameters (epsilon = 1.000)
+1. Initial log-likelihood: -6475.937
+2. Current log-likelihood: -6473.810
+Optimal log-likelihood: -6473.110
+Rate parameters:  A-C: 2.13788  A-G: 5.38315  A-T: 1.28888  C-G: 0.52765  C-T: 7.72886  G-T: 1.00000
+Base frequencies:  A: 0.308  C: 0.179  G: 0.253  T: 0.260
+Proportion of invariable sites: 0.247
+Gamma shape alpha: 5.512
+Parameters optimization took 2 rounds (0.777 sec)
+Time for fast ML tree search: 3.434 seconds
+
+NOTE: ModelFinder requires 12 MB RAM!
+ModelFinder will test up to 484 DNA models (sample size: 1486) ...
+ No. Model         -LnL         df  AIC          AICc         BIC
+  1  GTR+F         6505.810     157 13325.621    13362.979    14158.324
+  2  GTR+F+I       6473.466     158 13262.932    13300.795    14100.939
+  3  GTR+F+G4      6474.853     158 13265.706    13303.569    14103.714
+  4  GTR+F+I+G4    6473.020     159 13264.040    13302.411    14107.351
+  5  GTR+F+R2      6474.072     159 13266.144    13304.515    14109.455
+  6  GTR+F+R3      6474.136     161 13270.271    13309.670    14124.190
+ 14  GTR+F+I+R2    6473.197     160 13266.395    13305.278    14115.009
+ 15  GTR+F+I+R3    6473.105     162 13270.209    13310.127    14129.432
+ 24  SYM+I         6508.554     155 13327.107    13363.468    14149.203
+ 25  SYM+G4        6511.340     155 13332.680    13369.041    14154.776
+ 26  SYM+I+G4      6508.582     156 13329.164    13366.021    14156.563
+ 27  SYM+R2        6510.287     156 13332.574    13369.432    14159.973
+ 46  TVM+F+I       6478.428     157 13270.856    13308.215    14103.560
+ 47  TVM+F+G4      6482.127     157 13278.254    13315.612    14110.957
+ 48  TVM+F+I+G4    6478.596     158 13273.193    13311.056    14111.200
+ 49  TVM+F+R2      6481.055     158 13278.111    13315.974    14116.118
+ 68  TVMe+I        6508.677     154 13325.354    13361.221    14142.146
+ 69  TVMe+G4       6511.656     154 13331.312    13367.180    14148.104
+ 70  TVMe+I+G4     6508.744     155 13327.488    13363.849    14149.584
+ 71  TVMe+R2       6510.544     155 13331.088    13367.449    14153.184
+ 90  TIM3+F+I      6485.399     156 13282.797    13319.655    14110.197
+ 91  TIM3+F+G4     6485.923     156 13283.847    13320.704    14111.246
+ 92  TIM3+F+I+G4   6484.823     157 13283.647    13321.005    14116.350
+ 93  TIM3+F+R2     6485.297     157 13284.594    13321.953    14117.298
+112  TIM3e+I       6523.665     153 13353.330    13388.708    14164.818
+113  TIM3e+G4      6526.184     153 13358.367    13393.745    14169.855
+114  TIM3e+I+G4    6523.630     154 13355.261    13391.129    14172.053
+115  TIM3e+R2      6525.333     154 13358.665    13394.533    14175.457
+134  TIM2+F+I      6477.418     156 13266.836    13303.694    14094.236
+135  TIM2+F+G4     6478.581     156 13269.163    13306.021    14096.562
+136  TIM2+F+I+G4   6476.974     157 13267.949    13305.307    14100.652
+137  TIM2+F+R2     6477.849     157 13269.698    13307.057    14102.402
+156  TIM2e+I       6511.844     153 13329.688    13365.066    14141.176
+157  TIM2e+G4      6513.671     153 13333.342    13368.721    14144.830
+158  TIM2e+I+G4    6511.587     154 13331.173    13367.041    14147.965
+159  TIM2e+R2      6512.816     154 13333.632    13369.499    14150.424
+178  TIM+F+I       6484.497     156 13280.994    13317.851    14108.393
+179  TIM+F+G4      6486.207     156 13284.414    13321.272    14111.814
+180  TIM+F+I+G4    6484.162     157 13282.325    13319.683    14115.028
+181  TIM+F+R2      6485.390     157 13284.780    13322.138    14117.483
+200  TIMe+I        6522.550     153 13351.100    13386.478    14162.588
+201  TIMe+G4       6525.383     153 13356.766    13392.145    14168.254
+202  TIMe+I+G4     6522.591     154 13353.181    13389.049    14169.973
+203  TIMe+R2       6524.399     154 13356.798    13392.666    14173.590
+222  TPM3u+F+I     6490.502     155 13291.004    13327.364    14113.099
+223  TPM3u+F+G4    6493.349     155 13296.698    13333.059    14118.794
+224  TPM3u+F+I+G4  6490.451     156 13292.902    13329.760    14120.301
+225  TPM3u+F+R2    6492.582     156 13297.164    13334.022    14124.563
+244  TPM3+I        6523.805     152 13351.610    13386.503    14157.795
+245  TPM3+G4       6526.540     152 13357.080    13391.973    14163.265
+246  TPM3+I+G4     6523.847     153 13353.694    13389.073    14165.182
+247  TPM3+R2       6525.641     153 13357.282    13392.661    14168.770
+266  TPM2u+F+I     6482.570     155 13275.141    13311.502    14097.236
+267  TPM2u+F+G4    6485.896     155 13281.792    13318.153    14103.888
+268  TPM2u+F+I+G4  6482.668     156 13277.336    13314.194    14104.736
+269  TPM2u+F+R2    6484.861     156 13281.723    13318.581    14109.122
+288  TPM2+I        6511.962     152 13327.924    13362.817    14134.108
+289  TPM2+G4       6513.991     152 13331.981    13366.874    14138.165
+290  TPM2+I+G4     6511.754     153 13329.507    13364.886    14140.995
+291  TPM2+R2       6513.078     153 13332.157    13367.535    14143.645
+310  K3Pu+F+I      6489.469     155 13288.939    13325.299    14111.034
+311  K3Pu+F+G4     6493.546     155 13297.091    13333.452    14119.187
+312  K3Pu+F+I+G4   6489.750     156 13291.500    13328.358    14118.899
+313  K3Pu+F+R2     6492.412     156 13296.823    13333.681    14124.223
+332  K3P+I         6522.683     152 13349.366    13384.259    14155.550
+333  K3P+G4        6525.747     152 13355.494    13390.387    14161.678
+334  K3P+I+G4      6522.806     153 13351.612    13386.990    14163.100
+335  K3P+R2        6524.709     153 13355.418    13390.797    14166.906
+354  TN+F+I        6486.058     155 13282.115    13318.476    14104.211
+355  TN+F+G4       6487.391     155 13284.783    13321.144    14106.878
+356  TN+F+I+G4     6485.657     156 13283.313    13320.171    14110.713
+357  TN+F+R2       6486.613     156 13285.226    13322.084    14112.626
+376  TNe+I         6523.786     152 13351.572    13386.464    14157.756
+377  TNe+G4        6526.194     152 13356.387    13391.280    14162.571
+378  TNe+I+G4      6523.706     153 13353.413    13388.791    14164.901
+379  TNe+R2        6525.342     153 13356.684    13392.062    14168.172
+398  HKY+F+I       6491.160     154 13290.320    13326.188    14107.112
+399  HKY+F+G4      6494.773     154 13297.546    13333.414    14114.338
+400  HKY+F+I+G4    6491.296     155 13292.592    13328.953    14114.688
+401  HKY+F+R2      6493.767     155 13297.534    13333.895    14119.630
+420  K2P+I         6523.922     151 13349.843    13384.254    14150.723
+421  K2P+G4        6526.553     151 13355.106    13389.517    14155.987
+422  K2P+I+G4      6523.918     152 13351.836    13386.729    14158.021
+423  K2P+R2        6525.658     152 13355.316    13390.209    14161.500
+442  F81+F+I       6695.785     153 13697.569    13732.948    14509.057
+443  F81+F+G4      6695.605     153 13697.209    13732.588    14508.697
+444  F81+F+I+G4    6695.649     154 13699.299    13735.166    14516.090
+445  F81+F+R2      6695.424     154 13698.848    13734.716    14515.640
+464  JC+I          6728.352     150 13756.705    13790.637    14552.281
+465  JC+G4         6728.067     150 13756.135    13790.067    14551.711
+466  JC+I+G4       6728.093     151 13758.185    13792.596    14559.065
+467  JC+R2         6727.842     151 13757.683    13792.094    14558.563
+Akaike Information Criterion:           GTR+F+I
+Corrected Akaike Information Criterion: GTR+F+I
+Bayesian Information Criterion:         TIM2+F+I
+Best-fit model: TIM2+F+I chosen according to BIC
+
+All model information printed to SEP_NA_H5N5_clean_total_jalview_alignment.fasta.model.gz
+CPU time for ModelFinder: 1509.193 seconds (0h:25m:9s)
+Wall-clock time for ModelFinder: 624.956 seconds (0h:10m:24s)
+Generating 1000 samples for ultrafast bootstrap (seed: 47904)...
+
+NOTE: 2 MB RAM (0 GB) is required!
+Estimate model parameters (epsilon = 0.100)
+1. Initial log-likelihood: -6477.418
+Optimal log-likelihood: -6477.418
+Rate parameters:  A-C: 1.94592  A-G: 6.25432  A-T: 1.94592  C-G: 1.00000  C-T: 8.84648  G-T: 1.00000
+Base frequencies:  A: 0.308  C: 0.179  G: 0.253  T: 0.260
+Proportion of invariable sites: 0.277
+Parameters optimization took 1 rounds (0.022 sec)
+Wrote distance file to... 
+Computing ML distances based on estimated model parameters...
+Calculating distance matrix: done in 0.0112616 secs using 131.2% CPU
+Computing ML distances took 0.020418 sec (of wall-clock time) 0.027630 sec (of CPU time)
+Setting up auxiliary I and S matrices: done in 0.0224116 secs using 78.58% CPU
+Constructing RapidNJ tree: done in 0.40772 secs using 126.7% CPU
+Computing RapidNJ tree took 0.430328 sec (of wall-clock time) 0.534436 sec (of CPU time)
+Log-likelihood of RapidNJ tree: -6516.108
+--------------------------------------------------------------------
+|             INITIALIZING CANDIDATE TREE SET                      |
+--------------------------------------------------------------------
+Generating 98 parsimony trees... 0.873 second
+Computing log-likelihood of 98 initial trees ... 0.364 seconds
+Current best score: -6477.418
+
+Do NNI search on 20 best initial trees
+Optimizing NNI: done in 0.0472181 secs using 229.5% CPU
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 1: -6477.418
+Optimizing NNI: done in 0.255125 secs using 245.9% CPU
+Optimizing NNI: done in 0.239047 secs using 247.3% CPU
+BETTER TREE FOUND at iteration 3: -6477.412
+Optimizing NNI: done in 0.229284 secs using 264.4% CPU
+Optimizing NNI: done in 0.172242 secs using 272.7% CPU
+Optimizing NNI: done in 0.265997 secs using 247.5% CPU
+Optimizing NNI: done in 0.246276 secs using 253.6% CPU
+Optimizing NNI: done in 0.156714 secs using 281.7% CPU
+Optimizing NNI: done in 0.190041 secs using 264.3% CPU
+Optimizing NNI: done in 0.148177 secs using 278.8% CPU
+Iteration 10 / LogL: -6492.257 / Time: 0h:0m:3s
+Optimizing NNI: done in 0.181187 secs using 272.1% CPU
+Optimizing NNI: done in 0.164204 secs using 265.9% CPU
+Optimizing NNI: done in 0.178433 secs using 266.2% CPU
+Optimizing NNI: done in 0.159927 secs using 277.7% CPU
+Optimizing NNI: done in 0.155615 secs using 276.8% CPU
+Optimizing NNI: done in 0.208774 secs using 263.3% CPU
+Optimizing NNI: done in 0.216539 secs using 269.7% CPU
+Optimizing NNI: done in 0.229561 secs using 247.7% CPU
+Optimizing NNI: done in 0.281758 secs using 248.4% CPU
+Optimizing NNI: done in 0.331373 secs using 227% CPU
+Iteration 20 / LogL: -6483.220 / Time: 0h:0m:6s
+Finish initializing candidate tree set (20)
+Current best tree score: -6477.412 / CPU time: 5.392
+Number of iterations: 20
+--------------------------------------------------------------------
+|               OPTIMIZING CANDIDATE TREE SET                      |
+--------------------------------------------------------------------
+Optimizing NNI: done in 0.35119 secs using 222.2% CPU
+Optimizing NNI: done in 0.232243 secs using 237.5% CPU
+Optimizing NNI: done in 0.215955 secs using 266.6% CPU
+Optimizing NNI: done in 0.119405 secs using 272.1% CPU
+Optimizing NNI: done in 0.264679 secs using 201.3% CPU
+Optimizing NNI: done in 0.125832 secs using 276.1% CPU
+Optimizing NNI: done in 0.123951 secs using 276.3% CPU
+Optimizing NNI: done in 0.16255 secs using 279.9% CPU
+Optimizing NNI: done in 0.392526 secs using 206.9% CPU
+Optimizing NNI: done in 0.1675 secs using 277.8% CPU
+Iteration 30 / LogL: -6477.417 / Time: 0h:0m:8s (0h:0m:20s left)
+Optimizing NNI: done in 0.173315 secs using 251.1% CPU
+Optimizing NNI: done in 0.139002 secs using 285.9% CPU
+Optimizing NNI: done in 0.121115 secs using 264.8% CPU
+Optimizing NNI: done in 0.356438 secs using 244.9% CPU
+Optimizing NNI: done in 0.425689 secs using 216.1% CPU
+Optimizing NNI: done in 0.150997 secs using 280.4% CPU
+Optimizing NNI: done in 0.774853 secs using 180.6% CPU
+Optimizing NNI: done in 0.427548 secs using 198% CPU
+Optimizing NNI: done in 0.220672 secs using 199.6% CPU
+Optimizing NNI: done in 0.301733 secs using 243.1% CPU
+Iteration 40 / LogL: -6477.450 / Time: 0h:0m:11s (0h:0m:18s left)
+Optimizing NNI: done in 0.989982 secs using 181.3% CPU
+Optimizing NNI: done in 0.157009 secs using 281.2% CPU
+Optimizing NNI: done in 0.193201 secs using 274.9% CPU
+Optimizing NNI: done in 0.284229 secs using 228.5% CPU
+Optimizing NNI: done in 0.252406 secs using 241.2% CPU
+Optimizing NNI: done in 0.178507 secs using 268.2% CPU
+Optimizing NNI: done in 0.159295 secs using 271.5% CPU
+Optimizing NNI: done in 0.873415 secs using 172% CPU
+Optimizing NNI: done in 0.766383 secs using 185.8% CPU
+Optimizing NNI: done in 0.222088 secs using 244.5% CPU
+Iteration 50 / LogL: -6477.435 / Time: 0h:0m:15s (0h:0m:16s left)
+Log-likelihood cutoff on original alignment: -6525.102
+Optimizing NNI: done in 0.624763 secs using 187.5% CPU
+Optimizing NNI: done in 0.25455 secs using 256.2% CPU
+Optimizing NNI: done in 0.200745 secs using 269.6% CPU
+Optimizing NNI: done in 0.173557 secs using 276.8% CPU
+Optimizing NNI: done in 0.434344 secs using 208.8% CPU
+Optimizing NNI: done in 0.188445 secs using 253.1% CPU
+Optimizing NNI: done in 0.263333 secs using 259.2% CPU
+Optimizing NNI: done in 0.360894 secs using 211.7% CPU
+Optimizing NNI: done in 0.111482 secs using 252.1% CPU
+Optimizing NNI: done in 0.165457 secs using 278.5% CPU
+Iteration 60 / LogL: -6477.439 / Time: 0h:0m:18s (0h:0m:13s left)
+Optimizing NNI: done in 0.125813 secs using 274.7% CPU
+Optimizing NNI: done in 0.0996543 secs using 258.1% CPU
+Optimizing NNI: done in 0.12918 secs using 284.1% CPU
+Optimizing NNI: done in 0.228034 secs using 268.3% CPU
+Optimizing NNI: done in 0.170201 secs using 262.4% CPU
+Optimizing NNI: done in 0.204795 secs using 257.5% CPU
+Optimizing NNI: done in 0.242291 secs using 261.4% CPU
+Optimizing NNI: done in 0.152545 secs using 281.5% CPU
+Optimizing NNI: done in 0.716299 secs using 163.1% CPU
+Optimizing NNI: done in 0.410327 secs using 228% CPU
+Iteration 70 / LogL: -6486.027 / Time: 0h:0m:21s (0h:0m:10s left)
+Optimizing NNI: done in 0.520283 secs using 192.5% CPU
+Optimizing NNI: done in 1.13009 secs using 155.6% CPU
+Optimizing NNI: done in 0.281382 secs using 254.8% CPU
+Optimizing NNI: done in 0.317961 secs using 222% CPU
+Optimizing NNI: done in 0.2394 secs using 230.4% CPU
+Optimizing NNI: done in 0.123628 secs using 272.7% CPU
+Optimizing NNI: done in 0.145208 secs using 282.9% CPU
+Optimizing NNI: done in 0.218714 secs using 274.6% CPU
+Optimizing NNI: done in 0.587168 secs using 190.4% CPU
+Optimizing NNI: done in 0.1328 secs using 273.7% CPU
+Iteration 80 / LogL: -6477.437 / Time: 0h:0m:25s (0h:0m:7s left)
+Optimizing NNI: done in 0.166851 secs using 279.4% CPU
+Optimizing NNI: done in 0.223414 secs using 264.8% CPU
+Optimizing NNI: done in 0.182187 secs using 238.7% CPU
+Optimizing NNI: done in 0.0727011 secs using 283.1% CPU
+Optimizing NNI: done in 0.108566 secs using 280.2% CPU
+Optimizing NNI: done in 0.152761 secs using 269% CPU
+Optimizing NNI: done in 0.166787 secs using 281.3% CPU
+Optimizing NNI: done in 0.2 secs using 285.9% CPU
+Optimizing NNI: done in 0.23585 secs using 247.8% CPU
+Optimizing NNI: done in 0.200574 secs using 282.3% CPU
+Iteration 90 / LogL: -6477.435 / Time: 0h:0m:27s (0h:0m:3s left)
+Optimizing NNI: done in 0.179478 secs using 278.2% CPU
+Optimizing NNI: done in 0.12226 secs using 268.1% CPU
+Optimizing NNI: done in 0.196838 secs using 276.8% CPU
+Optimizing NNI: done in 0.155216 secs using 261.5% CPU
+Optimizing NNI: done in 0.0997822 secs using 274.1% CPU
+Optimizing NNI: done in 0.176224 secs using 266.9% CPU
+Optimizing NNI: done in 0.159331 secs using 279.2% CPU
+Optimizing NNI: done in 0.155705 secs using 279.8% CPU
+Optimizing NNI: done in 0.116321 secs using 277.1% CPU
+Optimizing NNI: done in 0.25476 secs using 267.6% CPU
+Iteration 100 / LogL: -6486.009 / Time: 0h:0m:28s (0h:0m:0s left)
+Log-likelihood cutoff on original alignment: -6525.102
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.985
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Optimizing NNI: done in 0.169734 secs using 271.5% CPU
+Optimizing NNI: done in 0.176878 secs using 276.3% CPU
+Optimizing NNI: done in 0.128041 secs using 282.5% CPU
+Optimizing NNI: done in 0.149389 secs using 277.1% CPU
+Optimizing NNI: done in 0.200592 secs using 251.3% CPU
+Optimizing NNI: done in 0.110131 secs using 275.5% CPU
+Optimizing NNI: done in 0.0981153 secs using 276.6% CPU
+Optimizing NNI: done in 0.0943259 secs using 280.1% CPU
+Optimizing NNI: done in 0.105342 secs using 284% CPU
+Optimizing NNI: done in 0.166888 secs using 266.3% CPU
+Iteration 110 / LogL: -6480.755 / Time: 0h:0m:30s (0h:0m:25s left)
+Optimizing NNI: done in 0.13447 secs using 275.7% CPU
+Optimizing NNI: done in 0.185581 secs using 269% CPU
+Optimizing NNI: done in 0.195661 secs using 267.5% CPU
+Optimizing NNI: done in 0.153916 secs using 273.7% CPU
+Optimizing NNI: done in 0.194742 secs using 267.7% CPU
+Optimizing NNI: done in 0.275963 secs using 274.4% CPU
+Optimizing NNI: done in 0.189682 secs using 270.9% CPU
+Optimizing NNI: done in 0.15314 secs using 281.6% CPU
+Optimizing NNI: done in 0.205491 secs using 265% CPU
+Optimizing NNI: done in 0.141702 secs using 279% CPU
+Iteration 120 / LogL: -6477.436 / Time: 0h:0m:32s (0h:0m:21s left)
+Optimizing NNI: done in 0.166124 secs using 279.9% CPU
+Optimizing NNI: done in 0.215045 secs using 261.2% CPU
+Optimizing NNI: done in 0.167071 secs using 281.7% CPU
+Optimizing NNI: done in 0.203584 secs using 277% CPU
+Optimizing NNI: done in 0.185261 secs using 266.5% CPU
+Optimizing NNI: done in 0.23143 secs using 281.6% CPU
+Optimizing NNI: done in 0.201705 secs using 264.6% CPU
+Optimizing NNI: done in 0.150475 secs using 260.1% CPU
+Optimizing NNI: done in 0.134705 secs using 281.1% CPU
+Optimizing NNI: done in 0.161066 secs using 282.6% CPU
+Iteration 130 / LogL: -6477.436 / Time: 0h:0m:34s (0h:0m:18s left)
+Optimizing NNI: done in 0.154349 secs using 282.6% CPU
+Optimizing NNI: done in 0.156316 secs using 265% CPU
+Optimizing NNI: done in 0.185351 secs using 263% CPU
+Optimizing NNI: done in 0.182738 secs using 283.5% CPU
+Optimizing NNI: done in 0.196891 secs using 274.6% CPU
+Optimizing NNI: done in 0.137153 secs using 285.6% CPU
+Optimizing NNI: done in 0.17808 secs using 236.5% CPU
+Optimizing NNI: done in 0.185114 secs using 256.8% CPU
+Optimizing NNI: done in 0.176466 secs using 280.7% CPU
+Optimizing NNI: done in 0.182339 secs using 282.6% CPU
+Iteration 140 / LogL: -6481.472 / Time: 0h:0m:36s (0h:0m:15s left)
+Optimizing NNI: done in 0.221779 secs using 271.5% CPU
+Optimizing NNI: done in 0.104169 secs using 282.7% CPU
+Optimizing NNI: done in 0.121265 secs using 278.3% CPU
+Optimizing NNI: done in 0.151147 secs using 267.4% CPU
+Optimizing NNI: done in 0.174859 secs using 264.7% CPU
+Optimizing NNI: done in 0.145069 secs using 272.8% CPU
+Optimizing NNI: done in 0.20767 secs using 282.9% CPU
+Optimizing NNI: done in 0.189931 secs using 271.5% CPU
+Optimizing NNI: done in 0.13296 secs using 275.6% CPU
+Optimizing NNI: done in 0.127273 secs using 282.5% CPU
+Iteration 150 / LogL: -6477.443 / Time: 0h:0m:37s (0h:0m:12s left)
+Log-likelihood cutoff on original alignment: -6525.102
+Optimizing NNI: done in 0.156168 secs using 267.3% CPU
+Optimizing NNI: done in 0.118706 secs using 281.4% CPU
+Optimizing NNI: done in 0.149992 secs using 286.6% CPU
+Optimizing NNI: done in 0.147692 secs using 279.1% CPU
+Optimizing NNI: done in 0.232707 secs using 263% CPU
+Optimizing NNI: done in 0.170671 secs using 273.8% CPU
+Optimizing NNI: done in 0.131851 secs using 279.6% CPU
+Optimizing NNI: done in 0.240002 secs using 277.1% CPU
+Optimizing NNI: done in 0.132287 secs using 280.2% CPU
+Optimizing NNI: done in 0.194979 secs using 268.5% CPU
+Iteration 160 / LogL: -6477.415 / Time: 0h:0m:39s (0h:0m:10s left)
+Optimizing NNI: done in 0.152724 secs using 271.7% CPU
+Optimizing NNI: done in 0.117435 secs using 283.9% CPU
+Optimizing NNI: done in 0.180299 secs using 279.1% CPU
+Optimizing NNI: done in 0.198732 secs using 269.9% CPU
+Optimizing NNI: done in 0.131835 secs using 282.3% CPU
+Optimizing NNI: done in 0.167946 secs using 281.7% CPU
+Optimizing NNI: done in 0.171235 secs using 272.6% CPU
+Optimizing NNI: done in 0.149932 secs using 279% CPU
+Optimizing NNI: done in 0.179054 secs using 283.1% CPU
+Optimizing NNI: done in 0.163738 secs using 279.9% CPU
+Iteration 170 / LogL: -6477.429 / Time: 0h:0m:41s (0h:0m:7s left)
+Optimizing NNI: done in 0.170918 secs using 253.4% CPU
+Optimizing NNI: done in 0.109433 secs using 283.6% CPU
+Optimizing NNI: done in 0.0912315 secs using 277.6% CPU
+Optimizing NNI: done in 0.141395 secs using 285.7% CPU
+Optimizing NNI: done in 0.195629 secs using 276.2% CPU
+Optimizing NNI: done in 0.125739 secs using 285.3% CPU
+Optimizing NNI: done in 0.151371 secs using 283.1% CPU
+Optimizing NNI: done in 0.167672 secs using 257.5% CPU
+Optimizing NNI: done in 0.116452 secs using 284.5% CPU
+Optimizing NNI: done in 0.12556 secs using 277.2% CPU
+Iteration 180 / LogL: -6477.434 / Time: 0h:0m:43s (0h:0m:4s left)
+Optimizing NNI: done in 0.13758 secs using 278.2% CPU
+Optimizing NNI: done in 0.197844 secs using 276.3% CPU
+Optimizing NNI: done in 0.179401 secs using 283.8% CPU
+Optimizing NNI: done in 0.150368 secs using 285.8% CPU
+Optimizing NNI: done in 0.294737 secs using 273.1% CPU
+Optimizing NNI: done in 0.126507 secs using 282.9% CPU
+Optimizing NNI: done in 0.202792 secs using 285.2% CPU
+Optimizing NNI: done in 0.269867 secs using 258.1% CPU
+Optimizing NNI: done in 0.121128 secs using 279.8% CPU
+Optimizing NNI: done in 0.114603 secs using 278% CPU
+Iteration 190 / LogL: -6477.430 / Time: 0h:0m:45s (0h:0m:2s left)
+Optimizing NNI: done in 0.149408 secs using 266.5% CPU
+Optimizing NNI: done in 0.191453 secs using 287.3% CPU
+Optimizing NNI: done in 0.154869 secs using 279.2% CPU
+Optimizing NNI: done in 0.164148 secs using 257.9% CPU
+Optimizing NNI: done in 0.178238 secs using 271.6% CPU
+Optimizing NNI: done in 0.160722 secs using 280.5% CPU
+Optimizing NNI: done in 0.136793 secs using 282.4% CPU
+Optimizing NNI: done in 0.164561 secs using 268.9% CPU
+Optimizing NNI: done in 0.135017 secs using 285.9% CPU
+Optimizing NNI: done in 0.199982 secs using 269.9% CPU
+Iteration 200 / LogL: -6477.427 / Time: 0h:0m:46s (0h:0m:0s left)
+Log-likelihood cutoff on original alignment: -6525.102
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.994
+TREE SEARCH COMPLETED AFTER 200 ITERATIONS / Time: 0h:0m:47s
+
+--------------------------------------------------------------------
+|                    FINALIZING TREE SEARCH                        |
+--------------------------------------------------------------------
+Performs final model parameters optimization
+Estimate model parameters (epsilon = 0.010)
+1. Initial log-likelihood: -6477.412
+Optimal log-likelihood: -6477.412
+Rate parameters:  A-C: 1.94478  A-G: 6.25361  A-T: 1.94478  C-G: 1.00000  C-T: 8.83784  G-T: 1.00000
+Base frequencies:  A: 0.308  C: 0.179  G: 0.253  T: 0.260
+Proportion of invariable sites: 0.277
+Parameters optimization took 1 rounds (0.011 sec)
+BEST SCORE FOUND : -6477.412
+Creating bootstrap support values...
+Split supports printed to NEXUS file SEP_NA_H5N5_clean_total_jalview_alignment.fasta.splits.nex
+Total tree length: 1.223
+
+Total number of iterations: 200
+CPU time used for tree search: 111.216 sec (0h:1m:51s)
+Wall-clock time used for tree search: 46.446 sec (0h:0m:46s)
+Total CPU time used: 112.437 sec (0h:1m:52s)
+Total wall-clock time used: 47.355 sec (0h:0m:47s)
+
+Computing bootstrap consensus tree...
+Reading input file SEP_NA_H5N5_clean_total_jalview_alignment.fasta.splits.nex...
+76 taxa and 1184 splits.
+Consensus tree written to SEP_NA_H5N5_clean_total_jalview_alignment.fasta.contree
+Reading input trees file SEP_NA_H5N5_clean_total_jalview_alignment.fasta.contree
+Log-likelihood of consensus tree: -6477.538
+
+Analysis results written to: 
+  IQ-TREE report:                SEP_NA_H5N5_clean_total_jalview_alignment.fasta.iqtree
+  Maximum-likelihood tree:       SEP_NA_H5N5_clean_total_jalview_alignment.fasta.treefile
+  Likelihood distances:          SEP_NA_H5N5_clean_total_jalview_alignment.fasta.mldist
+
+Ultrafast bootstrap approximation results written to:
+  Split support values:          SEP_NA_H5N5_clean_total_jalview_alignment.fasta.splits.nex
+  Consensus tree:                SEP_NA_H5N5_clean_total_jalview_alignment.fasta.contree
+  Screen log file:               SEP_NA_H5N5_clean_total_jalview_alignment.fasta.log
+
+Date and Time: Sat Nov 18 10:49:18 2023
