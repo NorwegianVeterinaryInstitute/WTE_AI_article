@@ -1,0 +1,4 @@
+Those logs are not linear and include tests and trials that were discarded (as the solutions were not optimal) - I just let those so we know what has been tried. So, the content, procedures and commands used to prepare the data sets are a bit dispersed throught the script. This is also because, collaborator added new data ... so the total dataset has been processed in several batches and concantanted to prepare the MSA and final datasets. 
+The final dataset included mammal sequences for HPAI that have been removed manually from the dataset, and some trials at deduplications, before we developped the collapsing method. 
+
+The logical process is described in the detailed material and method (supplementary)
