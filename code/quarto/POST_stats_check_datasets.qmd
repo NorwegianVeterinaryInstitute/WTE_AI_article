@@ -64,3 +64,186 @@ NA_init_df <- tibble("header" = names_NA_init,
 max(NA_init_df$length)
 ```
 
+# checking length for NVI sequences
+
+```{r}
+all_tree_metadata <- readRDS(here::here("data", "prepared_data", "all_tree_metadata_CAB.RDS"))
+```
+
+H5N5 HA 
+```{r}
+H5N5_HA_file <- here::here("results", "H5N5_HA", "iqtree", "H5N5_all_SEP_MSA_jalview.fasta")
+H5N5_HA_data <- read.fasta(H5N5_HA_file) 
+H5N5_HA_names <- unlist(getAnnot(H5N5_HA_data)) %>%
+  str_remove_all(">.*\\|") %>%
+  str_remove_all("\\/.*$") %>%
+  str_remove_all("(c$)|(_tr$)")
+
+H5N5_HA_seq <- unlist(getSequence(H5N5_HA_data, as.string = T)) %>%
+  str_remove_all(., "-")
+  
+H5N5_HA_df <- tibble("names" = H5N5_HA_names, 
+                     "seq" = H5N5_HA_seq) 
+
+H5N5_HA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(country == "Norway") %>%
+  pull(seq) %>%
+  str_length() %>%
+  range()
+
+H5N5_HA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(country != "Norway") %>%
+  #filter(Isolate_Id != "EPI_ISL_177506", Isolate_Id != "EPI_ISL_1254") %>%
+  pull(seq) %>%
+  str_length() %>%
+  range()
+```
+
+The H5N5 sample that was removed (dup)
+```{r}
+H5N5_HA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(Isolate_ID == "Norway") %>%
+  #filter(Isolate_Id != "EPI_ISL_177506", Isolate_Id != "EPI_ISL_1254") %>%
+  pull(seq) %>%
+  str_length() %>%
+  range()
+
+# the lengt of removed isolate
+H5N5_HA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(Isolate_Id == "EPI_ISL_12028892") %>%
+  pull(seq) %>%
+  str_length() 
+  
+H5N5_HA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(Isolate_Id != "EPI_ISL_12028892") %>%
+  pull(seq) %>%
+  str_length() %>%
+  range()
+```
+
+
+H5N5 NA 
+```{r}
+H5N5_NA_file <- here::here("results", "H5N5_NA", "iqtree", "SEP_NA_H5N5_clean_total_jalview_alignment.fasta")
+H5N5_NA_data <- read.fasta(H5N5_NA_file) 
+H5N5_NA_names <- unlist(getAnnot(H5N5_NA_data)) %>%
+  str_remove_all(">.*\\|") %>%
+  str_remove_all("\\/.*$") %>%
+  str_remove_all("(c$)|(_tr$)")
+
+H5N5_NA_seq <- unlist(getSequence(H5N5_NA_data, as.string = T)) %>%
+  str_remove_all(., "-")
+  
+H5N5_NA_df <- tibble("names" = H5N5_NA_names, 
+                     "seq" = H5N5_NA_seq) 
+
+H5N5_NA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(country == "Norway") %>%
+  #filter(is.na(Isolate_Id))
+  pull(seq) %>%
+  str_length() %>%
+  range()
+
+H5N5_NA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(country != "Norway") %>%
+  pull(seq) %>%
+  str_length() %>%
+  range()
+
+# the lengt of removed isolate
+H5N5_NA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(Isolate_Id == "EPI_ISL_12028892") %>%
+  pull(seq) %>%
+  str_length() 
+  
+H5N5_NA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(Isolate_Id != "EPI_ISL_12028892") %>%
+  pull(seq) %>%
+  str_length() %>%
+  range()
+```
+
+H5N1  HA
+
+```{r}
+H5N1_HA_file <- here::here("results", "H5N1_HA_all", "iqtree", "SEP_HA_H5N1_MSA_nomammals.fasta")
+H5N1_HA_data <- read.fasta(H5N1_HA_file) 
+H5N1_HA_names <- unlist(getAnnot(H5N1_HA_data)) %>%
+  str_remove_all(">.*\\|") %>%
+  str_remove_all("\\/.*$") %>%
+  str_remove_all("(c$)|(_tr$)")
+
+H5N1_HA_seq <- unlist(getSequence(H5N1_HA_data, as.string = T)) %>%
+  str_remove_all(., "-")
+  
+H5N1_HA_df <- tibble("names" = H5N1_HA_names, 
+                     "seq" = H5N1_HA_seq) 
+
+H5N1_HA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(country == "Norway") %>%
+  #filter(is.na(Isolate_Id))
+  pull(seq) %>%
+  str_length() %>%
+  range()
+
+H5N1_HA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(country != "Norway") %>%
+  #filter(Isolate_Id != "EPI_ISL_177506", Isolate_Id != "EPI_ISL_1254") %>%
+  pull(seq) %>%
+  str_length() %>%
+  range()
+```
+
+
+H5N1  NA
+
+```{r}
+H5N1_NA_file <- here::here("results", "H5N1_NA", "iqtree", "SEP_NA_H5N1_MSA_nommals.fasta")
+H5N1_NA_data <- read.fasta(H5N1_NA_file) 
+H5N1_NA_names <- unlist(getAnnot(H5N1_NA_data)) %>%
+  str_remove_all(">.*\\|") %>%
+  str_remove_all("\\/.*$") %>%
+  str_remove_all("(c$)|(_tr$)")
+
+H5N1_NA_seq <- unlist(getSequence(H5N1_NA_data, as.string = T)) %>%
+  str_remove_all(., "-")
+  
+H5N1_NA_df <- tibble("names" = H5N1_NA_names, 
+                     "seq" = H5N1_NA_seq) 
+
+H5N1_NA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(country == "Norway") %>%
+  #filter(is.na(Isolate_Id))
+  pull(seq) %>%
+  str_length() %>%
+  range()
+
+H5N1_NA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(country != "Norway") %>%
+  #filter(Isolate_Id != "EPI_ISL_177506", Isolate_Id != "EPI_ISL_1254") %>%
+  pull(seq) %>%
+  str_length() %>%
+  range()
+
+H5N1_NA_df %>% 
+  left_join(all_tree_metadata, by = c("names" = "label")) %>%
+  filter(country != "Norway") %>%
+  filter(Isolate_Id != "EPI_ISL_177506", Isolate_Id != "EPI_ISL_1254") %>%
+  pull(seq) %>%
+  str_length() %>%
+  range()
+```
+
