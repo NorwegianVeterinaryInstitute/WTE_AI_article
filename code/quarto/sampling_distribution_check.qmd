@@ -1,0 +1,389 @@
+---
+title: "Sampling distribution check"
+author: "Eve Zeyl Fiskebeck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+    sampling_data: "data/raw_metadata/HPAI_all_samples20201001_20230815_dev.xlsx"
+    save_dir: "results"
+    source_code: 'code/R'
+execute: 
+  echo: false
+  cache: false
+format: html
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Setup
+
+-   sourcing scripts and functions
+
+```{r setup}
+#| include: false
+library(here)
+source(here::here(params$source_code, "AI_main.R"))
+
+# Do not need that here I think
+# fun_files_path <- list.files(here::here(params$source_code, "fun"),
+#   pattern = "*.R",
+#   full.names = T)
+# # sourcing all functions
+# for (i in 1:length(fun_files_path)) {
+#   print(fun_files_path[i])
+#   source(fun_files_path[i])
+# }
+
+```
+
+# Getting the data 
+## Reading file 
+```{r}
+sampling_data <- xlsx::read.xlsx(here::here(params$sampling_data), sheetIndex = 1)
+```
+
+## wrangling data 
+
+```{r}
+sampling_df <- 
+  sampling_data %>%
+  dplyr::rename(PJS = Saksnr, Received_date=Mottatt, Diagnostic = Konklusjon, Species = Art) %>%
+  dplyr::select(PJS, Received_date, Diagnostic, Species) %>%
+  dplyr::mutate(Received_date = lubridate::ymd(Received_date))
+```
+
+```{r}
+levels(as_factor(sampling_df$Diagnostic))
+```
+
+
+```{r}
+sampling_df <- 
+  sampling_df %>%
+  dplyr::mutate(Diagnostic = 
+                  case_when(
+                    Diagnostic == "Ikke påvist Influensa A" ~ "Neg.",
+                    Diagnostic == "Påvist andre Influensa A" ~ "Other/unknown type HPAI",
+                    Diagnostic == "Uegnet" ~ "Not Poss. / Not done / Other pathogen",
+                    Diagnostic == "Annet"  ~ "Not Poss. / Not done / Other pathogen",
+                    Diagnostic == "Påvist H5Nx" ~ "Other/unknown type HPAI",
+                    Diagnostic == "Påvist H5N8" ~ "Other/unknown type HPAI",
+                    Diagnostic == "Påvist HPAI H5N8" ~ "Other/unknown type HPAI",
+                    Diagnostic == "Påvist H5N1"   ~ "H5N1",
+                    Diagnostic == "Påvist HPAI H5N1" ~ "H5N1",
+                    Diagnostic == "Påvist HPAI H5Nx"  ~ "Other/unknown type HPAI",
+                    Diagnostic == "Påvist HPAI H5N5" ~ "H5N5",
+                    Diagnostic == "Påvist H7Nx" ~ "Other/unknown type HPAI",
+                    Diagnostic == "Mottatt, ikke avsluttet" ~ "Not Poss. / Not done / Other pathogen",
+                    TRUE ~ NA_character_
+                  )) %>% 
+  dplyr::mutate(Abbr = 
+                  case_when(
+                    Diagnostic == "Neg." ~ "Neg.",
+                    Diagnostic == "Other/unknown type HPAI" ~ "Div. HPAI",
+                    Diagnostic == "Not Poss. / Not done / Other pathogen" ~ "Other",
+                    Diagnostic == "H5N1" ~ "H5N1",
+                    Diagnostic == "H5N5" ~ "H5N5",
+                    TRUE ~ NA_character_
+                  ))
+
+                
+                
+
+```
+
+```{r}
+levels(as_factor(sampling_df$Species))
+```
+
+
+```{r}
+sampling_df <- 
+  sampling_df %>% 
+  dplyr::mutate(Species_type = case_when(
+    Species == "Havørn" ~ "Bird of prey",
+    Species == "Kongeørn" ~ "Bird of prey",
+    Species == "Spurvehauk" ~ "Bird of prey",
+    Species == "Rovfugler" ~ "Bird of prey",
+    Species == "Hønsehauk" ~ "Bird of prey",
+    Species == "Haukefamilien" ~ "Bird of prey",
+    Species == "Rev (rødrev)" ~ "Mammal",
+    Species == "Kattugle" ~ "Bird of prey",
+    Species == "Fiskeørn" ~ "Bird of prey",
+    Species == "Hvalross" ~ "Mammal",
+    Species == "Steinkobbe (fjordsel)" ~ "Mammal",
+    Species == "Tårnfalk" ~ "Bird of prey",
+    Species == "Hornugle" ~ "Bird of prey",
+    Species == "Svin" ~ "Mammal",
+    Species == "Spurveugle" ~ "Bird of prey",
+    Species == "Uglefamilien" ~ "Bird of prey",
+    Species == "Seihval" ~ "Mammal",
+    TRUE ~ "Other Avian"
+  )) %>%
+  dplyr::mutate(WTE = case_when(
+    Species == "Havørn" ~ "WTE",
+    Species_type == "Mammal" ~ "Mammal",
+    TRUE ~ "Other Avian"
+    )
+    )
+                  
+```
+
+
+creating intervals and binning for the dates
+
+```{r}
+range(sampling$Received_date)
+```
+
+```{r}
+months_v <- seq.Date(from = min(sampling_df$Received_date), to = max(sampling_df$Received_date) + months(1), by = "month")
+
+months_df <- 
+  tidyr::tibble("start_date" = months_v) %>%
+  dplyr::mutate(end_date = lead(start_date - days(1), default = NULL)) %>%
+  dplyr::mutate(end_date = lead(start_date - days(1), default = NULL)) %>%
+  dplyr::mutate(date_interval = lubridate::interval(start_date, end_date)) %>%
+  dplyr::filter(!is.na(date_interval)) %>%
+  tibble::add_column(interval_number = seq(1, nrow(.)))
+  
+View(months_df)
+```
+
+now creating option to join the data within the intervals 
+Create a function that look up if the sample is within an interval, if so add the interval number to the data 
+
+```{r}
+head(sampling)
+```
+
+```{r}
+which_interval <- function(received_date, interval_df) {
+  interval_index <- which(received_date %within% interval_df$date_interval)
+  return(interval_df$interval_number[interval_index])
+  
+}
+
+# tEST
+which_interval(sampling_df$Received_date[1], months_df)
+sampling_df$interval_number <- unlist(lapply(sampling_df$Received_date, which_interval, months_df))
+```
+
+
+```{r}
+sampling_df <- 
+  sampling_df %>% 
+  dplyr::left_join(months_df, by = c("interval_number" = "interval_number")) 
+```
+
+```{r}
+sampling_df <- 
+  sampling_df %>%
+  mutate(interval = as.character(date_interval)) 
+```
+
+```{r}
+levels(as.factor(sampling_df$Abbr))
+```
+
+```{r}
+sampling_df <- 
+  sampling_df %>%
+  mutate(
+    HPAI_all = case_when(
+    Abbr == "H5N1" ~ "YES",
+    Abbr == "H5N5" ~ "YES",
+    Abbr == "Neg." ~ "NO",
+    Abbr == "Other" ~ "NO",
+    Abbr == "Div. HPAI" ~ "YES",
+    TRUE ~ "NO"
+    ))
+```
+
+
+## plotting 
+```{r}
+sampling_plot <- 
+  sampling_df %>% 
+  ggplot(aes(x = interval, 
+             fill = WTE)) +
+  geom_bar(stat = "count") +
+  expand_limits(x = c(-2, length(levels(sampling_df$interval))+2)) +
+  scale_fill_manual(values = c("WTE" = "deeppink", "Mammal" = "grey", "Other Avian" = "blue")) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Number of samples per date", 
+       x = "Date", 
+       y = "Count", 
+       fill = "Type Sample") 
+
+sampling_plot  
+```
+
+
+need to get the factors 
+
+```{r}
+sampling_postive_negative_plot <- 
+  sampling_df %>% 
+  ggplot(aes(x = interval, 
+             fill = WTE, alpha = HPAI_all)) +
+  geom_bar(stat = "count") +
+  expand_limits(x = c(-2, length(levels(sampling_df$interval))+2)) +
+  scale_fill_manual(values = c("WTE" = "deeppink", "Mammal" = "grey", "Other Avian" = "blue")) +
+  scale_alpha_manual(values = c("NO"= 0.3, "YES"= 1), name = "Influenza Positive") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Positive vs AI negative & total sampling", 
+       x = "Date", 
+       y = "Count") 
+
+sampling_postive_negative_plot 
+```
+
+I want only the postive and ordered - with the different influenza in same scale 
+```{r}
+sampling_df %>%
+  add_count(interval) %>%
+  pull(n) %>%
+  range(.)
+#  19 427  
+```
+
+```{r}
+positive_AI <- 
+  sampling_df %>% 
+  filter(HPAI_all == "YES") %>%
+  ggplot(aes(x = interval, 
+             fill = interaction(WTE, Abbr, sep = ":", lex.order = T),
+             color = interaction(WTE, Abbr, sep = ":", lex.order = T),
+             )
+         ) +
+  geom_bar(stat = "count") +
+  expand_limits(x = c(-2, length(levels(sampling_df$interval))+2))+
+  scale_fill_manual(values = c("WTE:H5N1" = rgb(1,0,1,1),
+                               "WTE:H5N5" = rgb(0.5,0,0.5, 0.5),
+                               "WTE:Div. HPAI" = rgb(0.5,0,0.5, 0.2),
+                               "Mammal:H5N1" = rgb(.5,.5,.5,1),
+                               "Other Avian:H5N1" = rgb(0,0,1, 1),
+                               "Other Avian:H5N5" = rgb(0,0,1,0.5),
+                               "Other Avian:Div. HPAI" = rgb(0,0,1,0.2)
+                               ),
+                    name = "Types positive Influenza A") +
+  ggplot2::scale_color_manual(values = c("WTE:H5N1" = rgb(1,0,1,1),
+                               "WTE:H5N5" = rgb(0.5,0,0.5, 0),
+                               "WTE:Div. HPAI" = rgb(0,0,0,1),
+                               "Mammal:H5N1" = rgb(.5,.5,.5,1),
+                               "Other Avian:H5N1" = rgb(0,0,1,1),
+                               "Other Avian:H5N5" = rgb(0,0,1,0),
+                               "Other Avian:Div. HPAI" = rgb(0,0,0,1)
+                               ),
+                              name = "Types positive Influenza A") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Positive AI & types incl. unknown", 
+       x = "Date", 
+       y = "Count") 
+
+positive_AI
+```
+
+
+```{r}
+positive_AI +
+    facet_wrap(vars(WTE), nrow = 3, scales = "fixed") 
+```
+
+!# HERE some problem with the bars its not writhht so many mammals
+
+! labels interaction, better do the factor oneself, otherwise is problematic I think
+
+```{r}
+positive_H5N1_5_plot <- 
+  sampling_df %>% 
+  dplyr::filter(HPAI_all == "YES") %>%
+  ggplot(aes(x = interval,
+             fill = interaction(WTE, Abbr, sep = ":", lex.order = T))) +
+  #geom_bar(stat = "count", position = "dodge", width = 0.7) +
+  geom_bar(stat = "count") +
+  expand_limits(x = c(-2, length(levels(sampling_df$interval))+2)) 
+  scale_fill_manual(values = c("WTE:H5N1" = rgb(1,0,1,1),
+                               "WTE:H5N5" = rgb(0.5,0,0.5, 0.3),
+                               "Mammal:H5N1" = rgb(.5,.5,.5,1),
+                               "Mammal:H5N1" = rgb(.5,.5,.5, 0.3),
+                               "Other Avian:H5N1" = rgb(0,0,1, 1),
+                               "Other Avian:H5N5" = rgb(0,0,1,0.3)
+                               ),
+                    name = "Types positive Influenza A") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Number of positive H5N5 and H5N1 samples", 
+       x = "Date", 
+       y = "Count") 
+  
+positive_H5N1_5_plot
+```
+
+
+```{r}
+#positive_H5N1_5_plot_wrap <- 
+  positive_H5N1_5_plot + 
+  facet_wrap(vars(WTE), nrow = 3, scales = "fixed") 
+
+positive_H5N1_5_plot_wrap 
+```
+
+
+Trying to put the plot together
+
+
+
+```{r}
+library(patchwork)
+devtools::load_all("~/packages/patchwork/")
+```
+
+
+```{r}
+posititive_AI1 <- positive_AI + scale_y_continuous(limits = c(0, 450))
+sampling_plot1 <- sampling_plot + scale_y_continuous(limits = c(0, 450))
+
+
+plot1 <- 
+  sampling_plot1 + posititive_AI1 +  
+  plot_layout(guides = "collect", 
+              axes = "collect")
+```
+
+```{r}
+ggsave(
+  here::here(params$save_dir, "plot_sampling_1.png"),
+  plot1, width = 20, height = 15)
+```
+
+now we zoom on the AI positive 
+```{r}
+mylayout <- "
+AC
+BC
+"
+
+positive_AI / positive_H5N1_5_plot 
+
+
+ positive_H5N1_5_plot_wrap  + 
+  plot_layout(guides = "collect", axes = "collect", design = mylayout)
+```
+
+```{r}
+
+sampling_postive_negative_plot + positive_H5N1_5_plot +
+ plot_layout(guides = "collect", axes = "collect", design = mylayout)
+```
+
+
