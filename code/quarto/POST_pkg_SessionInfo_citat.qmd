@@ -1,0 +1,52 @@
+---
+title: "Session Info, packages and citat"
+author: "Eve Zeyl Fiskebeck"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+    
+    source_code_dir: 'C:/Users/vi2067/OneDrive - Veterinaerinstituttet/REINSTALLED/projects_vault/Projects/2023/1_AvianInfluenza/12302_Avian_influenza_2023/code/R'
+execute: 
+  echo: false
+  cache: false
+format: html
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
+    R.options:
+      knitr.graphics.auto_pdf: true
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# sourcing scripts and functions - used in the paper
+
+
+```{r setup}
+
+library(here)
+source(here::here(params$source_code, "AI_main.R"))
+
+# Provisional until we get a package
+fun_files_path <- list.files(here::here(params$source_code, "fun"),
+  pattern = "*.R",
+  full.names = T)
+# sourcing all functions
+sapply(fun_files_path,source,.GlobalEnv)
+
+```
+
+Other libraries used
+```{r}
+library(readxl)
+library(plyr)
+```
+
+Libraries used in the Rscript for wrangling the data 
+```{r}
+library(optparse)
+library(seqinr)
+```
+
+

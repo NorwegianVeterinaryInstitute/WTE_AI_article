@@ -152,7 +152,7 @@ months_df <-
   dplyr::filter(!is.na(date_interval)) %>%
   tibble::add_column(interval_number = seq(1, nrow(.)))
   
-View(months_df)
+#View(months_df)
 ```
 
 now creating option to join the data within the intervals 
@@ -206,11 +206,30 @@ sampling_df <-
 ```
 
 
+getting the interval in ym for visualisation 
+
+```{r}
+sampling_df <- 
+  sampling_df %>% 
+  arrange(start_date) %>%
+  mutate(year = as.character(year(start_date)),
+         month  = as.character(month(start_date))) %>% 
+  unite(year_month, year, month, sep = "-") %>%
+  mutate(year_month = factor(year_month, 
+                             ordered = TRUE, 
+                             levels = unique(.$year_month)
+                             ))
+  
+  
+  
+```
+
+
 ## plotting 
 ```{r}
 sampling_plot <- 
   sampling_df %>% 
-  ggplot(aes(x = interval, 
+  ggplot(aes(x = year_month, 
              fill = WTE)) +
   geom_bar(stat = "count") +
   expand_limits(x = c(-2, length(levels(sampling_df$interval))+2)) +
@@ -231,7 +250,7 @@ need to get the factors
 ```{r}
 sampling_postive_negative_plot <- 
   sampling_df %>% 
-  ggplot(aes(x = interval, 
+  ggplot(aes(x = year_month, 
              fill = WTE, alpha = HPAI_all)) +
   geom_bar(stat = "count") +
   expand_limits(x = c(-2, length(levels(sampling_df$interval))+2)) +
@@ -246,7 +265,29 @@ sampling_postive_negative_plot <-
 sampling_postive_negative_plot 
 ```
 
-I want only the postive and ordered - with the different influenza in same scale 
+
+```{r}
+sampling_postive_negative_plot2 <- 
+  sampling_postive_negative_plot  +
+  facet_grid(rows = vars(HPAI_all), scales = "free")
+
+sampling_postive_negative_plot
+```
+
+```{r}
+test1 <- sampling_postive_negative_plot / sampling_postive_negative_plot2
+test1
+```
+
+
+```{r}
+ggsave(here(params$save_dir, "sampling_pos_neg_detail.png"),
+       plot = test1,
+       width = 15,
+       height = 10)
+```
+
+I want only the positive and ordered - with the different influenza in same scale 
 ```{r}
 sampling_df %>%
   add_count(interval) %>%
@@ -255,33 +296,43 @@ sampling_df %>%
 #  19 427  
 ```
 
+
+creating the positive and the interaction 
+
 ```{r}
-positive_AI <- 
+sampling_positive_interaction_df <- 
   sampling_df %>% 
   filter(HPAI_all == "YES") %>%
-  ggplot(aes(x = interval, 
-             fill = interaction(WTE, Abbr, sep = ":", lex.order = T),
-             color = interaction(WTE, Abbr, sep = ":", lex.order = T),
-             )
+  unite(Interaction, c("WTE", "Abbr"), sep = ": ", remove = F) 
+```
+
+
+
+```{r}
+ggplot(sampling_positive_interaction_df, 
+         aes(x = year_month, 
+             fill = Interaction, 
+             color = Interaction
+             ) 
          ) +
   geom_bar(stat = "count") +
   expand_limits(x = c(-2, length(levels(sampling_df$interval))+2))+
-  scale_fill_manual(values = c("WTE:H5N1" = rgb(1,0,1,1),
-                               "WTE:H5N5" = rgb(0.5,0,0.5, 0.5),
-                               "WTE:Div. HPAI" = rgb(0.5,0,0.5, 0.2),
-                               "Mammal:H5N1" = rgb(.5,.5,.5,1),
-                               "Other Avian:H5N1" = rgb(0,0,1, 1),
-                               "Other Avian:H5N5" = rgb(0,0,1,0.5),
-                               "Other Avian:Div. HPAI" = rgb(0,0,1,0.2)
+  scale_fill_manual(values = c("WTE: H5N1" = rgb(1,0,1,1),
+                               "WTE: H5N5" = rgb(0.5,0,0.5, 0.5),
+                               "WTE: Div. HPAI" = rgb(0.5,0,0.5, 0.2),
+                               "Mammal: H5N1" = rgb(.5,.5,.5,1),
+                               "Other Avian: H5N1" = rgb(0,0,1, 1),
+                               "Other Avian: H5N5" = rgb(0,0,1,0.5),
+                               "Other Avian: Div. HPAI" = rgb(0,0,1,0.2)
                                ),
                     name = "Types positive Influenza A") +
-  ggplot2::scale_color_manual(values = c("WTE:H5N1" = rgb(1,0,1,1),
-                               "WTE:H5N5" = rgb(0.5,0,0.5, 0),
-                               "WTE:Div. HPAI" = rgb(0,0,0,1),
-                               "Mammal:H5N1" = rgb(.5,.5,.5,1),
-                               "Other Avian:H5N1" = rgb(0,0,1,1),
-                               "Other Avian:H5N5" = rgb(0,0,1,0),
-                               "Other Avian:Div. HPAI" = rgb(0,0,0,1)
+  ggplot2::scale_color_manual(values = c("WTE: H5N1" = rgb(1,0,1,1),
+                               "WTE: H5N5" = rgb(0.5,0,0.5, 0),
+                               "WTE: Div. HPAI" = rgb(0,0,0,1),
+                               "Mammal: H5N1" = rgb(.5,.5,.5,1),
+                               "Other Avian: H5N1" = rgb(0,0,1,1),
+                               "Other Avian: H5N5" = rgb(0,0,1,0),
+                               "Other Avian: Div. HPAI" = rgb(0,0,0,1)
                                ),
                               name = "Types positive Influenza A") +
   theme_bw() +
@@ -289,35 +340,72 @@ positive_AI <-
   labs(title = "Positive AI & types incl. unknown", 
        x = "Date", 
        y = "Count") 
+```
+
+facet for that 
+```{r}
+positive_AI <- 
+  ggplot(sampling_positive_interaction_df, 
+         aes(x = year_month, 
+             fill = Interaction, 
+             color = Interaction
+             ) 
+         ) +
+  geom_bar(stat = "count", position = "dodge") +
+  expand_limits(x = c(-2, length(levels(sampling_df$interval))+2))+
+  scale_fill_manual(values = c("WTE: H5N1" = rgb(1,0,1,1),
+                               "WTE: H5N5" = rgb(0.5,0,0.5, 0.5),
+                               "WTE: Div. HPAI" = rgb(0.5,0,0.5, 0.2),
+                               "Mammal: H5N1" = rgb(.5,.5,.5,1),
+                               "Other Avian: H5N1" = rgb(0,0,1, 1),
+                               "Other Avian: H5N5" = rgb(0,0,1,0.5),
+                               "Other Avian: Div. HPAI" = rgb(0,0,1,0.2)
+                               ),
+                    name = "Types positive Influenza A") +
+  ggplot2::scale_color_manual(values = c("WTE: H5N1" = rgb(1,0,1,1),
+                               "WTE: H5N5" = rgb(0.5,0,0.5, 0),
+                               "WTE: Div. HPAI" = rgb(0,0,0,1),
+                               "Mammal: H5N1" = rgb(.5,.5,.5,1),
+                               "Other Avian: H5N1" = rgb(0,0,1,1),
+                               "Other Avian: H5N5" = rgb(0,0,1,0),
+                               "Other Avian: Div. HPAI" = rgb(0,0,0,1)
+                               ),
+                              name = "Types positive Influenza A") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Positive AI & types incl. unknown", 
+       x = "Date", 
+       y = "Count") +
+  facet_grid(rows = vars(WTE), scales = "free") 
 
 positive_AI
 ```
 
 
 ```{r}
-positive_AI +
-    facet_wrap(vars(WTE), nrow = 3, scales = "fixed") 
+ggsave(here::here(params$save_dir, "positive_AI.png"), 
+       positive_AI, width = 20, height = 15)
+
+
 ```
 
-!# HERE some problem with the bars its not writhht so many mammals
-
-! labels interaction, better do the factor oneself, otherwise is problematic I think
 
 ```{r}
 positive_H5N1_5_plot <- 
-  sampling_df %>% 
-  dplyr::filter(HPAI_all == "YES") %>%
-  ggplot(aes(x = interval,
-             fill = interaction(WTE, Abbr, sep = ":", lex.order = T))) +
+  sampling_positive_interaction_df %>% 
+  filter(Abbr == "H5N1" | Abbr == "H5N5") %>%
+  droplevels() %>%
+  ggplot(aes(x = year_month,
+             fill = Interaction)) +
   #geom_bar(stat = "count", position = "dodge", width = 0.7) +
   geom_bar(stat = "count") +
-  expand_limits(x = c(-2, length(levels(sampling_df$interval))+2)) 
-  scale_fill_manual(values = c("WTE:H5N1" = rgb(1,0,1,1),
-                               "WTE:H5N5" = rgb(0.5,0,0.5, 0.3),
-                               "Mammal:H5N1" = rgb(.5,.5,.5,1),
-                               "Mammal:H5N1" = rgb(.5,.5,.5, 0.3),
-                               "Other Avian:H5N1" = rgb(0,0,1, 1),
-                               "Other Avian:H5N5" = rgb(0,0,1,0.3)
+  expand_limits(x = c(-2, length(levels(sampling_df$interval))+2)) +
+  scale_fill_manual(values = c("WTE: H5N1" = rgb(1,0,1,1),
+                               "WTE: H5N5" = rgb(0.5,0,0.5, 0.3),
+                               "Mammal: H5N1" = rgb(.5,.5,.5,1),
+                               "Mammal: H5N1" = rgb(.5,.5,.5, 0.3),
+                               "Other Avian: H5N1" = rgb(0,0,1, 1),
+                               "Other Avian: H5N5" = rgb(0,0,1,0.3)
                                ),
                     name = "Types positive Influenza A") +
   theme_bw() +
@@ -331,14 +419,23 @@ positive_H5N1_5_plot
 
 
 ```{r}
-#positive_H5N1_5_plot_wrap <- 
+positive_H5N1_5_plot_wrap <- 
   positive_H5N1_5_plot + 
-  facet_wrap(vars(WTE), nrow = 3, scales = "fixed") 
+  facet_grid(rows = vars(WTE), cols = vars(Abbr), scales = "fixed") 
 
 positive_H5N1_5_plot_wrap 
 ```
 
 
+```{r}
+ggsave(here::here(params$save_dir, "positive_H5N1_5_plot.png"), 
+       positive_H5N1_5_plot_wrap, width = 15, height = 10)
+
+```
+
+
+<!-- 
+--> 
 Trying to put the plot together
 
 
@@ -350,22 +447,26 @@ devtools::load_all("~/packages/patchwork/")
 
 
 ```{r}
-posititive_AI1 <- positive_AI + scale_y_continuous(limits = c(0, 450))
+posititive_AI1 <- positive_AI 
 sampling_plot1 <- sampling_plot + scale_y_continuous(limits = c(0, 450))
 
 
 plot1 <- 
   sampling_plot1 + posititive_AI1 +  
   plot_layout(guides = "collect", 
-              axes = "collect")
+              axes = "collect")  & theme(legend.position = 'bottom')
+
+plot1
 ```
 
 ```{r}
 ggsave(
-  here::here(params$save_dir, "plot_sampling_1.png"),
+  here::here(params$save_dir, "plot_sampling_all_and_positive.png"),
   plot1, width = 20, height = 15)
 ```
 
+
+<!--
 now we zoom on the AI positive 
 ```{r}
 mylayout <- "
@@ -376,14 +477,19 @@ BC
 positive_AI / positive_H5N1_5_plot 
 
 
- positive_H5N1_5_plot_wrap  + 
+positive_H5N1_5_plot_wrap  + 
   plot_layout(guides = "collect", axes = "collect", design = mylayout)
 ```
 
 ```{r}
-
 sampling_postive_negative_plot + positive_H5N1_5_plot +
  plot_layout(guides = "collect", axes = "collect", design = mylayout)
 ```
+
+--> 
+
+nb birds tested -> 2020 - 2021 - 2022 
+should have doubled 2021 and 2022 
+but here start in october 2020 
 
 
