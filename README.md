@@ -1,6 +1,7 @@
+[![DOI](https://zenodo.org/badge/750248033.svg)](https://zenodo.org/doi/10.5281/zenodo.11143879)
+
 # WTE_AI_article
 White Tailed Eagle Article - place to put the cleaned scripts, functions - and supplementary material for the article
-
 
 ## R and packages used
 > please let me know if I missed some ... 
