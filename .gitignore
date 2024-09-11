@@ -19,6 +19,7 @@
 *Tmp
 temp*
 *docx
+.here
 # FOR now ignoring the data and results dir 
 data/ 
 results/

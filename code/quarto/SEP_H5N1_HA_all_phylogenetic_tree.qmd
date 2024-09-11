@@ -1,5 +1,5 @@
 ---
-title: "SEP H5N1 NA Phylogenetic tree"
+title: "SEP H5N1 HA all Phylogenetic tree"
 author: "Eve Zeyl Fiskebeck"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 params:
@@ -37,10 +37,13 @@ source(here::here(params$source_code, "AI_main.R"))
 fun_files_path <- list.files(here::here(params$source_code, "fun"),
   pattern = "*.R",
   full.names = T)
+# correcting order sourcing
+fun_files_path <- c(fun_files_path[1:13],fun_files_path[15], fun_files_path[14], fun_files_path[16:32] )
 # sourcing all functions
 sapply(fun_files_path,source,.GlobalEnv)
-
 ```
+
+<!-- for some reason on the server get_label_from_node needs to be sourced directly, was not pb on laptop -->
 
 Note: if you are modifying the script and want to continue to work after, you can load a previous environment (don't forget to save it at the end of your work).
 
@@ -49,7 +52,7 @@ Loads the environment (to continue previous work)
 ```{r optional load environment}
 #| include: false
 # Uncomment if you want to load a saved environment file
-#if (file.exists(params$env_file)) {load(params$env_file)}
+# if (file.exists(params$env_file)) {load(params$env_file)}
 ```
 
 # Preparation of metadata specific to the tree
@@ -936,7 +939,7 @@ circular_plotb <-
      offset = 0.1,
      pwidth = 0.15) +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups",
+                    name = "Geographical Regions",
                     guide = guide_legend(order = 4)) 
 
 ```
@@ -1146,7 +1149,7 @@ N529_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups", 
+                    name = "Geographical Regions", 
                     guide = guide_legend(order = 4)) +
     ggtree::geom_facet(
     panel = "Country Detail", 
@@ -1400,7 +1403,7 @@ N9_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups",
+                    name = "Geographical Regions",
                     guide = guide_legend(order = 4)) +
     ggtree::geom_facet(
     panel = "Country Detail", 
