@@ -19,9 +19,14 @@
 *Tmp
 temp*
 *docx
+.here
 # FOR now ignoring the data and results dir 
 data/ 
 results/
+
+# renv files that we can ignore 
+.Rprofile
+renv
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

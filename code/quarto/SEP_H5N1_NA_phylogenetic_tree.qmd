@@ -37,6 +37,8 @@ source(here::here(params$source_code, "AI_main.R"))
 fun_files_path <- list.files(here::here(params$source_code, "fun"),
   pattern = "*.R",
   full.names = T)
+# correcting order sourcing
+fun_files_path <- c(fun_files_path[1:13],fun_files_path[15], fun_files_path[14], fun_files_path[16:32] )
 # sourcing all functions
 sapply(fun_files_path,source,.GlobalEnv)
 
@@ -214,7 +216,6 @@ rooted_tree_simple_plot_list <-
 ```
 
 
-
 -   saving in individual objects (copy). We will reuse the plot data
 We need to add the tips in descendants from nodes - so its homogeneous for next function
 
@@ -266,6 +267,7 @@ Note here, we come back to the original metadata table, because we have the
 list of tips that is represented at each label (tip or node)
 
 Here we do not want to use interaction between factors
+
 ```{r}
 my_plotdata <- 
   my_plotdata %>%
@@ -275,7 +277,6 @@ my_plotdata <-
     interaction = FALSE,
     country, Host, Host_latin, year, continent, Host_family) 
 ```
-
 
 Here is how it looks like 
 ```{r}
@@ -825,7 +826,7 @@ explor_plot4 <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups",
+                    name = "Geographical Regions",
                     guide = guide_legend(order = 3)) +
     ggtree::geom_facet(
     panel = "Country Detail", 
@@ -946,7 +947,7 @@ circular_meta <-
 ```{r}
 # ! here palette is specific for this article: SEP_years_shape_pal
 circular_plot <- 
-  ggtree(rooted_tree_nodelab, layout = "circular", color = "grey", alpha = .7)  %<+%
+  ggtree(rooted_tree_nodelab, layout = "circular", color = "grey", alpha = 1, size = 1)  %<+%
   circular_meta +
   ggnewscale::new_scale_color() +
   geom_tippoint(
@@ -962,7 +963,7 @@ circular_plot <-
                      name = "Shape Year", 
                      na.translate = FALSE,
                      guide = guide_legend(order = 1)) +
-  scale_size_continuous(range = c(0, 1)) +
+  scale_size_continuous(range = c(0, 2)) +
   guides(size = "none") +
   # Adding the highlight for the subsets plots - where is the group branching
   ggnewscale::new_scale_color() +
@@ -971,6 +972,8 @@ circular_plot <-
     mapping = aes(x = x, y = y),
     size = 1.5,
     color = "green")
+
+circular_plot 
 
 ```
 
@@ -1025,7 +1028,7 @@ circular_plotb <-
      offset = 0.1,
      pwidth = 0.15) +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups",
+                    name = "Geographical Regions",
                     guide = guide_legend(order = 4)) 
 
 ```
@@ -1233,7 +1236,7 @@ N1732_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups", 
+                    name = "Geographical Regions", 
                     guide = guide_legend(order = 4)) +
     ggtree::geom_facet(
     panel = "Country Detail", 
@@ -1486,7 +1489,7 @@ N15_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups", 
+                    name = "Geographical Regions", 
                     guide = guide_legend(order = 4)) +
     ggtree::geom_facet(
     panel = "Country Detail", 

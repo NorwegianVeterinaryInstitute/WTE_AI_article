@@ -17,42 +17,53 @@ params:
 -   link to previously collated metadata for all trees to get back the isolate name
 -   collates aknowledgments for isolates
 
-2. Data check - included in the phylogenetic tree
+2.  Data check - included in the phylogenetic tree
 
-3. Metadata update - updates the metadata - when people add things manually, reformat and re-export 
-- [x] UPDATE_metadata.qmd
+3.  Metadata update - updates the metadata - when people add things manually, reformat and re-export
 
+-   [x] UPDATE_metadata.qmd
 
 3.  Visualisation phylogenetic tree:
 
-- [x]   `SEP_H5N1_HA_phylogenetic_tree.qmd`
-- [x]   `SEP_H5N1_HA_all_phylogenetic_tree.qmd` - rerun according to same model - with all isolates to be able to compare with NA - I think NA was best
-- [x]     `PRERUN_SEP_H5N1_NA_phylogenetic_tree.qmd` - where I select what to filter out (mammals and eventually other isolates on the tree)
-- [x]   `SEP_H5N1_NA_phylogenetic_tree.qmd`
-- [x]   `SEP_H5N5_HA_phylogenetic_tree.qmd`
-- [x]   `SEP_H5N5_NA_phylogenetic_tree.qmd`
+-   [x] `SEP_H5N1_HA_phylogenetic_tree.qmd`
+-   [x] `SEP_H5N1_HA_all_phylogenetic_tree.qmd` - rerun according to same model - with all isolates to be able to compare with NA - I think NA was best - This is the one used in the paper
+-   [x] `PRERUN_SEP_H5N1_NA_phylogenetic_tree.qmd` - where I select what to filter out (mammals and eventually other isolates on the tree)
+-   [x] `SEP_H5N1_NA_phylogenetic_tree.qmd`
+-   [x] `SEP_H5N5_HA_phylogenetic_tree.qmd`
+-   [x] `SEP_H5N5_NA_phylogenetic_tree.qmd`
 
-4. Packages used citat - session info 
+4.  Packages used citat
 
-6.  (last) Preparation metadata and aknowledgments for publication: `POST_preparation_aknowledgments_metadata_for_publication.qmd`
+<!-- (had to re-install all R ! RRRrr ) -->
+
+```         
+-   at revision : add renv and make lock file for package info and reproducibility
+```
+
+5.  (last) Preparation metadata and acknowledgments for publication: `POST_preparation_aknowledgments_metadata_for_publication.qmd`
 
 # check list of what needs to be done before publication
 
-Metadata to include
-- [ ] all trees 
-- [ ] preparation files for MSA 
-- [ ] removed sequences for H5N1 HA
+-   [x] Metadata- info to include so they can be recovered
 
-Acknowledgements and formating checks
-- [ ] all trees - only for HA and NA segments 
-- [ ] removed sequences for H5N1 HA
-- [ ] preparation files for MSA 
-- [ ] formatting
+-   [x] all trees
 
-# Diverse 
-- [ ] Open github repository with scripts before submission 
-- [ ] Add a licence - Ask Karin what type I should use so I can use that to make package afterwards
-- [ ] clean dependencies that are absolutely necessary for the scripts to work (let the scales as it was used 
-to create the scales)
-- [ ] organize and move the prep scripts into the folder so its accessible 
+-   [x] preparation files for MSA -
+
+-   [x] removed sequences for H5N1 HA as explained
+
+Acknowledgements and formatting checks - \[x\] all trees - only for HA and NA segments - - \[x\] removed sequences for H5N1 HA - - \[x\] preparation files for MSA - \[x\] formatting
+
+# Diverse
+
+-   [x] Open github repository with scripts before submission
+-   [x] Add a licence - Ask Karin what type I should use so I can use that to make package afterwards
+-   [x] clean dependencies that are absolutely necessary for the scripts to work (let the scales as it was used to create the scales) - might still be some relics there
+-   [x] organize and move the prep scripts into the folder so its accessible
+
+Revision 
+- [x] rerun with modifications 
+- [x] added renv for reproducibility (lock file should allow to recreate env) 
+- [ ] need to recreate zenodo and then upload - aslo upload on the journal zenodo
+- [ ] export the savedata/image and everything redone to project for archive (all git repo - code and data to a same place) 
 
