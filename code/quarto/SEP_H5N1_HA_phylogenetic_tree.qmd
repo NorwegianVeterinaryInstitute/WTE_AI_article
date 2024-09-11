@@ -796,7 +796,7 @@ explor_plot4 <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups") +
+                    name = "Geographical Regions") +
     ggtree::geom_facet(
     panel = "Country Legend", 
     data = countries_facet_df,
@@ -981,7 +981,7 @@ circular_plotb <-
      offset = 0.1,
      pwidth = 0.15) +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups") 
+                    name = "Geographical Regions") 
 
 ```
 
@@ -1135,7 +1135,7 @@ N348_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups") +
+                    name = "Geographical Regions") +
     ggtree::geom_facet(
     panel = "Country Legend", 
     data = N348_countries_facet_df,
@@ -1334,7 +1334,7 @@ N9_plot <-
     width = 1, 
     stat = "identity") +
   scale_fill_manual(values = col_grouped_countries_pal2,
-                    name = "Country Groups") +
+                    name = "Geographical Regions") +
     ggtree::geom_facet(
     panel = "Country Legend", 
     data = N9_countries_facet_df,

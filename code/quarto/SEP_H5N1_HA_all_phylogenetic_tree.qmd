@@ -214,7 +214,6 @@ rooted_tree_simple_plot_list <-
   monophyly_nodetag_simple_plot_fun(rooted_tree, lwd = .1, color = "grey")
 ```
 
-
 -   saving in individual objects (copy). We will reuse the plot data
 We need to add the tips in descendants from nodes - so its homogeneous for next function
 
@@ -323,7 +322,7 @@ my_plotdata %>%
 rooted_tree_simple_plot_list$simple_plot$data <- my_plotdata
 ```
 
- # NOW
+
 
 ## 3. Filtering based on criteria based on information from nested metadata 
 
@@ -860,7 +859,7 @@ circular_meta <-
 ```{r}
 # ! here palette is specific for this article: SEP_years_shape_pal
 circular_plot <- 
-  ggtree(rooted_tree_nodelab, layout = "circular", color = "grey", alpha = .7)  %<+%
+  ggtree(rooted_tree_nodelab, layout = "circular", color = "grey", alpha = 1, size = 1)  %<+%
   circular_meta +
   ggnewscale::new_scale_color() +
   geom_tippoint(
@@ -871,7 +870,7 @@ circular_plot <-
                             na.translate = FALSE,
                             name = "Highlight Norway", 
                             guide = guide_legend(order = 2)) +
-  scale_size_continuous(range = c(0, 1)) +
+  scale_size_continuous(range = c(0, 2)) +
   # HERE SHAPE
   scale_shape_manual(values = SEP_years_shape_pal, 
                      name = "Shape Year", 
@@ -886,6 +885,7 @@ circular_plot <-
     size = 1.5,
     color = "green")
 
+circular_plot
 ```
 
 - Adding annotation around the tree
