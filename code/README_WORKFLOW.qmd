@@ -34,35 +34,36 @@ params:
 
 4.  Packages used citat
 
-<!-- (had to re-install all R ! RRRrr ) --> 
+<!-- (had to re-install all R ! RRRrr ) -->
 
-    -   at revision : add renv and make lock file for package info and reproducibility
+```         
+-   at revision : add renv and make lock file for package info and reproducibility
+```
 
 5.  (last) Preparation metadata and acknowledgments for publication: `POST_preparation_aknowledgments_metadata_for_publication.qmd`
 
 # check list of what needs to be done before publication
 
-- [x] Metadata- info to include so they can be recovered 
+-   [x] Metadata- info to include so they can be recovered
 
-- [x] all trees 
-- [x] preparation files for MSA - 
-- [x] removed sequences for H5N1 HA as explained
+-   [x] all trees
 
+-   [x] preparation files for MSA -
 
-Acknowledgements and formatting checks 
-- [x] all trees - only for HA and NA segments - 
-- [x] removed sequences for H5N1 HA -
-- [x] preparation files for MSA 
-- [x] formatting
+-   [x] removed sequences for H5N1 HA as explained
+
+Acknowledgements and formatting checks - \[x\] all trees - only for HA and NA segments - - \[x\] removed sequences for H5N1 HA - - \[x\] preparation files for MSA - \[x\] formatting
 
 # Diverse
 
 -   [x] Open github repository with scripts before submission
--   [x] Add a licence - Ask Karin what type I should use so I can use that to make package afterwards 
--   [x] clean dependencies that are absolutely necessary for the scripts to work (let the scales as it was used to create the scales) - might still be some relics there 
+-   [x] Add a licence - Ask Karin what type I should use so I can use that to make package afterwards
+-   [x] clean dependencies that are absolutely necessary for the scripts to work (let the scales as it was used to create the scales) - might still be some relics there
 -   [x] organize and move the prep scripts into the folder so its accessible
 
-Revision
-- [x] rerun with modifications
-- [x] added renv for reproducibility (lock file should allow to recreate env)
+Revision 
+- [x] rerun with modifications 
+- [x] added renv for reproducibility (lock file should allow to recreate env) 
 - [ ] need to recreate zenodo and then upload - aslo upload on the journal zenodo
+- [ ] export the savedata/image and everything redone to project for archive (all git repo - code and data to a same place) 
+
