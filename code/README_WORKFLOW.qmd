@@ -64,5 +64,5 @@ Acknowledgements and formatting checks
 
 Revision
 - [x] rerun with modifications
-- [ ] added renv for reproducibility (lock file should allow to recreate env)
+- [x] added renv for reproducibility (lock file should allow to recreate env)
 - [ ] need to recreate zenodo and then upload - aslo upload on the journal zenodo

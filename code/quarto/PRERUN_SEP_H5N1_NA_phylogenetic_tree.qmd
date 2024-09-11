@@ -247,4 +247,4 @@ Rerun iqtree
 conda activate iqtree 
 iqtree --version 
 iqtree -s SEP_NA_H5N1_MSA_nommals.fasta -m MFP+F+I  -B 1000 -T AUTO
-
+```

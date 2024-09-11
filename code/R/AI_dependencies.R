@@ -1,11 +1,12 @@
 # To manage the packages 
-library(renv)
+# library(renv) # renv.log should be able to reproduce the whole environment
+
 # R packages on CRAN
 library(tidyverse)
 library(rlist)
 library(xlsx)
 library(glue)
-#library(ggplot2) installed with tidyverse
+#library(ggplot2) loaded  with tidyverse
 library(ggnewscale)
 library(scales)
 library(qualpalr)

@@ -4,7 +4,11 @@
 White Tailed Eagle Article - place to put the cleaned scripts, functions - and supplementary material for the article
 
 ## R and packages used
-> please let me know if I missed some ... 
+> 2024-09-11 The packages and versions used are now saved in "renv.lock" that you can now use to reproduce the environment we used here. 
+An introduction on how to use renv can be found here: <https://rstudio.github.io/renv/articles/renv.html> 
+
+
+> Main packages used ... (and all dependencies osv)
 
 - R Core Team (2023). _R: A Language and Environment for Statistical Computing_. R Foundation for Statistical Computing, Vienna, Austria. <https://www.R-project.org/>.
 - Müller K (2020). _here: A Simpler Way to Find Your Files_. R package version 1.0.1, <https://CRAN.R-project.org/package=here>.

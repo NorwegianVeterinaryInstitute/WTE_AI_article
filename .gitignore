@@ -24,6 +24,10 @@ temp*
 data/ 
 results/
 
+# renv files that we can ignore 
+.Rprofile
+renv
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
