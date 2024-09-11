@@ -37,6 +37,8 @@ source(here::here(params$source_code, "AI_main.R"))
 fun_files_path <- list.files(here::here(params$source_code, "fun"),
   pattern = "*.R",
   full.names = T)
+# correcting order sourcing
+fun_files_path <- c(fun_files_path[1:13],fun_files_path[15], fun_files_path[14], fun_files_path[16:32] )
 # sourcing all functions
 sapply(fun_files_path,source,.GlobalEnv)
 
@@ -474,7 +476,7 @@ circular_meta <-
 ```{r}
 # ! here palette is specific for this article: SEP_years_shape_pal
 circular_plot <- 
-  ggtree(rooted_tree_nodelab, layout = "circular", color = "grey", alpha = .7)  %<+%
+  ggtree(rooted_tree_nodelab, layout = "circular", color = "grey", alpha = 1, size = 1)  %<+%
   circular_meta +
   ggnewscale::new_scale_color() +
   geom_tippoint(
@@ -484,13 +486,15 @@ circular_plot <-
                             na.translate = FALSE,
                             name = "Highlight Norway", 
                             guide = guide_legend(order = 2)) +
-  scale_size_continuous(range = c(0, 1)) +
+  scale_size_continuous(range = c(0, 3)) +
   # Added homogeneization shapes
   scale_shape_manual(values = SEP_years_shape_pal, 
                      name = "Shape Year", 
                      na.translate = FALSE, 
                       guide = guide_legend(order = 1)) +
   guides(size = "none") 
+
+circular_plot
 ```
 
 - Adding annotation around the tree
